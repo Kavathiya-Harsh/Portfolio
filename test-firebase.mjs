@@ -2,13 +2,13 @@ import { initializeApp } from "firebase/app";
 import { getFirestore, collection, addDoc, getDocs } from "firebase/firestore";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyDW1wUBkaSyqx0mWYkNXIMC4VgAoVbPwEY",
-  authDomain: "harsh-kavathiya-portfolio.firebaseapp.com",
-  projectId: "harsh-kavathiya-portfolio",
-  storageBucket: "harsh-kavathiya-portfolio.firebasestorage.app",
-  messagingSenderId: "1067197088420",
-  appId: "1:1067197088420:web:9a42f318a6702fcff05c31",
-  measurementId: "G-6XDFF4J5T6"
+  apiKey: import.meta.env.AIzaSyDW1wUBkaSyqx0mWYkNXIMC4VgAoVbPwEY,
+  authDomain: import.meta.env.harsh-kavathiya-portfolio.firebaseapp.com,
+  projectId: import.meta.env.harsh-kavathiya-portfolio,
+  storageBucket: import.meta.env.harsh-kavathiya-portfolio.firebasestorage.app,
+  messagingSenderId: import.meta.env.1067197088420,
+  appId: import.meta.env.1:1067197088420:web:9a42f318a6702fcff05c31,
+  measurementId: import.meta.env.G-6XDFF4J5T6
 };
 
 const app = initializeApp(firebaseConfig);
