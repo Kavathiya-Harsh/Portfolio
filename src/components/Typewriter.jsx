@@ -3,9 +3,10 @@ import { motion } from 'framer-motion';
 
 const ROLES = [
   'Full Stack Developer',
-  'Competitive Programmer',
-  'UI/UX Enthusiast',
-  'Open Source Contributor',
+  'CS Student @ SSU',
+  'Web Developer',
+  'Problem Solver',
+  'Open Source Enthusiast',
 ];
 
 export default function Typewriter() {

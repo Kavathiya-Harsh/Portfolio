@@ -10,12 +10,12 @@ import {
   Linkedin, 
   Code, 
   User, 
-  Briefcase, 
   Award, 
   Home,
   Copy,
   Check
 } from 'lucide-react';
+import { profile } from '../data/profile';
 
 const commands = [
   {
@@ -43,14 +43,6 @@ const commands = [
     action: () => (window.location.hash = '#skills'),
   },
   {
-    id: 'experience',
-    title: 'Experience',
-    description: 'My professional journey',
-    category: 'Navigate',
-    icon: Briefcase,
-    action: () => (window.location.hash = '#experience'),
-  },
-  {
     id: 'certificates',
     title: 'Certificates & Awards',
     description: 'Recognitions and achievements',
@@ -69,11 +61,11 @@ const commands = [
   {
     id: 'email',
     title: 'Copy Email Address',
-    description: 'hello@example.com',
+    description: 'harsh.kavathiya.cg@gmail.com',
     category: 'Actions',
     icon: Copy,
     action: (notify) => {
-      navigator.clipboard.writeText('hello@example.com');
+      navigator.clipboard.writeText('harsh.kavathiya.cg@gmail.com');
       notify('Email copied to clipboard!');
     },
   },
@@ -83,7 +75,7 @@ const commands = [
     description: 'PDF format',
     category: 'Actions',
     icon: FileText,
-    action: () => window.open('/resume.pdf', '_blank'),
+    action: () => window.open(profile.resumeUrl, '_blank'),
   },
   {
     id: 'github',
@@ -91,7 +83,7 @@ const commands = [
     description: 'View my open source contributions',
     category: 'Links',
     icon: Github,
-    action: () => window.open('https://github.com', '_blank'),
+    action: () => window.open('https://github.com/Kavathiya-Harsh', '_blank'),
   },
   {
     id: 'linkedin',
@@ -99,7 +91,7 @@ const commands = [
     description: 'Connect with me professionally',
     category: 'Links',
     icon: Linkedin,
-    action: () => window.open('https://linkedin.com', '_blank'),
+    action: () => window.open('https://www.linkedin.com/in/harshkavathiya', '_blank'),
   },
 ];
 

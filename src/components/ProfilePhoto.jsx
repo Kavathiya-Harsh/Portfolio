@@ -23,10 +23,13 @@ export function ProfilePhoto({ size = 'lg', className = '', showRing = true }) {
           src={photoUrl}
           alt={profile.name}
           className="h-full w-full object-cover"
-          onError={() => setError(true)}
+          onError={(e) => {
+            console.error("Photo load error:", e);
+            setError(true);
+          }}
         />
       ) : (
-        <div className="h-full w-full flex items-center justify-center font-bold text-white/80 bg-blue-500/30">
+        <div className="h-full w-full flex items-center justify-center font-bold text-white bg-gradient-to-br from-blue-600 to-cyan-500 shadow-inner">
           {initials}
         </div>
       )}

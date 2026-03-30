@@ -1,7 +1,14 @@
 import React, { useRef } from 'react';
-import { motion, useScroll, useSpring, useTransform } from 'framer-motion';
+import { motion, useScroll, useTransform, useSpring } from 'framer-motion';
 import { experience } from '../data/experience';
-import { maskReveal, staggerItem, transitionSpring } from '../utils/motion';
+import {
+  textRevealUp,
+  slideInLeft,
+  slideInRight,
+  staggerContainer,
+  transitionSpring,
+  viewportOnce,
+} from '../utils/motion';
 
 export default function ExperienceTimeline() {
   const sectionRef = useRef(null);
@@ -22,24 +29,26 @@ export default function ExperienceTimeline() {
   return (
     <section id="experience" ref={sectionRef} className="py-24 px-6">
       <div className="max-w-3xl mx-auto">
-        <motion.h2
-          variants={maskReveal}
+        {/* Section header with text reveal */}
+        <motion.div
           initial="hidden"
           whileInView="visible"
-          viewport={{ once: true, margin: '-40px' }}
-          className="text-3xl md:text-4xl font-bold text-white mb-4"
+          viewport={viewportOnce}
+          variants={staggerContainer(0.1, 0)}
         >
-          Experience
-        </motion.h2>
-        <motion.p
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ ...transitionSpring, delay: 0.05 }}
-          className="text-slate-400 mb-12"
-        >
-          Career and education journey.
-        </motion.p>
+          <motion.h2
+            variants={textRevealUp}
+            className="text-3xl md:text-4xl font-bold text-white mb-4"
+          >
+            Experience
+          </motion.h2>
+          <motion.p
+            variants={textRevealUp}
+            className="text-slate-300 mb-12"
+          >
+            Career and education journey.
+          </motion.p>
+        </motion.div>
 
         <div className="relative">
           {/* Static background track */}
@@ -60,20 +69,25 @@ export default function ExperienceTimeline() {
           {experience.map((item, i) => (
             <motion.div
               key={item.id}
-              variants={staggerItem}
+              variants={i % 2 === 0 ? slideInLeft : slideInRight}
               initial="hidden"
               whileInView="visible"
-              viewport={{ once: true, margin: '-40px' }}
-              transition={{ ...transitionSpring, delay: i * 0.1 }}
+              viewport={viewportOnce}
+              transition={{ ...transitionSpring, delay: i * 0.12 }}
               className="relative pl-16 pb-12 last:pb-0"
             >
-              {/* Timeline node */}
+              {/* Timeline node — enhanced pop-in with rotation */}
               <motion.div
                 className="absolute left-0 top-2 w-10 h-10 rounded-full border-2 border-[#3b82f6] bg-[#0b1120] flex items-center justify-center z-10"
-                initial={{ scale: 0, opacity: 0 }}
-                whileInView={{ scale: 1, opacity: 1 }}
+                initial={{ scale: 0, opacity: 0, rotate: -90 }}
+                whileInView={{ scale: 1, opacity: 1, rotate: 0 }}
                 viewport={{ once: true }}
-                transition={{ ...transitionSpring, delay: i * 0.1 + 0.1 }}
+                transition={{
+                  type: 'spring',
+                  stiffness: 200,
+                  damping: 15,
+                  delay: i * 0.12 + 0.1,
+                }}
                 whileHover={{ scale: 1.15 }}
               >
                 <motion.div
@@ -113,7 +127,7 @@ export default function ExperienceTimeline() {
                   <span className="text-xs font-mono text-[#06b6d4]">{item.period}</span>
                 </div>
                 <p className="text-blue-300/90 text-sm font-medium mb-2">{item.company}</p>
-                <p className="text-slate-400 text-sm leading-relaxed mb-3">{item.description}</p>
+                <p className="text-slate-300 text-sm leading-relaxed mb-3">{item.description}</p>
                 {item.highlights && item.highlights.length > 0 && (
                   <ul className="space-y-1">
                     {item.highlights.map((h) => (

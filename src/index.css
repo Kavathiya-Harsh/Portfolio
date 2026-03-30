@@ -4,39 +4,58 @@
   color-scheme: dark;
 
   /* Core palette */
-  --base: #0b1120;
-  --surface: #111827;
+  --base: #080d1a;
+  --surface: #0f172a;
   --surface-light: #1e293b;
   --primary: #3b82f6;
   --primary-hover: #60a5fa;
   --accent: #22d3ee;
   --accent-glow: rgba(34, 211, 238, 0.15);
 
-  /* Glass */
-  --glass: rgba(255, 255, 255, 0.06);
-  --glass-border: rgba(255, 255, 255, 0.12);
+  /* Glass — refined for sweetness */
+  --glass: rgba(15, 23, 42, 0.45);
+  --glass-border: rgba(255, 255, 240, 0.08);
+  --glass-glow: rgba(59, 130, 246, 0.12);
 
-  /* Text */
+  /* Text — enhanced visibility */
   --text: #f1f5f9;
-  --text-secondary: #94a3b8;
-  --text-muted: #64748b;
+  --text-secondary: #b0bfe0;
+  --text-muted: #8293ab;
+}
+
+/* Smooth transitions for interactive elements only */
+a, button, input, textarea, select {
+  transition: color 0.3s ease, background-color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease, opacity 0.3s ease;
 }
 
 body {
   background-color: var(--base);
   color: var(--text);
-  font-family:
-    system-ui,
-    -apple-system,
-    BlinkMacSystemFont,
-    "Segoe UI",
-    Roboto,
-    sans-serif;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  letter-spacing: -0.011em;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  line-height: 1.7;
+}
+
+h1, h2, h3, h4, .font-heading {
+  font-family: 'Plus Jakarta Sans', sans-serif !important;
+}
+
+.font-mono {
+  font-family: 'DM Mono', monospace !important;
 }
 
 /* Smooth scroll */
 html {
   scroll-behavior: smooth;
+  scroll-padding-top: 80px;
+}
+
+/* All paragraphs and descriptions — improved readability */
+p, li, span {
+  text-rendering: optimizeLegibility;
 }
 
 /* Selection */
@@ -58,4 +77,92 @@ html {
 }
 ::-webkit-scrollbar-thumb:hover {
   background: var(--primary);
+}
+
+@keyframes spin-slow {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+.animate-spin-slow {
+  animation: spin-slow 6s linear infinite;
+}
+
+@keyframes aurora {
+  0%, 100% { opacity: 0.4; transform: scale(1) translate(0, 0); }
+  33%       { opacity: 0.7; transform: scale(1.06) translate(15px, -10px); }
+  66%       { opacity: 0.5; transform: scale(0.97) translate(-10px, 12px); }
+}
+.animate-aurora {
+  animation: aurora 14s ease-in-out infinite;
+}
+
+@keyframes float-y {
+  0%, 100% { transform: translateY(0); }
+  50%       { transform: translateY(-12px); }
+}
+.animate-float {
+  animation: float-y 6s ease-in-out infinite;
+}
+
+/* ─── Scroll Animation Utilities ─── */
+
+/* GPU acceleration for scroll-driven elements */
+.will-change-transform {
+  will-change: transform;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+}
+
+/* Perspective container for 3D scroll effects */
+.perspective-section {
+  perspective: 1200px;
+  perspective-origin: center;
+}
+
+/* Premium text reveal line */
+@keyframes reveal-up {
+  from {
+    opacity: 0;
+    clip-path: inset(100% 0 0 0);
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    clip-path: inset(0 0 0 0);
+    transform: translateY(0);
+  }
+}
+
+.scroll-reveal-line {
+  animation: reveal-up 0.8s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/* Section divider glow animation */
+@keyframes divider-glow {
+  0%, 100% { opacity: 0.3; width: 30%; }
+  50% { opacity: 0.8; width: 60%; }
+}
+
+.section-divider {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--primary), transparent);
+  animation: divider-glow 4s ease-in-out infinite;
+  margin: 0 auto;
+}
+
+/* Gradient text shimmer effect */
+@keyframes text-shimmer {
+  0% { background-position: -200% center; }
+  100% { background-position: 200% center; }
+}
+
+.animate-text-shimmer {
+  background-size: 200% auto;
+  animation: text-shimmer 4s linear infinite;
+}
+
+/* Character reveal 3D perspective */
+.char-reveal-perspective {
+  perspective: 600px;
+  display: inline-block;
 }

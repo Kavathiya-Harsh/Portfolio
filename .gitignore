@@ -1,1 +1,27 @@
+# Dependencies
 node_modules
+
+# Build output
+dist
+
+# Environment variables (contains API keys)
+.env
+.env.local
+.env.*.local
+
+# IDE
+.vscode
+.idea
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+firebase-debug.log
+
+# Build artifacts
+build_error.log

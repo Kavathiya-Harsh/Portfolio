@@ -3,15 +3,19 @@ import { motion } from 'framer-motion';
 import { Terminal, Circle } from 'lucide-react';
 
 const fullBio = `{
-  "name": "Your Name",
-  "role": "Full Stack Developer",
-  "specialty": "High-Performance Web Apps",
-  "yearsOfExperience": 4,
-  "status": "Open to New Opportunities",
-  "techStack": ["React", "Next.js", "TypeScript", "Node.js", "Python"],
-  "interests": ["System Design", "Competitive Programming", "OSS"],
-  "location": "Global / Remote",
-  "contact": "hello@example.com"
+  "name": "Harsh Kavathiya",
+  "role": "Computer Science Student & Developer",
+  "college": "Shree Swaminarayan University (codinggita)",
+  "education": {
+    "10th": "Modi School",
+    "12th": "Modi School",
+    "current": "B.E CSE — Shree Swaminarayan University"
+  },
+  "status": "Open to Internships & Projects",
+  "techStack": ["React", "Next.js", "JavaScript", "Node.js", "Python"],
+  "interests": ["Web Development", "Problem Solving", "Open Source"],
+  "location": "Kalol, Gandhinagar, Gujarat",
+  "contact": "harsh.kavathiya@example.com"
 }`;
 
 export default function TerminalBio() {

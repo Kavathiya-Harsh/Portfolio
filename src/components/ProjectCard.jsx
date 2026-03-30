@@ -1,7 +1,7 @@
 import React, { useRef, useState } from 'react';
 import { motion, useMotionValue, useSpring, useTransform } from 'framer-motion';
 import { ExternalLink, Github, Code2, Star, ArrowUpRight, Gauge, FileCode, Layers } from 'lucide-react';
-import { transitionSpring } from '../utils/motion';
+import { transitionSpring, blurScaleIn } from '../utils/motion';
 import CodeSnippetModal from './CodeSnippetModal';
 
 function MetricBadge({ icon: Icon, label, value, color }) {
@@ -64,11 +64,8 @@ export default function ProjectCard({ project, index = 0 }) {
   return (
     <>
       <motion.div
-        initial={{ opacity: 0, y: 30 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, margin: '-50px' }}
-        transition={{ duration: 0.6, delay: index * 0.1 }}
-        className="h-full perspective-1000"
+        variants={blurScaleIn}
+        className="h-full perspective-1000 will-change-transform"
       >
         <motion.div
           ref={cardRef}

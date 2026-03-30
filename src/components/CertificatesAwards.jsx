@@ -1,207 +1,232 @@
-import React from 'react';
-import { motion } from 'framer-motion';
-import { Award, Medal, ExternalLink, Calendar, Building2 } from 'lucide-react';
+import React, { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Award, Medal, ChevronLeft, ChevronRight, Maximize2, ExternalLink } from 'lucide-react';
 import { certificates, awards } from '../data/certificates';
-import { maskReveal, staggerContainer, staggerItem, transitionSpring } from '../utils/motion';
+import {
+  textRevealUp,
+  blurScaleIn,
+  staggerContainer,
+  viewportOnce,
+  transitionSlow,
+} from '../utils/motion';
 
-function CertCard({ item, index }) {
-  const Wrapper = item.credentialUrl ? motion.a : motion.div;
-  const wrapperProps = item.credentialUrl
-    ? { href: item.credentialUrl, target: '_blank', rel: 'noopener noreferrer' }
-    : {};
-
-  const onMove = (e) => {
-    const rect = e.currentTarget.getBoundingClientRect();
-    const x = ((e.clientX - rect.left) / rect.width) * 100;
-    const y = ((e.clientY - rect.top) / rect.height) * 100;
-    e.currentTarget.style.setProperty('--mx', `${x}%`);
-    e.currentTarget.style.setProperty('--my', `${y}%`);
-  };
-  const onLeave = (e) => {
-    e.currentTarget.style.setProperty('--mx', `50%`);
-    e.currentTarget.style.setProperty('--my', `50%`);
-  };
-
-  return (
-    <Wrapper
-      {...wrapperProps}
-      variants={staggerItem}
-      initial="hidden"
-      whileInView="visible"
-      viewport={{ once: true, margin: '-30px' }}
-      transition={{ ...transitionSpring, delay: index * 0.06 }}
-      whileHover={{ y: -6, transition: { duration: 0.2 } }}
-      onMouseMove={onMove}
-      onMouseLeave={onLeave}
-      className="group relative overflow-hidden block rounded-2xl border border-white/12 bg-slate-800/50 backdrop-blur-md p-6 hover:border-slate-600/60 hover:shadow-[0_12px_40px_-12px_rgba(59, 130, 246,0.25)] hover:bg-white/[0.07] transition-all duration-300"
-    >
-      <div
-        className="pointer-events-none absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity"
-        style={{
-          background:
-            'radial-gradient(220px circle at var(--mx, 50%) var(--my, 50%), rgba(59, 130, 246,0.18), transparent 60%)',
-          mixBlendMode: 'screen',
-        }}
-      />
-      <div className="flex items-start gap-4">
-        <div className="shrink-0 w-12 h-12 rounded-xl bg-blue-500/20 border border-slate-600/60 flex items-center justify-center">
-          <Award className="w-6 h-6 text-blue-400" />
-        </div>
-        <div className="min-w-0 flex-1">
-          <h3 className="text-lg font-semibold text-white group-hover:text-blue-200 transition-colors mb-1">
-            {item.title}
-          </h3>
-          <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-slate-400">
-            <span className="flex items-center gap-1.5">
-              <Building2 className="w-3.5 h-3.5" />
-              {item.issuer}
-            </span>
-            <span className="flex items-center gap-1.5">
-              <Calendar className="w-3.5 h-3.5" />
-              {item.date}
-            </span>
-          </div>
-          {item.description && (
-            <p className="text-slate-500 text-sm mt-2 leading-relaxed">
-              {item.description}
-            </p>
-          )}
-          {item.credentialUrl && (
-            <span className="inline-flex items-center gap-1.5 mt-3 text-xs font-medium text-blue-400 group-hover:text-blue-300 transition-colors">
-              Verify credential
-              <ExternalLink className="w-3.5 h-3.5" />
-            </span>
-          )}
-        </div>
-      </div>
-    </Wrapper>
-  );
-}
-
-function AwardCard({ item, index }) {
-  const onMove = (e) => {
-    const rect = e.currentTarget.getBoundingClientRect();
-    const x = ((e.clientX - rect.left) / rect.width) * 100;
-    const y = ((e.clientY - rect.top) / rect.height) * 100;
-    e.currentTarget.style.setProperty('--mx', `${x}%`);
-    e.currentTarget.style.setProperty('--my', `${y}%`);
-  };
-  const onLeave = (e) => {
-    e.currentTarget.style.setProperty('--mx', `50%`);
-    e.currentTarget.style.setProperty('--my', `50%`);
-  };
-  return (
-    <motion.div
-      variants={staggerItem}
-      initial="hidden"
-      whileInView="visible"
-      viewport={{ once: true, margin: '-30px' }}
-      transition={{ ...transitionSpring, delay: index * 0.06 }}
-      whileHover={{ y: -6, transition: { duration: 0.2 } }}
-      onMouseMove={onMove}
-      onMouseLeave={onLeave}
-      className="group relative overflow-hidden rounded-2xl border border-white/12 bg-slate-800/50 backdrop-blur-md p-6 hover:border-amber-500/30 hover:shadow-[0_12px_40px_-12px_rgba(245,158,11,0.2)] hover:bg-white/[0.07] transition-all duration-300"
-    >
-      <div
-        className="pointer-events-none absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity"
-        style={{
-          background:
-            'radial-gradient(220px circle at var(--mx, 50%) var(--my, 50%), rgba(245,158,11,0.18), transparent 60%)',
-          mixBlendMode: 'screen',
-        }}
-      />
-      <div className="flex items-start gap-4">
-        <div className="shrink-0 w-12 h-12 rounded-xl bg-amber-500/20 border border-amber-500/30 flex items-center justify-center">
-          <Medal className="w-6 h-6 text-amber-400" />
-        </div>
-        <div className="min-w-0 flex-1">
-          <h3 className="text-lg font-semibold text-white group-hover:text-amber-200/90 transition-colors mb-1">
-            {item.title}
-          </h3>
-          <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-slate-400">
-            <span className="flex items-center gap-1.5">
-              <Building2 className="w-3.5 h-3.5" />
-              {item.issuer}
-            </span>
-            <span className="flex items-center gap-1.5">
-              <Calendar className="w-3.5 h-3.5" />
-              {item.date}
-            </span>
-          </div>
-          {item.description && (
-            <p className="text-slate-500 text-sm mt-2 leading-relaxed">
-              {item.description}
-            </p>
-          )}
-        </div>
-      </div>
-    </motion.div>
-  );
-}
+// Merge both into one professional collection
+const mergedItems = [
+  ...certificates.map(c => ({ ...c, isAward: false })),
+  ...awards.map(a => ({ ...a, isAward: true, image: a.image || '/certificates/shaastra_ai.jpg' }))
+];
 
 export default function CertificatesAwards() {
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [isFullscreen, setIsFullscreen] = useState(false);
+  const [selectedImage, setSelectedImage] = useState(null);
+
+  if (mergedItems.length === 0) return null;
+
+  const next = () => setCurrentIndex((prev) => (prev + 1) % mergedItems.length);
+  const prev = () => setCurrentIndex((prev) => (prev - 1 + mergedItems.length) % mergedItems.length);
+
+  const activeItem = mergedItems[currentIndex];
+
   return (
-    <section id="certificates" className="py-24 px-6">
-      <div className="max-w-5xl mx-auto">
+    <section id="certificates" className="py-24 px-6 relative overflow-hidden bg-[#0b1120]">
+      {/* Background ambient glow */}
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[500px] bg-blue-500/5 blur-[120px] rounded-full pointer-events-none" />
+
+      <div className="max-w-7xl mx-auto relative z-10">
+        {/* Section Header with text reveal */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="mb-14"
+          initial="hidden"
+          whileInView="visible"
+          viewport={viewportOnce}
+          variants={staggerContainer(0.12, 0)}
+          className="text-center mb-16"
         >
-          <p className="text-[#06b6d4] font-mono text-sm uppercase tracking-widest mb-2">
-            Credentials & recognition
-          </p>
-          <motion.h2
-            variants={maskReveal}
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, margin: '-40px' }}
-            className="text-3xl md:text-5xl font-bold text-white mb-4"
+          <motion.div
+            variants={textRevealUp}
+            className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-xs font-mono uppercase tracking-widest mb-4"
           >
-            Certificates & Awards
+            <Award className="w-3 h-3" />
+            <span>Showcase & Recognition</span>
+          </motion.div>
+          <motion.h2
+            variants={textRevealUp}
+            className="text-4xl sm:text-5xl md:text-7xl font-bold text-white tracking-tight mb-8 leading-[1.1]"
+          >
+            Official <span className="bg-gradient-to-r from-blue-400 via-cyan-400 to-blue-500 bg-clip-text text-transparent">Credentials</span>
           </motion.h2>
-          <p className="text-slate-400 text-lg max-w-2xl">
-            Industry certifications and awards that reflect continuous learning and impact.
-          </p>
+          <motion.p
+            variants={textRevealUp}
+            className="text-slate-400 font-medium text-base sm:text-lg max-w-xl mx-auto leading-relaxed"
+          >
+            A curated selection of hackathon wins, technical certifications, and industry recognitions.
+          </motion.p>
         </motion.div>
 
-        <div className="grid lg:grid-cols-2 gap-12">
-          {/* Certificates */}
-          <motion.div
-            variants={staggerContainer(0.06, 0.05)}
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, margin: '-40px' }}
-            className="space-y-4"
-          >
-            <div className="flex items-center gap-2 mb-6">
-              <Award className="w-5 h-5 text-blue-400" />
-              <h3 className="text-xl font-semibold text-white">Certifications</h3>
-            </div>
-            {certificates.map((item, index) => (
-              <CertCard key={item.id} item={item} index={index} />
-            ))}
-          </motion.div>
+        {/* Slider container with blurScaleIn entrance */}
+        <motion.div
+          initial="hidden"
+          whileInView="visible"
+          viewport={viewportOnce}
+          variants={blurScaleIn}
+          className="relative min-h-[450px] md:min-h-[550px] flex items-center justify-center"
+        >
+          {/* Navigation Controls */}
+          <div className="absolute inset-x-0 top-1/2 -translate-y-1/2 flex justify-between px-4 md:px-12 z-40 pointer-events-none">
+            <button
+              onClick={prev}
+              className="p-4 rounded-full bg-white/5 border border-white/10 text-white hover:bg-white/10 hover:scale-110 active:scale-95 transition-all pointer-events-auto backdrop-blur-md shadow-2xl"
+            >
+              <ChevronLeft className="w-6 h-6" />
+            </button>
+            <button
+              onClick={next}
+              className="p-4 rounded-full bg-white/5 border border-white/10 text-white hover:bg-white/10 hover:scale-110 active:scale-95 transition-all pointer-events-auto backdrop-blur-md shadow-2xl"
+            >
+              <ChevronRight className="w-6 h-6" />
+            </button>
+          </div>
 
-          {/* Awards */}
-          <motion.div
-            variants={staggerContainer(0.06, 0.05)}
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, margin: '-40px' }}
-            className="space-y-4"
-          >
-            <div className="flex items-center gap-2 mb-6">
-              <Medal className="w-5 h-5 text-amber-400" />
-              <h3 className="text-xl font-semibold text-white">Awards & Recognition</h3>
-            </div>
-            {awards.map((item, index) => (
-              <AwardCard key={item.id} item={item} index={index} />
-            ))}
-          </motion.div>
+          {/* Cards Stack */}
+          <div className="relative w-full max-w-4xl h-[350px] md:h-[450px] flex items-center justify-center">
+            <AnimatePresence mode="popLayout">
+              {mergedItems.map((item, index) => {
+                const isCenter = index === currentIndex;
+                const isLeft = index === (currentIndex - 1 + mergedItems.length) % mergedItems.length;
+                const isRight = index === (currentIndex + 1) % mergedItems.length;
+
+                if (!isCenter && !isLeft && !isRight) return null;
+
+                let x = 0;
+                let scale = 0.8;
+                let zIndex = 10;
+                let opacity = 0;
+                let rotateY = 0;
+
+                if (isCenter) {
+                  x = 0;
+                  scale = 1;
+                  zIndex = 30;
+                  opacity = 1;
+                } else if (isLeft) {
+                  x = -250;
+                  scale = 0.85;
+                  zIndex = 20;
+                  opacity = 0.4;
+                  rotateY = 25;
+                } else if (isRight) {
+                  x = 250;
+                  scale = 0.85;
+                  zIndex = 20;
+                  opacity = 0.4;
+                  rotateY = -25;
+                }
+
+                // Mobile adjustments
+                if (typeof window !== 'undefined' && window.innerWidth < 768) {
+                  x = isCenter ? 0 : (isLeft ? -100 : 100);
+                  scale = isCenter ? 1 : 0.7;
+                }
+
+                return (
+                  <motion.div
+                    key={item.id}
+                    initial={{ opacity: 0, scale: 0.8, x: isRight ? 200 : -200 }}
+                    animate={{ 
+                      opacity, 
+                      scale, 
+                      x, 
+                      zIndex,
+                      rotateY,
+                    }}
+                    exit={{ opacity: 0, scale: 0.8, x: isLeft ? 200 : -200 }}
+                    transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                    className="absolute w-[300px] sm:w-[500px] lg:w-[700px] h-full perspective-1000"
+                    onClick={() => {
+                        if (isCenter) {
+                          setSelectedImage(item.image);
+                          setIsFullscreen(true);
+                        } else {
+                          setCurrentIndex(index);
+                        }
+                    }}
+                  >
+                    <div className="w-full h-full relative rounded-3xl overflow-hidden border border-white/10 shadow-[0_20px_50px_rgba(0,0,0,0.5)] bg-slate-900 group cursor-pointer">
+                      <img
+                        src={item.image}
+                        alt={item.title}
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                      />
+                      
+                      {/* Subtitle Overlay */}
+                      <div className="absolute inset-x-0 bottom-0 p-6 md:p-8 bg-gradient-to-t from-black via-black/40 to-transparent flex flex-col justify-end opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                        <div className="flex items-center gap-2 text-blue-400 text-xs font-mono uppercase tracking-tighter mb-1">
+                          {item.isAward ? <Medal className="w-3 h-3" /> : <Award className="w-3 h-3" />}
+                          <span>{item.issuer}</span>
+                        </div>
+                        <h3 className="text-white text-lg md:text-xl font-bold line-clamp-1">{item.title}</h3>
+                      </div>
+
+                      {/* Click to Expand */}
+                      <div className="absolute top-4 right-4 p-2 rounded-full bg-black/40 backdrop-blur-md opacity-0 group-hover:opacity-100 transition-opacity">
+                         <Maximize2 className="w-4 h-4 text-white" />
+                      </div>
+                    </div>
+                  </motion.div>
+                );
+              })}
+            </AnimatePresence>
+          </div>
+        </motion.div>
+
+        {/* Dots Indicator */}
+        <div className="flex justify-center gap-2.5 mt-16">
+          {mergedItems.map((_, i) => (
+            <button
+              key={i}
+              onClick={() => setCurrentIndex(i)}
+              className={`h-1.5 rounded-full transition-all duration-500 ${
+                i === currentIndex ? 'w-10 bg-blue-500 shadow-[0_0_15px_rgba(59,130,246,0.6)]' : 'w-2 bg-slate-700 hover:bg-slate-600'
+              }`}
+            />
+          ))}
         </div>
       </div>
+
+      {/* Fullscreen Modal */}
+      <AnimatePresence>
+        {isFullscreen && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[100] bg-black/95 backdrop-blur-2xl flex items-center justify-center p-4 md:p-12 cursor-zoom-out"
+            onClick={() => setIsFullscreen(false)}
+          >
+            <motion.div
+              initial={{ scale: 0.9, y: 20, filter: 'blur(8px)' }}
+              animate={{ scale: 1, y: 0, filter: 'blur(0px)' }}
+              exit={{ scale: 0.9, y: 20, filter: 'blur(8px)' }}
+              className="relative max-w-6xl w-full h-full flex items-center justify-center"
+            >
+              <img
+                src={selectedImage}
+                alt="Certificate Fullscreen"
+                className="max-h-full object-contain rounded-lg shadow-2xl"
+              />
+              <button
+                className="absolute top-0 right-0 p-4 text-white/50 hover:text-white transition-colors"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setIsFullscreen(false);
+                }}
+              >
+                Close (ESC)
+              </button>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </section>
   );
 }

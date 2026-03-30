@@ -2,7 +2,12 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Quote, ChevronLeft, ChevronRight } from 'lucide-react';
 import { testimonials } from '../data/testimonials';
-import { maskReveal } from '../utils/motion';
+import {
+  textRevealUp,
+  smoothFadeIn,
+  staggerContainer,
+  viewportOnce,
+} from '../utils/motion';
 
 export default function TestimonialCarousel() {
   const [index, setIndex] = useState(0);
@@ -18,28 +23,34 @@ export default function TestimonialCarousel() {
   return (
     <section id="testimonials" className="py-24 px-6">
       <div className="max-w-4xl mx-auto">
-        <motion.h2
-          variants={maskReveal}
+        {/* Section Header with text reveal */}
+        <motion.div
           initial="hidden"
           whileInView="visible"
-          viewport={{ once: true, margin: '-40px' }}
-          className="text-3xl md:text-4xl font-bold text-white mb-4 text-center"
+          viewport={viewportOnce}
+          variants={staggerContainer(0.1, 0)}
+          className="text-center"
         >
-          What People Say
-        </motion.h2>
-        <motion.p
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="text-slate-400 mb-12 text-center"
-        >
-          Kind words from colleagues and clients.
-        </motion.p>
+          <motion.h2
+            variants={textRevealUp}
+            className="text-3xl md:text-4xl font-bold text-white mb-4"
+          >
+            What People Say
+          </motion.h2>
+          <motion.p
+            variants={textRevealUp}
+            className="text-slate-300 mb-12"
+          >
+            Kind words from colleagues and clients.
+          </motion.p>
+        </motion.div>
 
+        {/* Card with smooth entrance */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
+          variants={smoothFadeIn}
+          initial="hidden"
+          whileInView="visible"
+          viewport={viewportOnce}
           onMouseMove={(e) => {
             const rect = e.currentTarget.getBoundingClientRect();
             const x = ((e.clientX - rect.left) / rect.width) * 100;
@@ -65,13 +76,13 @@ export default function TestimonialCarousel() {
           <AnimatePresence mode="wait">
             <motion.div
               key={t.id}
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -20 }}
-              transition={{ duration: 0.3 }}
+              initial={{ opacity: 0, x: 20, filter: 'blur(4px)' }}
+              animate={{ opacity: 1, x: 0, filter: 'blur(0px)' }}
+              exit={{ opacity: 0, x: -20, filter: 'blur(4px)' }}
+              transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
               className="relative"
             >
-              <p className="text-slate-300 text-lg md:text-xl leading-relaxed mb-8 pr-12">
+              <p className="text-slate-200 text-lg md:text-xl leading-relaxed mb-8 pr-12">
                 &ldquo;{t.quote}&rdquo;
               </p>
               <div className="flex items-center gap-4">
@@ -82,7 +93,7 @@ export default function TestimonialCarousel() {
                 />
                 <div>
                   <p className="font-semibold text-white">{t.author}</p>
-                  <p className="text-sm text-slate-400">{t.role}</p>
+                  <p className="text-sm text-slate-300">{t.role}</p>
                 </div>
               </div>
             </motion.div>
