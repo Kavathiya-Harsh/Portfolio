@@ -94,11 +94,11 @@ export default function Hero() {
     >
       {/* Background orbs */}
       <motion.div
-        className="absolute top-20 right-[10%] w-[300px] sm:w-[500px] h-[300px] sm:h-[500px] bg-blue-500/10 blur-[100px] sm:blur-[120px] rounded-full pointer-events-none animate-pulse"
+        className="absolute top-20 right-[10%] w-[300px] sm:w-[500px] h-[300px] sm:h-[500px] bg-blue-500/10 blur-[100px] sm:blur-[120px] rounded-full pointer-events-none animate-pulse will-change-transform"
         style={{ y: bgOrb1Y }}
       />
       <motion.div
-        className="absolute bottom-20 left-[5%] w-[250px] sm:w-[400px] h-[250px] sm:h-[400px] bg-cyan-500/5 blur-[80px] sm:blur-[100px] rounded-full pointer-events-none"
+        className="absolute bottom-20 left-[5%] w-[250px] sm:w-[400px] h-[250px] sm:h-[400px] bg-cyan-500/5 blur-[80px] sm:blur-[100px] rounded-full pointer-events-none will-change-transform"
         style={{ y: bgOrb2Y }}
       />
 
@@ -275,7 +275,7 @@ export default function Hero() {
                   <img
                     src="/photo.jpg"
                     alt={profile.name}
-                    className="w-full h-full object-cover object-top scale-105 group-hover:scale-110 transition-transform duration-1000"
+                    className="w-full h-full object-cover object-top scale-105 group-hover:scale-110 transition-transform duration-1000 will-change-transform"
                     onError={() => setPhotoError(true)}
                   />
                 ) : (

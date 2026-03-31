@@ -33,20 +33,6 @@ export const skillCategories = [
     ],
   },
   {
-    id: 'quant',
-    title: 'Quant & Logic',
-    icon: 'TrendingUp',
-    description: 'Algorithmic trading and complex problem solving',
-    color: '#f472b6', // pink
-    skills: [
-      { name: 'Trading Logic', level: 'Advanced', fill: 85, color: '#f472b6' },
-      { name: 'Market Microstructure', level: 'Intermediate', fill: 72, color: '#ec4899' },
-      { name: 'Technical Analysis', level: 'Advanced', fill: 88, color: '#8b5cf6' },
-      { name: 'Python for Quant', level: 'Advanced', fill: 84, color: '#3776ab' },
-      { name: 'Risk Management', level: 'Intermediate', fill: 75, color: '#ef4444' },
-    ],
-  },
-  {
     id: 'problem-solving',
     title: 'Problem Solving',
     icon: 'Cpu',

@@ -67,7 +67,7 @@ export default function Navbar() {
     ${
       activeId === id
         ? 'text-[#d4af37] after:scale-x-100 after:bg-[#d4af37]'
-        : "text-slate-400 hover:text-white after:scale-x-0 after:bg-blue-400 hover:after:scale-x-100"
+        : "text-slate-400 hover:text-white after:scale-x-0 after:bg-[#d4af37] hover:after:scale-x-100"
     }`;
 
   return (
@@ -83,17 +83,26 @@ export default function Navbar() {
     >
       <nav className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
         {/* ── Brand ── */}
-        <a
+        <motion.a
           href="#hero"
           onClick={(e) => handleNavClick(e, '#hero')}
-          className="flex items-center gap-3 group"
+          className="flex items-center gap-3 group relative perspective-1000"
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
         >
-          <img
-            src="/hk_logo.png"
-            alt="HK Logo"
-            className="w-10 h-10 rounded-xl object-cover drop-shadow-[0_0_8px_rgba(212,175,55,0.5)] group-hover:drop-shadow-[0_0_14px_rgba(212,175,55,0.75)] transition-all duration-300"
-          />
-        </a>
+          <motion.div
+             whileHover={{ rotateY: 10, rotateX: -5 }}
+             className="relative z-10"
+          >
+            <img
+              src="/hk_logo.png"
+              alt="HK Logo"
+              className="w-10 h-10 rounded-xl object-cover drop-shadow-[0_0_8px_rgba(212,175,55,0.5)] group-hover:drop-shadow-[0_0_16px_rgba(212,175,55,0.8)] transition-all duration-500 will-change-transform"
+            />
+          </motion.div>
+          {/* Subtle glow behind logo on hover */}
+          <div className="absolute inset-0 bg-[#d4af37]/0 group-hover:bg-[#d4af37]/10 blur-xl rounded-full transition-all duration-500 -z-10" />
+        </motion.a>
 
         {/* ── Desktop Links ── */}
         <ul className="hidden md:flex items-center gap-7">
@@ -119,14 +128,16 @@ export default function Navbar() {
             );
           })}
           <li>
-            <a
+            <motion.a
               href={RESUME_URL}
               target="_blank"
               rel="noopener noreferrer"
-              className="px-4 py-2 rounded-lg bg-blue-500 text-white text-sm font-semibold hover:bg-blue-400 transition-colors shadow-lg shadow-blue-500/25"
+              whileHover={{ scale: 1.05, translateY: -2 }}
+              whileTap={{ scale: 0.95 }}
+              className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-blue-600 to-cyan-600 text-white text-xs font-bold uppercase tracking-wider hover:shadow-[0_10px_20px_-5px_rgba(37,99,235,0.4)] transition-all will-change-transform"
             >
               Resume
-            </a>
+            </motion.a>
           </li>
         </ul>
 

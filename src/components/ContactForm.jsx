@@ -200,11 +200,9 @@ export default function ContactForm() {
       console.error('Submission failed:', error);
       setStatus('error');
       
-      let msg = 'Failed to send. Please check your Firebase/EmailJS settings.';
+      let msg = 'Failed to send. Please check your backend and EmailJS settings.';
       if (error.message === 'timeout') {
-         msg = 'Request timed out. This is usually due to incorrect Firebase Security Rules or a slow connection.';
-      } else if (error.code === 'permission-denied') {
-         msg = 'Firebase Permission Denied. Please ensure your Firestore Rules allow "create".';
+         msg = 'Request timed out. This is usually due to a slow connection or database error.';
       } else if (error.message) {
          msg = `Error: ${error.message}`;
       }
@@ -266,10 +264,9 @@ export default function ContactForm() {
             initial="hidden"
             whileInView="visible"
             viewport={viewportOnce}
-            className="relative p-8 md:p-10 rounded-[2.5rem] bg-white/[0.03] border border-white/10 backdrop-blur-2xl shadow-2xl overflow-hidden h-full flex flex-col"
+            className="relative p-8 md:p-10 rounded-[2.5rem] bg-white/[0.03] border border-white/10 backdrop-blur-2xl shadow-2xl overflow-hidden h-full flex flex-col will-change-transform"
           >
-            {/* Ambient inner glow */}
-            <div className="absolute -top-24 -right-24 w-64 h-64 bg-blue-500/10 blur-[80px] rounded-full pointer-events-none" />
+            <div className="absolute -top-24 -right-24 w-64 h-64 bg-blue-500/10 blur-[80px] rounded-full pointer-events-none will-change-transform" />
             
             <form 
               onSubmit={handleSubmit}
