@@ -1,16 +1,26 @@
+// Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
-import { getFirestore, collection, addDoc, getDocs } from "firebase/firestore";
+import { getFirestore, collection, addDoc } from "firebase/firestore";
 
+// Your web app's Firebase configuration
+// For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
-  apiKey: import.meta.env.AIzaSyDW1wUBkaSyqx0mWYkNXIMC4VgAoVbPwEY,
-  authDomain: import.meta.env.harsh-kavathiya-portfolio.firebaseapp.com,
-  projectId: import.meta.env.harsh-kavathiya-portfolio,
-  storageBucket: import.meta.env.harsh-kavathiya-portfolio.firebasestorage.app,
-  messagingSenderId: import.meta.env.1067197088420,
-  appId: import.meta.env.1:1067197088420:web:9a42f318a6702fcff05c31,
-  measurementId: import.meta.env.G-6XDFF4J5T6
+  apiKey: process.env.VITE_FIREBASE_API_KEY,
+  authDomain: process.env.VITE_FIREBASE_AUTH_DOMAIN,
+  projectId: process.env.VITE_FIREBASE_PROJECT_ID,
+  storageBucket: process.env.VITE_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: process.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+  appId: process.env.VITE_FIREBASE_APP_ID,
+  measurementId: process.env.VITE_FIREBASE_MEASUREMENT_ID
 };
 
+if (!firebaseConfig.apiKey) {
+  console.error("\x1b[31mError: Firebase API Key is missing.\x1b[0m");
+  console.log("Run the script like this: \x1b[32mnode --env-file=.env test-firebase.mjs\x1b[0m");
+  process.exit(1);
+}
+
+// Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
