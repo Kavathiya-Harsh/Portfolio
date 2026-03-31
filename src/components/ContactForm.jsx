@@ -143,31 +143,25 @@ export default function ContactForm() {
     setStatus('sending');
 
     try {
-      // Lazy-load Firebase, EmailJS & confetti on first submit
-      const [firebaseModule, firestoreModule, emailjsModule, confettiModule] = await Promise.all([
-        import('../utils/firebase'),
-        import('firebase/firestore'),
+      // Lazy-load EmailJS & confetti on first submit
+      const [emailjsModule, confettiModule] = await Promise.all([
         import('@emailjs/browser'),
         import('canvas-confetti'),
       ]);
 
-      const { db } = firebaseModule;
-      const { collection, addDoc, serverTimestamp } = firestoreModule;
       const emailjs = emailjsModule.default;
       const confetti = confettiModule.default;
 
-      // 1. Save to Firebase Firestore (with 10-second timeout)
-      const savePromise = addDoc(collection(db, 'messages'), {
-        ...formState,
-        to_email: 'harsh.kavathiya.cg@gmail.com',
-        timestamp: serverTimestamp(),
+      // 1. Save to MongoDB Atlas via Node backend
+      const dbResponse = await fetch('/api/messages', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formState)
       });
 
-      const timeoutPromise = new Promise((_, reject) =>
-        setTimeout(() => reject(new Error('timeout')), 10000)
-      );
-
-      await Promise.race([savePromise, timeoutPromise]);
+      if (!dbResponse.ok) {
+        throw new Error('Failed to save to database');
+      }
 
       // 2. Send Email via EmailJS
       const serviceId = import.meta.env.VITE_EMAILJS_SERVICE_ID;
