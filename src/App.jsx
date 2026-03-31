@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback, lazy, Suspense } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, MotionConfig } from 'framer-motion';
+import { useBreakpoint } from './utils/useBreakpoint';
 import { FileText, Linkedin } from 'lucide-react';
 
 // Critical above-the-fold components (loaded immediately)
@@ -120,6 +121,7 @@ function PortfolioMain() {
 }
 
 export default function App() {
+  const isMobile = useBreakpoint(1024);
   const [isPaletteOpen, setIsPaletteOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -139,23 +141,25 @@ export default function App() {
   }, []);
 
   return (
-    <RecruiterModeProvider>
-      <AnimatePresence>
-        {isLoading && <LoadingScreen onComplete={handleLoadingComplete} />}
-      </AnimatePresence>
-      
-      <MeshGradient />
-      <CodeScrollIndicator />
-      <Navbar />
-      
-      <Suspense fallback={null}>
-        <CommandPalette 
-          isOpen={isPaletteOpen} 
-          onClose={() => setIsPaletteOpen(false)} 
-        />
-      </Suspense>
-      
-      <PortfolioMain />
-    </RecruiterModeProvider>
+    <MotionConfig reducedMotion={isMobile ? 'always' : 'user'}>
+      <RecruiterModeProvider>
+        <AnimatePresence>
+          {isLoading && <LoadingScreen onComplete={handleLoadingComplete} />}
+        </AnimatePresence>
+        
+        <MeshGradient />
+        <CodeScrollIndicator />
+        <Navbar />
+        
+        <Suspense fallback={null}>
+          <CommandPalette 
+            isOpen={isPaletteOpen} 
+            onClose={() => setIsPaletteOpen(false)} 
+          />
+        </Suspense>
+        
+        <PortfolioMain />
+      </RecruiterModeProvider>
+    </MotionConfig>
   );
 }

@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Menu, X } from 'lucide-react';
+import { useBreakpoint } from '../utils/useBreakpoint';
 import { profile } from '../data/profile';
 
 const navLinks = [
@@ -15,9 +16,11 @@ const navLinks = [
 const RESUME_URL = profile.resumeUrl;
 
 export default function Navbar() {
+  const isMobile = useBreakpoint(1024);
   const [scrolled, setScrolled]     = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [activeId, setActiveId]     = useState('hero');
+  const [hoveredId, setHoveredId]   = useState(null);
 
   /* ── scroll glass effect ── */
   useEffect(() => {
@@ -77,7 +80,7 @@ export default function Navbar() {
       transition={{ type: 'spring', stiffness: 100, damping: 20 }}
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
         scrolled
-          ? 'backdrop-blur-xl bg-[#0b1120]/80 border-b border-slate-700/50 shadow-[0_4px_30px_rgba(0,0,0,0.4)]'
+          ? `bg-[#0b1120]/95 border-b border-slate-700/50 shadow-[0_4px_30px_rgba(0,0,0,0.4)] ${!isMobile && 'backdrop-blur-xl'}`
           : 'bg-transparent'
       }`}
     >
@@ -108,22 +111,31 @@ export default function Navbar() {
         <ul className="hidden md:flex items-center gap-7">
           {navLinks.map((link) => {
             const id = link.href.slice(1);
+            const isActive = activeId === id;
             return (
               <li key={link.href}>
-                <a
+                <motion.a
                   href={link.href}
                   className={linkClass(id)}
                   onClick={(e) => handleNavClick(e, link.href)}
+                  onMouseEnter={() => setHoveredId(id)}
+                  onMouseLeave={() => setHoveredId(null)}
+                  whileHover={{ y: -1 }}
                 >
                   {link.label}
-                  {activeId === id && (
-                    <motion.span
-                      layoutId="nav-dot"
-                      className="absolute -top-1.5 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-[#d4af37]"
-                      transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-                    />
-                  )}
-                </a>
+                  <AnimatePresence>
+                    {(isActive || hoveredId === id) && (
+                      <motion.span
+                        layoutId="nav-dot"
+                        initial={{ opacity: 0, scale: 0.5 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        exit={{ opacity: 0, scale: 0.5 }}
+                        className="absolute -top-1.5 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-[#d4af37] shadow-[0_0_8px_#d4af37]"
+                        transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+                      />
+                    )}
+                  </AnimatePresence>
+                </motion.a>
               </li>
             );
           })}
@@ -132,9 +144,13 @@ export default function Navbar() {
               href={RESUME_URL}
               target="_blank"
               rel="noopener noreferrer"
-              whileHover={{ scale: 1.05, translateY: -2 }}
+              whileHover={{ 
+                scale: 1.05, 
+                translateY: -2,
+                boxShadow: "0 10px 25px -5px rgba(212, 175, 55, 0.4)"
+              }}
               whileTap={{ scale: 0.95 }}
-              className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-blue-600 to-cyan-600 text-white text-xs font-bold uppercase tracking-wider hover:shadow-[0_10px_20px_-5px_rgba(37,99,235,0.4)] transition-all will-change-transform"
+              className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-blue-600 to-cyan-600 text-white text-xs font-bold uppercase tracking-wider transition-all will-change-transform border border-white/10 hover:border-[#d4af37]/50"
             >
               Resume
             </motion.a>
@@ -160,7 +176,7 @@ export default function Navbar() {
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
             transition={{ duration: 0.25, ease: 'easeInOut' }}
-            className="md:hidden backdrop-blur-xl bg-[#0b1120]/95 border-b border-slate-700/50"
+            className={`md:hidden bg-[#0b1120]/98 border-b border-slate-700/50 ${!isMobile && 'backdrop-blur-xl'}`}
           >
             <ul className="px-6 py-5 flex flex-col gap-1">
               {navLinks.map((link) => {

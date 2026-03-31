@@ -1,5 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
+import { useBreakpoint } from '../utils/useBreakpoint';
 
 /**
  * ScrollReveal — Reusable scroll-triggered reveal wrapper.
@@ -30,6 +31,18 @@ export default function ScrollReveal({
   style = {},
   ...rest
 }) {
+  const isMobile = useBreakpoint(1024);
+
+  // Skip animation on mobile/tablet for performance
+  if (isMobile) {
+    const Component = as;
+    return (
+      <Component className={className} style={style} {...rest}>
+        {children}
+      </Component>
+    );
+  }
+
   const directionMap = {
     up: { y: distance },
     down: { y: -distance },

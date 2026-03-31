@@ -44,6 +44,24 @@ export const certificates = [
     image: '/certificates/odoo_adani.jpg',
     description: 'Participation in the Odoo x Adani University Hackathon 2026.',
   },
+  {
+    id: 6,
+    title: 'CodeTantra 2K25 — Debug & Dominate',
+    issuer: 'Avanthi Institute of Engineering and Technology',
+    date: '2025',
+    type: 'certificate',
+    image: '/certificates/codetantra_2k25.jpg',
+    description: 'Participation in Round 1: Debug & Dominate of CodeTantra2K25.',
+  },
+  {
+    id: 7,
+    title: 'HackTheRank — Online Quiz Event',
+    issuer: 'HackerRank',
+    date: '2025',
+    type: 'certificate',
+    image: '/certificates/hack_the_rank.jpg',
+    description: 'Successful participation in the HackTheRank online quiz event.',
+  },
 ];
 
 export const awards = [
@@ -56,3 +74,5 @@ export const awards = [
     description: 'Participated as part of the "Code Fusion" team in Shaastra 2026 events.',
   },
 ];
+
+

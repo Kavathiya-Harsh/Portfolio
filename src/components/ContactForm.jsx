@@ -76,8 +76,8 @@ function ContactCard({ item, index }) {
       target={item.link.startsWith('http') ? "_blank" : "_self"}
       rel="noopener noreferrer"
       variants={slideInLeft}
-      whileHover={{ y: -4 }}
-      className="group relative flex items-center gap-4 p-4 rounded-2xl bg-white/5 border border-white/10 hover:border-white/20 hover:bg-white/10 transition-all duration-300 backdrop-blur-md overflow-hidden"
+      whileHover={{ y: -5, scale: 1.02 }}
+      className="group relative flex items-center gap-4 p-4 rounded-2xl bg-white/5 border border-white/10 hover:border-[#d4af37]/30 hover:bg-white/10 transition-all duration-300 backdrop-blur-md overflow-hidden"
     >
       {/* Dynamic Background Glow */}
       <div className={`absolute inset-0 ${item.bg} opacity-0 group-hover:opacity-100 transition-opacity blur-2xl -z-10`} />
@@ -91,8 +91,10 @@ function ContactCard({ item, index }) {
         <p className="text-white font-medium truncate text-sm md:text-base">{item.value}</p>
       </div>
 
-      <button
+      <motion.button
         onClick={copyToClipboard}
+        whileHover={{ scale: 1.1, rotate: 5 }}
+        whileTap={{ scale: 0.9 }}
         className="shrink-0 p-2 rounded-lg hover:bg-white/10 text-slate-500 hover:text-white transition-colors relative"
         title="Copy"
       >
@@ -117,7 +119,7 @@ function ContactCard({ item, index }) {
             </motion.div>
           )}
         </AnimatePresence>
-      </button>
+      </motion.button>
     </motion.a>
   );
 }
@@ -312,10 +314,15 @@ export default function ContactForm() {
                 />
               </div>
 
-              <button
+              <motion.button
                 type="submit"
-                disabled={status === 'sending'}
-                className="w-full py-5 rounded-2xl bg-gradient-to-r from-blue-600 to-cyan-600 text-white font-bold shadow-[0_20px_40px_-10px_rgba(37,99,235,0.4)] hover:shadow-[0_25px_50px_-10px_rgba(37,99,235,0.5)] active:scale-[0.98] disabled:opacity-90 disabled:cursor-not-allowed transition-all flex items-center justify-center gap-3 group overflow-hidden relative"
+                whileHover={{ 
+                  scale: 1.05,
+                  y: -5,
+                  boxShadow: "0 25px 50px -12px rgba(37,99,235,0.5)"
+                }}
+                whileTap={{ scale: 0.95 }}
+                className="w-full py-5 rounded-2xl bg-gradient-to-r from-blue-600 to-cyan-600 text-white font-bold shadow-xl active:scale-[0.98] disabled:opacity-90 disabled:cursor-not-allowed transition-all flex items-center justify-center gap-3 group overflow-hidden relative border border-white/10 hover:border-[#d4af37]/30"
               >
                 {/* Progress Underlay during sending */}
                 {status === 'sending' && (
@@ -362,7 +369,7 @@ export default function ContactForm() {
                     </motion.div>
                   )}
                 </AnimatePresence>
-              </button>
+              </motion.button>
 
               {/* Status Feedback */}
               <AnimatePresence>

@@ -107,30 +107,36 @@ export default function ProjectCard({ project, index = 0 }) {
             {/* Quick Actions */}
             <div className="absolute bottom-3 right-3 flex gap-2 translate-y-8 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300 z-20">
               {codeSnippet && (
-                <button
+                <motion.button
                   onClick={() => setShowCode(true)}
-                  className="p-2.5 bg-slate-800/90 backdrop-blur-sm rounded-xl text-cyan-400 hover:text-cyan-300 hover:bg-slate-700 transition-all border border-slate-600/50"
+                  whileHover={{ scale: 1.1, y: -2 }}
+                  whileTap={{ scale: 0.9 }}
+                  className="p-2.5 bg-slate-800/90 backdrop-blur-sm rounded-xl text-cyan-400 hover:text-cyan-300 hover:bg-slate-700 transition-all border border-slate-600/50 hover:border-cyan-500/50"
                   title="View Logic"
                 >
                   <Code2 className="w-4 h-4" />
-                </button>
+                </motion.button>
               )}
-              <a
+              <motion.a
                 href={project.github || '#'}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="p-2.5 bg-slate-800/90 backdrop-blur-sm rounded-xl text-slate-300 hover:text-white hover:bg-slate-700 transition-all border border-slate-600/50"
+                whileHover={{ scale: 1.1, y: -2 }}
+                whileTap={{ scale: 0.9 }}
+                className="p-2.5 bg-slate-800/90 backdrop-blur-sm rounded-xl text-slate-300 hover:text-white hover:bg-slate-700 transition-all border border-slate-600/50 hover:border-white/20"
               >
                 <Github className="w-4 h-4" />
-              </a>
-              <a
+              </motion.a>
+              <motion.a
                 href={project.link || '#'}
                 target="_blank"
                 rel="noopener noreferrer"
+                whileHover={{ scale: 1.1, y: -2, boxShadow: "0 10px 20px -5px rgba(59,130,246,0.5)" }}
+                whileTap={{ scale: 0.9 }}
                 className="p-2.5 bg-blue-500 text-white rounded-xl hover:bg-blue-400 transition-all shadow-lg shadow-blue-500/30"
               >
                 <ArrowUpRight className="w-4 h-4" />
-              </a>
+              </motion.a>
             </div>
           </div>
 

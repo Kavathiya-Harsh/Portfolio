@@ -5,6 +5,7 @@ import Typewriter from './Typewriter';
 import MagneticButton from './MagneticButton';
 import { fadeInUp, viewportOnce } from '../utils/motion';
 import { profile } from '../data/profile';
+import { useBreakpoint } from '../utils/useBreakpoint';
 
 // Character-by-character animated title — uses tween (not spring) to avoid blur issues
 function AnimatedName({ firstName, lastName }) {
@@ -63,6 +64,7 @@ function AnimatedName({ firstName, lastName }) {
 }
 
 export default function Hero() {
+  const isMobile = useBreakpoint(1024);
   const [photoError, setPhotoError] = React.useState(false);
   const sectionRef = useRef(null);
 
@@ -77,11 +79,11 @@ export default function Hero() {
     restDelta: 0.001,
   });
 
-  const contentY = useTransform(smoothProgress, [0, 1], [0, -60]);
-  const photoScale = useTransform(smoothProgress, [0, 1], [1, 0.88]);
-  const photoOpacity = useTransform(smoothProgress, [0, 0.8], [1, 0]);
-  const bgOrb1Y = useTransform(smoothProgress, [0, 1], [0, 80]);
-  const bgOrb2Y = useTransform(smoothProgress, [0, 1], [0, 50]);
+  const contentY = useTransform(smoothProgress, [0, 1], isMobile ? [0, 0] : [0, -60]);
+  const photoScale = useTransform(smoothProgress, [0, 1], isMobile ? [1, 1] : [1, 0.88]);
+  const photoOpacity = useTransform(smoothProgress, [0, 0.8], isMobile ? [1, 1] : [1, 0]);
+  const bgOrb1Y = useTransform(smoothProgress, [0, 1], isMobile ? [0, 0] : [0, 80]);
+  const bgOrb2Y = useTransform(smoothProgress, [0, 1], isMobile ? [0, 0] : [0, 50]);
 
   const firstName = profile.name.split(' ')[0];
   const lastName = profile.name.split(' ').slice(1).join(' ');
@@ -195,7 +197,12 @@ export default function Hero() {
             >
               <MagneticButton
                 href="#contact"
-                className="px-6 sm:px-8 py-3 sm:py-4 rounded-xl sm:rounded-2xl bg-blue-600 text-white font-bold shadow-[0_20px_40px_-10px_rgba(37,99,235,0.4)] hover:shadow-[0_25px_50px_-10px_rgba(37,99,235,0.5)] hover:-translate-y-1 transition-all flex items-center justify-center gap-2 group text-sm sm:text-base"
+                whileHover={{ 
+                  scale: 1.05, 
+                  y: -4,
+                  boxShadow: "0 20px 40px -10px rgba(37,99,235,0.5)"
+                }}
+                className="px-6 sm:px-8 py-3 sm:py-4 rounded-xl sm:rounded-2xl bg-blue-600 text-white font-bold transition-all flex items-center justify-center gap-2 group text-sm sm:text-base border border-blue-400/20"
               >
                 Let's Build Something <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
               </MagneticButton>
@@ -203,7 +210,12 @@ export default function Hero() {
                 href={profile.resumeUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="px-6 sm:px-8 py-3 sm:py-4 rounded-xl sm:rounded-2xl bg-white/5 text-white font-bold border border-white/10 hover:bg-white/10 transition-all flex items-center justify-center gap-2 text-sm sm:text-base"
+                whileHover={{ 
+                  scale: 1.05, 
+                  y: -4,
+                  boxShadow: "0 20px 40px -10px rgba(212,175,55,0.2)"
+                }}
+                className="px-6 sm:px-8 py-3 sm:py-4 rounded-xl sm:rounded-2xl bg-white/5 text-white font-bold border border-white/10 hover:border-[#d4af37]/40 hover:text-[#d4af37] transition-all flex items-center justify-center gap-2 text-sm sm:text-base"
               >
                 <Download className="w-4 h-4" /> Download CV
               </MagneticButton>

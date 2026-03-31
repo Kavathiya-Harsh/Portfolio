@@ -3,6 +3,7 @@ import { motion, useMotionValue, useSpring, useTransform, AnimatePresence } from
 import { Layout, Server, TrendingUp, Cpu, Code } from 'lucide-react';
 import { skillCategories, currentlyLearning } from '../data/skills';
 import { blurScaleIn, textRevealUp, staggerContainer, viewportOnce, transitionSlow, fadeInUp } from '../utils/motion';
+import { useBreakpoint } from '../utils/useBreakpoint';
 
 // Map icon names from skills data to actual imported components
 const iconMap = { Layout, Server, TrendingUp, Cpu, Code };
@@ -13,6 +14,7 @@ function SkillIcon({ iconName, className }) {
 }
 
 function SkillCard({ skill, index, categoryColor }) {
+  const isMobile = useBreakpoint(1024);
   const cardRef = useRef(null);
   const x = useMotionValue(0);
   const y = useMotionValue(0);
@@ -24,7 +26,7 @@ function SkillCard({ skill, index, categoryColor }) {
   const rotateY = useTransform(mouseXSpring, [-0.5, 0.5], ["-10deg", "10deg"]);
 
   const handleMouseMove = (e) => {
-    if (!cardRef.current) return;
+    if (!cardRef.current || isMobile) return;
     const rect = cardRef.current.getBoundingClientRect();
     const width = rect.width;
     const height = rect.height;
@@ -47,8 +49,8 @@ function SkillCard({ skill, index, categoryColor }) {
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
       style={{
-        rotateX,
-        rotateY,
+        rotateX: isMobile ? 0 : rotateX,
+        rotateY: isMobile ? 0 : rotateY,
         transformStyle: "preserve-3d",
         '--skill-color': skill.color || categoryColor
       }}

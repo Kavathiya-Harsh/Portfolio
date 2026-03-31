@@ -17,6 +17,11 @@
   --glass-border: rgba(255, 255, 240, 0.08);
   --glass-glow: rgba(59, 130, 246, 0.12);
 
+  /* Performance overrides for mobile/tablet */
+  @media (max-width: 1023px) {
+    --glass: rgba(15, 23, 42, 0.9); /* More opaque, no blur */
+  }
+
   /* Text — enhanced visibility */
   --text: #f1f5f9;
   --text-secondary: #b0bfe0;
@@ -26,6 +31,14 @@
 /* Smooth transitions for interactive elements only */
 a, button, input, textarea, select {
   transition: color 0.3s ease, background-color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease, opacity 0.3s ease;
+}
+
+/* Performance fix: Disable backdrop-blur on mobile/tablet */
+@media (max-width: 1023px) {
+  [class*="backdrop-blur"] {
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+  }
 }
 
 body {
@@ -87,13 +100,21 @@ p, li, span {
   animation: spin-slow 6s linear infinite;
 }
 
-@keyframes aurora {
-  0%, 100% { opacity: 0.4; transform: scale(1) translate(0, 0); }
-  33%       { opacity: 0.7; transform: scale(1.06) translate(15px, -10px); }
-  66%       { opacity: 0.5; transform: scale(0.97) translate(-10px, 12px); }
+/* Aurora animation - only for desktop for performance */
+@media (min-width: 1024px) {
+  @keyframes aurora {
+    0%, 100% { opacity: 0.4; transform: scale(1) translate(0, 0); }
+    33%       { opacity: 0.7; transform: scale(1.06) translate(15px, -10px); }
+    66%       { opacity: 0.5; transform: scale(0.97) translate(-10px, 12px); }
+  }
+  .animate-aurora {
+    animation: aurora 14s ease-in-out infinite;
+  }
 }
-.animate-aurora {
-  animation: aurora 14s ease-in-out infinite;
+@media (max-width: 1023px) {
+  .animate-aurora {
+    opacity: 0.3;
+  }
 }
 
 @keyframes float-y {
@@ -138,16 +159,26 @@ p, li, span {
 }
 
 /* Section divider glow animation */
-@keyframes divider-glow {
-  0%, 100% { opacity: 0.3; width: 30%; }
-  50% { opacity: 0.8; width: 60%; }
+/* Section divider glow animation - disabled on mobile */
+@media (min-width: 1024px) {
+  @keyframes divider-glow {
+    0%, 100% { opacity: 0.3; width: 30%; }
+    50% { opacity: 0.8; width: 60%; }
+  }
+  .section-divider {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--primary), transparent);
+    animation: divider-glow 4s ease-in-out infinite;
+    margin: 0 auto;
+  }
 }
-
-.section-divider {
-  height: 1px;
-  background: linear-gradient(90deg, transparent, var(--primary), transparent);
-  animation: divider-glow 4s ease-in-out infinite;
-  margin: 0 auto;
+@media (max-width: 1023px) {
+  .section-divider {
+    height: 1px;
+    width: 80%;
+    background: rgba(59, 130, 246, 0.2);
+    margin: 0 auto;
+  }
 }
 
 /* Gradient text shimmer effect */

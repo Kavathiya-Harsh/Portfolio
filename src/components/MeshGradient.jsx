@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { motion, useSpring, useMotionValue } from 'framer-motion';
+import { useBreakpoint } from '../utils/useBreakpoint';
 
 export default function MeshGradient() {
+  const isMobile = useBreakpoint(1024);
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
 
@@ -11,13 +13,15 @@ export default function MeshGradient() {
   const smoothY = useSpring(mouseY, springConfig);
 
   useEffect(() => {
+    if (isMobile) return; // No mouse move on mobile/tablet
+
     const handleMouseMove = (e) => {
       mouseX.set(e.clientX);
       mouseY.set(e.clientY);
     };
     window.addEventListener('mousemove', handleMouseMove);
     return () => window.removeEventListener('mousemove', handleMouseMove);
-  }, [mouseX, mouseY]);
+  }, [mouseX, mouseY, isMobile]);
 
   return (
     <div className="fixed inset-0 -z-10 overflow-hidden select-none pointer-events-none">
@@ -38,7 +42,7 @@ export default function MeshGradient() {
         style={{
           background: `radial-gradient(circle at 20% 30%, rgba(30, 58, 138, 0.25) 0%, transparent 60%)`,
         }}
-        animate={{
+        animate={isMobile ? false : {
           rotate: [0, 5, 0],
           scale: [1, 1.1, 1],
         }}
@@ -51,7 +55,7 @@ export default function MeshGradient() {
         style={{
           background: `radial-gradient(circle at 80% 80%, rgba(8, 145, 178, 0.15) 0%, transparent 60%)`,
         }}
-        animate={{
+        animate={isMobile ? false : {
           rotate: [0, -8, 0],
           scale: [1, 1.15, 1],
         }}
@@ -64,7 +68,7 @@ export default function MeshGradient() {
         style={{
           background: `radial-gradient(circle at center, rgba(109, 40, 217, 0.08) 0%, transparent 50%)`,
         }}
-        animate={{
+        animate={isMobile ? false : {
           x: [0, 40, -40, 0],
           y: [0, -30, 20, 0],
         }}
@@ -83,15 +87,17 @@ export default function MeshGradient() {
         }}
       />
 
-      {/* High-Performance Cursor Spotlight */}
-      <motion.div
-        className="absolute inset-0 z-10"
-        style={{
-          background: `radial-gradient(600px circle at var(--x) var(--y), rgba(59, 130, 246, 0.07), transparent 80%)`,
-          '--x': smoothX,
-          '--y': smoothY,
-        }}
-      />
+      {/* High-Performance Cursor Spotlight - Only for desktop */}
+      {!isMobile && (
+        <motion.div
+          className="absolute inset-0 z-10"
+          style={{
+            background: `radial-gradient(600px circle at var(--x) var(--y), rgba(59, 130, 246, 0.07), transparent 80%)`,
+            '--x': smoothX,
+            '--y': smoothY,
+          }}
+        />
+      )}
 
       {/* Vignette for cinematic focus */}
       <div className="absolute inset-0 shadow-[inset_0_0_150px_rgba(0,0,0,0.8)] pointer-events-none" />

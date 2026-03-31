@@ -38,8 +38,12 @@ export default function MagneticButton({ children, className = '', href, ...prop
       onMouseEnter={handleMouseEnter}
       style={{ transform }}
       className={`inline-flex items-center gap-2 px-8 py-4 rounded-xl font-semibold text-white bg-[#3b82f6] hover:bg-blue-500 shadow-lg shadow-blue-500/25 transition-shadow ${className}`}
-      whileHover={{ scale: 1.02 }}
-      whileTap={{ scale: 0.98 }}
+      whileHover={{ 
+        scale: 1.05,
+        y: -4,
+        boxShadow: "0 15px 30px -5px rgba(59,130,246,0.5)"
+      }}
+      whileTap={{ scale: 0.95 }}
       {...props}
     >
       {children}
