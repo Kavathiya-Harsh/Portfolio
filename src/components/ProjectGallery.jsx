@@ -12,19 +12,21 @@ import {
   transitionSlow,
 } from '../utils/motion';
 import { useRecruiterMode } from '../context/RecruiterModeContext';
+import { useBreakpoint } from '../utils/useBreakpoint';
 
 export default function ProjectGallery({ typeFilter = 'all' }) {
   const [filter, setFilter] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
   const { recruiterMode } = useRecruiterMode();
   const sectionRef = useRef(null);
+  const isMobile = useBreakpoint(1024);
   
   // Horizontal parallax for title
   const { scrollYProgress } = useScroll({
     target: sectionRef,
     offset: ['start end', 'end start'],
   });
-  const titleX = useTransform(scrollYProgress, [0, 1], [40, -40]);
+  const titleX = useTransform(scrollYProgress, [0, 1], isMobile ? [0, 0] : [40, -40]);
 
   const categories = ['all', ...new Set(projects.map(p => p.category.toLowerCase()))];
   

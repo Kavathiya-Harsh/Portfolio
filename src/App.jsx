@@ -143,14 +143,14 @@ export default function App() {
   }, []);
 
   return (
-    <MotionConfig reducedMotion={isMobile || isLowPower ? 'always' : 'user'}>
+    <MotionConfig reducedMotion={isLowPower ? 'always' : 'user'}>
       <RecruiterModeProvider>
         <AnimatePresence>
           {isLoading && <LoadingScreen onComplete={handleLoadingComplete} />}
         </AnimatePresence>
         
         <MeshGradient />
-        {!isLowPower && <CodeScrollIndicator />}
+        {(!isLowPower && !isMobile) && <CodeScrollIndicator />}
         <Navbar />
         
         <Suspense fallback={null}>

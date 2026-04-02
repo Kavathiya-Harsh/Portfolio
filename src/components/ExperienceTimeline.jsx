@@ -9,6 +9,7 @@ import {
   transitionSpring,
   viewportOnce,
 } from '../utils/motion';
+import { useBreakpoint } from '../utils/useBreakpoint';
 
 export default function ExperienceTimeline() {
   const sectionRef = useRef(null);
@@ -24,7 +25,9 @@ export default function ExperienceTimeline() {
     restDelta: 0.001,
   });
 
-  const glowOpacity = useTransform(scrollYProgress, [0, 0.5, 1], [0.3, 1, 0.6]);
+  const isMobile = useBreakpoint(1024);
+  const glowOpacity = useTransform(scrollYProgress, [0, 0.5, 1], isMobile ? [0.6, 0.6, 0.6] : [0.3, 1, 0.6]);
+  const finalScaleY = useTransform(scaleY, (v) => isMobile ? 1 : v);
 
   return (
     <section id="experience" ref={sectionRef} className="py-24 px-6">
@@ -58,7 +61,7 @@ export default function ExperienceTimeline() {
           <motion.div
             className="absolute left-[19px] top-2 w-px rounded-full origin-top"
             style={{
-              scaleY,
+              scaleY: finalScaleY,
               height: 'calc(100% - 1rem)',
               background: 'linear-gradient(to bottom, #3b82f6, #06b6d4)',
               boxShadow: '0 0 12px 2px rgba(59, 130, 246,0.7)',
