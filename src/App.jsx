@@ -15,6 +15,7 @@ import { profile } from './data/profile';
 
 // Context
 import { RecruiterModeProvider } from './context/RecruiterModeContext';
+import { usePerformance } from './context/PerformanceContext';
 
 // Lazy-loaded below-the-fold components (loaded after initial paint)
 const GitHubActivity = lazy(() => import('./components/GitHubActivity'));
@@ -122,6 +123,7 @@ function PortfolioMain() {
 
 export default function App() {
   const isMobile = useBreakpoint(1024);
+  const { isLowPower } = usePerformance();
   const [isPaletteOpen, setIsPaletteOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -141,14 +143,14 @@ export default function App() {
   }, []);
 
   return (
-    <MotionConfig reducedMotion={isMobile ? 'always' : 'user'}>
+    <MotionConfig reducedMotion={isMobile || isLowPower ? 'always' : 'user'}>
       <RecruiterModeProvider>
         <AnimatePresence>
           {isLoading && <LoadingScreen onComplete={handleLoadingComplete} />}
         </AnimatePresence>
         
         <MeshGradient />
-        <CodeScrollIndicator />
+        {!isLowPower && <CodeScrollIndicator />}
         <Navbar />
         
         <Suspense fallback={null}>
