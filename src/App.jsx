@@ -38,7 +38,7 @@ function QuickActionsDock() {
       initial={{ opacity: 0, y: 40 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, delay: 0.8 }}
-      className="fixed inset-x-0 bottom-4 md:bottom-6 flex justify-center pointer-events-none z-[100]"
+      className="hidden sm:flex fixed inset-x-0 bottom-4 md:bottom-6 justify-center pointer-events-none z-[100]"
     >
       <div className="pointer-events-auto inline-flex items-center gap-2 md:gap-3 rounded-2xl bg-[#111827]/90 border border-slate-700/60 backdrop-blur-xl px-3 py-2 md:px-4 md:py-2.5 shadow-[0_24px_60px_rgba(0,0,0,0.6)]"
            style={{ marginBottom: 'env(safe-area-inset-bottom, 0px)' }}>

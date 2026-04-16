@@ -225,7 +225,7 @@ export default function ContactForm() {
   };
 
   return (
-    <section id="contact" className="py-24 px-6 relative overflow-hidden">
+    <section id="contact" className="py-16 md:py-24 px-4 sm:px-6 relative overflow-hidden">
       <div className="max-w-7xl mx-auto">
         {/* Section Header with text reveal */}
         <motion.div
@@ -244,7 +244,7 @@ export default function ContactForm() {
           </motion.div>
           <motion.h2
             variants={textRevealUp}
-            className="text-4xl sm:text-5xl md:text-7xl font-bold text-white tracking-tight mb-8 leading-[1.1]"
+            className="text-3xl sm:text-5xl md:text-7xl font-bold text-white tracking-tight mb-8 leading-[1.1]"
           >
             Get in <span className="bg-gradient-to-r from-blue-400 via-cyan-400 to-blue-500 bg-clip-text text-transparent">Touch</span>
           </motion.h2>
@@ -276,7 +276,7 @@ export default function ContactForm() {
             initial="hidden"
             whileInView="visible"
             viewport={viewportOnce}
-            className="relative p-8 md:p-10 rounded-[2.5rem] bg-white/[0.03] border border-white/10 backdrop-blur-2xl shadow-2xl overflow-hidden h-full flex flex-col will-change-transform"
+            className="relative p-6 sm:p-8 md:p-10 rounded-[2.5rem] bg-white/[0.03] border border-white/10 backdrop-blur-2xl shadow-2xl overflow-hidden h-full flex flex-col will-change-transform"
           >
             <div className="absolute -top-24 -right-24 w-64 h-64 bg-blue-500/10 blur-[80px] rounded-full pointer-events-none will-change-transform" />
             
@@ -286,7 +286,7 @@ export default function ContactForm() {
             >
               <div className="grid sm:grid-cols-2 gap-6">
                 <div>
-                  <label htmlFor="name" className="block text-xs font-mono uppercase tracking-[0.2em] text-slate-400 mb-2 ml-1">Full Name</label>
+                  <label htmlFor="name" className="block text-[10px] font-mono uppercase tracking-[0.2em] text-slate-400 mb-1.5 ml-0.5">Full Name</label>
                   <input
                     type="text"
                     id="name"
@@ -298,7 +298,7 @@ export default function ContactForm() {
                   />
                 </div>
                 <div>
-                  <label htmlFor="email" className="block text-xs font-mono uppercase tracking-[0.2em] text-slate-400 mb-2 ml-1">Email Address</label>
+                  <label htmlFor="email" className="block text-[10px] font-mono uppercase tracking-[0.2em] text-slate-400 mb-1.5 ml-0.5">Email Address</label>
                   <input
                     type="email"
                     id="email"
@@ -312,7 +312,7 @@ export default function ContactForm() {
               </div>
 
               <div>
-                <label htmlFor="message" className="block text-xs font-mono uppercase tracking-[0.2em] text-slate-400 mb-2 ml-1">Your Message</label>
+                <label htmlFor="message" className="block text-[10px] font-mono uppercase tracking-[0.2em] text-slate-400 mb-1.5 ml-0.5">Your Message</label>
                 <textarea
                   id="message"
                   required
