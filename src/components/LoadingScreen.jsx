@@ -14,15 +14,13 @@ export default function LoadingScreen({ onComplete }) {
     setIsMobile(window.innerWidth < 768);
     
     // Cinematic Timeline
-    const tSingularity = setTimeout(() => setPhase('horizon'), 1600);   // Logo Pulsing (Increased from 1200)
-    const tHorizon     = setTimeout(() => setPhase('reveal'), 2000);    // The Slicing Reveal (Tightened)
-    const tExit        = setTimeout(() => setPhase('exit'), 4600);      // Immersive Exit (Shifted)
-    const tComplete    = setTimeout(() => onComplete?.(), 5400);         // Final Call (Shifted)
+    const tSingularity = setTimeout(() => setPhase('horizon'), 1400);   // Photo (Phase 1)
+    const tHorizon     = setTimeout(() => setPhase('reveal'), 1800);    // Name Reveal (Phase 2)
+    const tComplete    = setTimeout(() => onComplete?.(), 4500);         // Final Transition (Simplified)
     
     return () => {
       clearTimeout(tSingularity);
       clearTimeout(tHorizon);
-      clearTimeout(tExit);
       clearTimeout(tComplete);
     };
   }, [onComplete]);
@@ -47,17 +45,22 @@ export default function LoadingScreen({ onComplete }) {
           className="fixed inset-0 z-[250] flex items-center justify-center bg-[#050810] overflow-hidden"
           exit={{ opacity: 0 }}
         >
-          {/* ── BACKGROUND PANELS (SHUTTER EXIT) ── */}
+          {/* ── NOISE OVERLAY (DEPTH) ── */}
+          <div className="absolute inset-0 bg-noise z-50 pointer-events-none" />
+
+          {/* ── BACKGROUND PANELS (CLEAN EXIT) ── */}
           <motion.div 
             initial={{ y: 0 }}
-            animate={phase === 'exit' ? { y: '-100%' } : { y: 0 }}
-            transition={{ duration: 1, ease: [0.77, 0, 0.175, 1] }}
+            animate={phase === 'reveal' ? { y: 0 } : { y: 0 }}
+            exit={{ y: '-100%' }}
+            transition={{ duration: 0.8, ease: [0.77, 0, 0.175, 1] }}
             className="absolute inset-0 h-1/2 bg-[#080d1a] border-b border-white/5 z-0"
           />
           <motion.div 
             initial={{ y: 0 }}
-            animate={phase === 'exit' ? { y: '100%' } : { y: 0 }}
-            transition={{ duration: 1, ease: [0.77, 0, 0.175, 1] }}
+            animate={phase === 'reveal' ? { y: 0 } : { y: 0 }}
+            exit={{ y: '100%' }}
+            transition={{ duration: 0.8, ease: [0.77, 0, 0.175, 1] }}
             className="absolute inset-x-0 bottom-0 h-1/2 bg-[#080d1a] border-t border-white/5 z-0"
           />
 
@@ -74,7 +77,7 @@ export default function LoadingScreen({ onComplete }) {
               />
             ))}
             <motion.div
-              animate={phase === 'exit' ? { scale: 2, opacity: 0 } : { scale: [1, 1.2, 1], opacity: [0.1, 0.3, 0.1] }}
+              animate={{ scale: [1, 1.2, 1], opacity: [0.1, 0.3, 0.1] }}
               transition={{ duration: 8, repeat: Infinity }}
               className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-blue-600/5 blur-[150px] rounded-full"
             />
@@ -88,10 +91,10 @@ export default function LoadingScreen({ onComplete }) {
               {phase === 'singularity' && (
                 <motion.div
                   key="logo-pulse"
-                  initial={{ scale: 0.8, opacity: 0, filter: 'blur(10px)' }}
+                  initial={{ scale: 0.9, opacity: 0, filter: 'blur(10px)' }}
                   animate={{ scale: 1, opacity: 1, filter: 'blur(0px)' }}
-                  exit={{ scale: 1.2, opacity: 0, filter: 'blur(40px)' }}
-                  transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+                  exit={{ scale: 1.1, opacity: 0, filter: 'blur(20px)' }}
+                  transition={{ duration: 1, ease: [0.23, 1, 0.32, 1] }}
                   className="relative group"
                 >
                   <img 
@@ -138,9 +141,9 @@ export default function LoadingScreen({ onComplete }) {
                    </div>
 
                    <motion.div
-                     initial={{ opacity: 0 }}
-                     animate={phase === 'reveal' ? { opacity: 1 } : { opacity: 0 }}
-                     transition={{ delay: 0.8, duration: 1 }}
+                     initial={{ opacity: 0, y: 10 }}
+                     animate={phase === 'reveal' ? { opacity: 1, y: 0 } : { opacity: 0, y: 10 }}
+                     transition={{ delay: 0.6, duration: 1.2, ease: [0.23, 1, 0.32, 1] }}
                      className="text-[10px] sm:text-xs font-mono uppercase text-slate-400 tracking-[0.5em] text-center mt-6"
                    >
                      {slogan}
@@ -158,9 +161,6 @@ export default function LoadingScreen({ onComplete }) {
                   className="flex flex-col items-center gap-12"
                 >
                    <img src={profile.photoUrl} className="w-16 h-16 rounded-full opacity-40 object-cover" alt="" />
-                   <h2 className="text-9xl font-black text-white opacity-20 uppercase tracking-[2em]">
-                     {firstName}
-                   </h2>
                 </motion.div>
               )}
             </AnimatePresence>
