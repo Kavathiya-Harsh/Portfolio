@@ -270,17 +270,27 @@ function PhotoSection({ isLowPower, isReady, isMobile }) {
         {/* Photo */}
         <div className="relative w-56 h-56 sm:w-72 sm:h-72 md:w-80 md:h-80 lg:w-[22rem] lg:h-[22rem] rounded-full overflow-hidden border-[5px] border-[#080d1a] bg-slate-800 z-10 shadow-2xl">
           {!photoError ? (
-            <img
-              src={profile.photoUrl.replace('w_600', isMobile ? 'w_400' : 'w_800')}
-              alt={profile.name}
-              width={isMobile ? "288" : "352"}
-              height={isMobile ? "288" : "352"}
-              fetchpriority="high"
-              loading="eager"
-              decoding="async"
-              className="w-full h-full object-cover object-top scale-105 group-hover:scale-110 transition-transform duration-[1.2s] will-change-transform"
-              onError={() => setPhotoError(true)}
-            />
+            <picture>
+              <source 
+                media="(max-width: 1024px)" 
+                srcSet="https://res.cloudinary.com/dvv5mtpli/image/upload/q_auto,f_auto,w_400/v1776351778/Harsh_Kavathiya_Profile_duaqrs.jpg" 
+              />
+              <source 
+                media="(min-width: 1025px)" 
+                srcSet="https://res.cloudinary.com/dvv5mtpli/image/upload/q_auto,f_auto,w_800/v1776351778/Harsh_Kavathiya_Profile_duaqrs.jpg" 
+              />
+              <img
+                src="https://res.cloudinary.com/dvv5mtpli/image/upload/q_auto,f_auto,w_800/v1776351778/Harsh_Kavathiya_Profile_duaqrs.jpg"
+                alt={profile.name}
+                width="352"
+                height="352"
+                fetchpriority="high"
+                loading="eager"
+                decoding="async"
+                className="w-full h-full object-cover object-top scale-105 group-hover:scale-110 transition-transform duration-[1.2s] will-change-transform"
+                onError={() => setPhotoError(true)}
+              />
+            </picture>
           ) : (
             <div className="w-full h-full flex flex-col items-center justify-center bg-gradient-to-br from-blue-600 to-cyan-500">
               <span className="text-5xl font-black text-white tracking-widest">{profile.initials}</span>

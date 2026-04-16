@@ -1,19 +1,16 @@
-import React, { useState, useEffect } from 'react';
-import { motion, useScroll, useTransform, useSpring } from 'framer-motion';
+import React, { useEffect, useRef } from 'react';
+import { motion, useScroll, useSpring } from 'framer-motion';
 
 export default function CodeScrollIndicator() {
   const { scrollYProgress } = useScroll();
-  const [percent, setPercent] = useState(0);
-
-  // Smooth out the percentage display
-  const smoothProgress = useSpring(scrollYProgress, {
-    stiffness: 100,
-    damping: 30,
-    restDelta: 0.001
-  });
+  const percentRef = useRef(null);
 
   useEffect(() => {
-    return scrollYProgress.onChange((v) => setPercent(Math.round(v * 100)));
+    return scrollYProgress.onChange((v) => {
+      if (percentRef.current) {
+        percentRef.current.textContent = Math.round(v * 100);
+      }
+    });
   }, [scrollYProgress]);
 
   return (
@@ -27,8 +24,8 @@ export default function CodeScrollIndicator() {
       <div className="absolute right-4 top-4 font-mono text-[10px] hidden md:flex items-center gap-1.5 opacity-60">
         <span className="text-slate-400">//</span>
         <span className="text-blue-400">current_progress:</span>
-        <span className={`text-white transition-all duration-300 ${percent > 0 ? 'opacity-100' : 'opacity-0'}`}>
-          {percent}%
+        <span className="text-white opacity-100">
+          <span ref={percentRef}>0</span>%
         </span>
       </div>
     </div>
