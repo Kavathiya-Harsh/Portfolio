@@ -183,16 +183,18 @@ export default function CertificatesAwards() {
         </motion.div>
 
         {/* Dots Indicator */}
-        <div className="flex justify-center gap-2.5 mt-16">
+        <div className="flex justify-center gap-1 mt-16">
           {mergedItems.map((_, i) => (
             <button
               key={i}
               onClick={() => setCurrentIndex(i)}
               aria-label={`Go to certificate ${i + 1}`}
-              className={`h-1.5 rounded-full transition-all duration-500 ${
-                i === currentIndex ? 'w-10 bg-blue-500 shadow-[0_0_15px_rgba(59,130,246,0.6)]' : 'w-2 bg-slate-700 hover:bg-slate-600'
-              }`}
-            />
+              className="p-3 group"
+            >
+              <span className={`block h-1.5 rounded-full transition-all duration-500 ${
+                i === currentIndex ? 'w-10 bg-blue-500 shadow-[0_0_15px_rgba(59,130,246,0.6)]' : 'w-2 bg-slate-700 group-hover:bg-slate-600'
+              }`} />
+            </button>
           ))}
         </div>
       </div>

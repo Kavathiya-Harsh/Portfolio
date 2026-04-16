@@ -81,9 +81,9 @@ function SkillCard({ skill, index, categoryColor }) {
           />
           <span className="text-[10px] font-mono text-slate-400 uppercase tracking-widest">{skill.level}</span>
         </div>
-        <h4 className="text-lg font-bold text-white tracking-tight group-hover:translate-x-1 transition-transform">
+        <h3 className="text-lg font-bold text-white tracking-tight group-hover:translate-x-1 transition-transform">
           {skill.name}
-        </h4>
+        </h3>
       </div>
 
       {/* Bottom Section */}

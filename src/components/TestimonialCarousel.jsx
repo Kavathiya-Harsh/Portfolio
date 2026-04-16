@@ -112,17 +112,19 @@ export default function TestimonialCarousel() {
             >
               <ChevronLeft className="w-6 h-6" />
             </button>
-            <div className="flex gap-2">
+            <div className="flex gap-0">
               {testimonials.map((_, i) => (
                 <button
                   key={i}
                   type="button"
                   onClick={() => setIndex(i)}
-                  className={`w-2 h-2 rounded-full transition-colors ${
-                    i === index ? 'bg-[#3b82f6] w-6' : 'bg-white/20'
-                  }`}
+                  className="p-3 group"
                   aria-label={`Go to testimonial ${i + 1}`}
-                />
+                >
+                  <span className={`block w-2 h-2 rounded-full transition-colors ${
+                    i === index ? 'bg-[#3b82f6] !w-6' : 'bg-white/20 group-hover:bg-white/40'
+                  }`} />
+                </button>
               ))}
             </div>
             <button

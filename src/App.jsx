@@ -155,18 +155,18 @@ export default function App() {
           <>
             <MeshGradient />
             {(!isLowPower && !isMobile) && <CodeScrollIndicator />}
+            <Navbar />
+            
+            <Suspense fallback={null}>
+              <CommandPalette 
+                isOpen={isPaletteOpen} 
+                onClose={() => setIsPaletteOpen(false)} 
+              />
+            </Suspense>
+            
+            <PortfolioMain />
           </>
         )}
-        <Navbar />
-        
-        <Suspense fallback={null}>
-          <CommandPalette 
-            isOpen={isPaletteOpen} 
-            onClose={() => setIsPaletteOpen(false)} 
-          />
-        </Suspense>
-        
-        <PortfolioMain />
       </RecruiterModeProvider>
     </MotionConfig>
   );

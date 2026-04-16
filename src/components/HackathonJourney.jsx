@@ -25,7 +25,7 @@ const HackathonCard = ({ hackathon, index }) => {
         </div>
         <div className="mt-4 text-center max-w-md bg-white/5 border border-white/10 backdrop-blur-md px-6 py-4 rounded-2xl shadow-xl">
            <p className="text-[10px] font-mono text-[#d4af37] uppercase tracking-widest mb-1">{hackathon.achievement}</p>
-           <h4 className="text-lg font-bold text-white mb-2">{hackathon.title}</h4>
+           <h3 className="text-lg font-bold text-white mb-2">{hackathon.title}</h3>
            <p className="text-xs text-slate-400 font-mono tracking-wide">{hackathon.description}</p>
         </div>
       </motion.div>

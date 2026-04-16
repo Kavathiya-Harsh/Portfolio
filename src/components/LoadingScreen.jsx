@@ -84,7 +84,8 @@ export default function LoadingScreen({ onComplete }) {
                   transition={{ duration: 0.5, ease: [0.23, 1, 0.32, 1] }}
                   className="flex flex-col items-center"
                 >
-                  <motion.h1
+                  <motion.div
+                    role="presentation"
                     initial={{ opacity: 0, y: 30 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.8, ease: [0.23, 1, 0.32, 1] }}
@@ -95,7 +96,7 @@ export default function LoadingScreen({ onComplete }) {
                     <span className="bg-gradient-to-r from-blue-400 via-cyan-300 to-indigo-400 bg-clip-text text-transparent">
                       {lastName}
                     </span>
-                  </motion.h1>
+                  </motion.div>
 
                   <motion.p
                     initial={{ opacity: 0, y: 10 }}

@@ -98,9 +98,9 @@ export default function ProjectGallery({ typeFilter = 'all' }) {
             className="py-32 text-center"
           >
             <FolderOpen className="w-16 h-16 text-slate-700 mx-auto mb-6" />
-            <h4 className="text-white text-xl font-bold mb-2">
+            <h3 className="text-white text-xl font-bold mb-2">
               No projects found
-            </h4>
+            </h3>
             <p className="text-slate-400 text-sm max-w-xs mx-auto">
               Your filtered view didn't return any items. Try clearing your filters.
             </p>
