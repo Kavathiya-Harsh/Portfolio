@@ -87,42 +87,6 @@ function SectionFallback() {
   return <div className="min-h-[200px]" />;
 }
 
-function PortfolioMain() {
-  return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      transition={{ duration: 0.5 }}
-      className="pb-40 md:pb-12"
-    >
-      <main>
-        <Hero />
-      <Suspense fallback={<SectionFallback />}>
-        <SectionDivider />
-        <GitHubActivity />
-        <SectionDivider />
-        <About />
-        <SectionDivider />
-        <BentoSkills />
-        <SectionDivider />
-        <ProjectGallery />
-        <SectionDivider />
-        <HackathonJourney />
-        <SectionDivider />
-        <CertificatesAwards />
-        <SectionDivider />
-        <Education />
-        <SectionDivider />
-        <ContactForm />
-        <QuickActionsDock />
-        <Footer />
-      </Suspense>
-      </main>
-    </motion.div>
-  );
-}
-
 export default function App() {
   const isMobile = useBreakpoint(1024);
   const { isLowPower } = usePerformance();
@@ -147,26 +111,56 @@ export default function App() {
   return (
     <MotionConfig reducedMotion={isLowPower ? 'always' : 'user'}>
       <RecruiterModeProvider>
+        {/* 
+          PERFORMANCE FIX: Always render ALL content from the start.
+          The loading screen is a fixed z-250 overlay ON TOP of the content.
+          This means the DOM never changes when loading ends = ZERO CLS.
+          The content is already laid out underneath, just hidden by the overlay.
+        */}
+        
+        {/* Loading screen overlay — fixed position, doesn't affect document flow */}
         <AnimatePresence>
           {isLoading && <LoadingScreen onComplete={handleLoadingComplete} />}
         </AnimatePresence>
+
+        {/* Main content — ALWAYS rendered, stable in DOM from first paint */}
+        <MeshGradient />
+        {(!isLowPower && !isMobile) && <CodeScrollIndicator />}
+        <Navbar />
         
-        {!isLoading && (
-          <>
-            <MeshGradient />
-            {(!isLowPower && !isMobile) && <CodeScrollIndicator />}
-            <Navbar />
-            
-            <Suspense fallback={null}>
-              <CommandPalette 
-                isOpen={isPaletteOpen} 
-                onClose={() => setIsPaletteOpen(false)} 
-              />
+        <Suspense fallback={null}>
+          <CommandPalette 
+            isOpen={isPaletteOpen} 
+            onClose={() => setIsPaletteOpen(false)} 
+          />
+        </Suspense>
+
+        {/* Main page content — always in DOM, no conditional rendering */}
+        <div className="pb-40 md:pb-12">
+          <main>
+            <Hero />
+            <Suspense fallback={<SectionFallback />}>
+              <SectionDivider />
+              <GitHubActivity />
+              <SectionDivider />
+              <About />
+              <SectionDivider />
+              <BentoSkills />
+              <SectionDivider />
+              <ProjectGallery />
+              <SectionDivider />
+              <HackathonJourney />
+              <SectionDivider />
+              <CertificatesAwards />
+              <SectionDivider />
+              <Education />
+              <SectionDivider />
+              <ContactForm />
+              <QuickActionsDock />
+              <Footer />
             </Suspense>
-            
-            <PortfolioMain />
-          </>
-        )}
+          </main>
+        </div>
       </RecruiterModeProvider>
     </MotionConfig>
   );
