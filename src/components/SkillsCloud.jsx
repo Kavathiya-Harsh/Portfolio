@@ -102,9 +102,14 @@ function CategoryCard({ category, index }) {
     damping: 30,
   });
 
+  const rectRef = useRef(null);
+
   function onMouseMove(e) {
     if (!cardRef.current) return;
-    const rect = cardRef.current.getBoundingClientRect();
+    if (!rectRef.current) {
+      rectRef.current = cardRef.current.getBoundingClientRect();
+    }
+    const rect = rectRef.current;
     const x = (e.clientX - rect.left) / rect.width - 0.5;
     const y = (e.clientY - rect.top) / rect.height - 0.5;
     mouseX.set(x);
@@ -114,6 +119,7 @@ function CategoryCard({ category, index }) {
   function onMouseLeave() {
     mouseX.set(0);
     mouseY.set(0);
+    rectRef.current = null;
   }
 
   return (

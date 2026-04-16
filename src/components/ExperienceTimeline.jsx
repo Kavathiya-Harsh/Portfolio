@@ -69,81 +69,103 @@ export default function ExperienceTimeline() {
             }}
           />
 
-          {experience.map((item, i) => (
-            <motion.div
-              key={item.id}
-              variants={i % 2 === 0 ? slideInLeft : slideInRight}
-              initial="hidden"
-              whileInView="visible"
-              viewport={viewportOnce}
-              transition={{ ...transitionSpring, delay: i * 0.12 }}
-              className="relative pl-16 pb-12 last:pb-0"
-            >
-              {/* Timeline node — enhanced pop-in with rotation */}
-              <motion.div
-                className="absolute left-0 top-2 w-10 h-10 rounded-full border-2 border-[#3b82f6] bg-[#0b1120] flex items-center justify-center z-10"
-                initial={{ scale: 0, opacity: 0, rotate: -90 }}
-                whileInView={{ scale: 1, opacity: 1, rotate: 0 }}
-                viewport={{ once: true }}
-                transition={{
-                  type: 'spring',
-                  stiffness: 200,
-                  damping: 15,
-                  delay: i * 0.12 + 0.1,
-                }}
-                whileHover={{ scale: 1.15 }}
-              >
-                <motion.div
-                  className="w-2.5 h-2.5 rounded-full bg-[#3b82f6] shadow-[0_0_12px_4px_rgba(59, 130, 246,0.5)]"
-                  animate={{ scale: [1, 1.2, 1] }}
-                  transition={{ duration: 2, repeat: Infinity, repeatType: 'reverse' }}
-                />
-              </motion.div>
+function TimelineCard({ item, index }) {
+  const cardRef = useRef(null);
+  const rectRef = useRef(null);
 
-              {/* Card */}
-              <motion.div
-                onMouseMove={(e) => {
-                  const rect = e.currentTarget.getBoundingClientRect();
-                  const x = ((e.clientX - rect.left) / rect.width) * 100;
-                  const y = ((e.clientY - rect.top) / rect.height) * 100;
-                  e.currentTarget.style.setProperty('--mx', `${x}%`);
-                  e.currentTarget.style.setProperty('--my', `${y}%`);
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.setProperty('--mx', `50%`);
-                  e.currentTarget.style.setProperty('--my', `50%`);
-                }}
-                className="relative group overflow-hidden rounded-xl border border-white/12 bg-slate-800/50 backdrop-blur-md p-5 hover:border-blue-500/20 transition-colors"
-                whileHover={{ x: 4 }}
-                transition={transitionSpring}
-              >
-                <div
-                  className="pointer-events-none absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity"
-                  style={{
-                    background:
-                      'radial-gradient(220px circle at var(--mx, 50%) var(--my, 50%), rgba(59, 130, 246,0.12), transparent 60%)',
-                    mixBlendMode: 'screen',
-                  }}
-                />
-                <div className="flex flex-wrap items-center gap-2 mb-1">
-                  <h3 className="text-lg font-semibold text-white">{item.title}</h3>
-                  <span className="text-xs font-mono text-[#06b6d4]">{item.period}</span>
-                </div>
-                <p className="text-blue-300/90 text-sm font-medium mb-2">{item.company}</p>
-                <p className="text-slate-300 text-sm leading-relaxed mb-3">{item.description}</p>
-                {item.highlights && item.highlights.length > 0 && (
-                  <ul className="space-y-1">
-                    {item.highlights.map((h) => (
-                      <li key={h} className="text-slate-400 text-sm flex items-start gap-2">
-                        <span className="text-blue-400 mt-0.5">▹</span>
-                        {h}
-                      </li>
-                    ))}
-                  </ul>
-                )}
-              </motion.div>
-            </motion.div>
-          ))}
+  const onMouseMove = (e) => {
+    if (!rectRef.current && cardRef.current) {
+      rectRef.current = cardRef.current.getBoundingClientRect();
+    }
+    const rect = rectRef.current;
+    if (!rect) return;
+    const x = ((e.clientX - rect.left) / rect.width) * 100;
+    const y = ((e.clientY - rect.top) / rect.height) * 100;
+    cardRef.current.style.setProperty('--mx', `${x}%`);
+    cardRef.current.style.setProperty('--my', `${y}%`);
+  };
+
+  const onMouseLeave = () => {
+    if (cardRef.current) {
+      cardRef.current.style.setProperty('--mx', `50%`);
+      cardRef.current.style.setProperty('--my', `50%`);
+    }
+    rectRef.current = null;
+  };
+
+  return (
+    <motion.div
+      key={item.id}
+      variants={index % 2 === 0 ? slideInLeft : slideInRight}
+      initial="hidden"
+      whileInView="visible"
+      viewport={viewportOnce}
+      transition={{ ...transitionSpring, delay: index * 0.12 }}
+      className="relative pl-16 pb-12 last:pb-0"
+    >
+      {/* Timeline node — enhanced pop-in with rotation */}
+      <motion.div
+        className="absolute left-0 top-2 w-10 h-10 rounded-full border-2 border-[#3b82f6] bg-[#0b1120] flex items-center justify-center z-10"
+        initial={{ scale: 0, opacity: 0, rotate: -90 }}
+        whileInView={{ scale: 1, opacity: 1, rotate: 0 }}
+        viewport={{ once: true }}
+        transition={{
+          type: 'spring',
+          stiffness: 200,
+          damping: 15,
+          delay: index * 0.12 + 0.1,
+        }}
+        whileHover={{ scale: 1.15 }}
+      >
+        <motion.div
+          className="w-2.5 h-2.5 rounded-full bg-[#3b82f6] shadow-[0_0_12px_4px_rgba(59, 130, 246,0.5)]"
+          animate={{ scale: [1, 1.2, 1] }}
+          transition={{ duration: 2, repeat: Infinity, repeatType: 'reverse' }}
+        />
+      </motion.div>
+
+      {/* Card */}
+      <motion.div
+        ref={cardRef}
+        onMouseMove={onMouseMove}
+        onMouseLeave={onMouseLeave}
+        className="relative group overflow-hidden rounded-xl border border-white/12 bg-slate-800/50 backdrop-blur-md p-5 hover:border-blue-500/20 transition-colors"
+        whileHover={{ x: 4 }}
+        transition={transitionSpring}
+      >
+        <div
+          className="pointer-events-none absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity"
+          style={{
+            background:
+              'radial-gradient(220px circle at var(--mx, 50%) var(--my, 50%), rgba(59, 130, 246,0.12), transparent 60%)',
+            mixBlendMode: 'screen',
+          }}
+        />
+        <div className="flex flex-wrap items-center gap-2 mb-1">
+          <h3 className="text-lg font-semibold text-white">{item.title}</h3>
+          <span className="text-xs font-mono text-[#06b6d4]">{item.period}</span>
+        </div>
+        <p className="text-blue-300/90 text-sm font-medium mb-2">{item.company}</p>
+        <p className="text-slate-300 text-sm leading-relaxed mb-3">{item.description}</p>
+        {item.highlights && item.highlights.length > 0 && (
+          <ul className="space-y-1">
+            {item.highlights.map((h) => (
+              <li key={h} className="text-slate-400 text-sm flex items-start gap-2">
+                <span className="text-blue-400 mt-0.5">▹</span>
+                {h}
+              </li>
+            ))}
+          </ul>
+        )}
+      </motion.div>
+    </motion.div>
+  );
+}
+          <div className="relative z-10">
+            {experience.map((item, i) => (
+              <TimelineCard key={item.id} item={item} index={i} />
+            ))}
+          </div>
         </div>
       </div>
     </section>

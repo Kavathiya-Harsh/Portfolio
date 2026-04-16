@@ -19,12 +19,12 @@ const L_DELAY = 0.52;   // delay before firstchar of lastName
 const L_STEP  = 0.048;  // stagger per char — lastName
 
 // When last char of lastName finishes landing (~0.65s animation)
-const NAME_DONE = L_DELAY + LAST_NAME.length * L_STEP + 0.65; // ≈ 1.69s
+const NAME_DONE = L_DELAY + LAST_NAME.length * L_STEP + 0.5; // ≈ 1.45s (previously 1.69s)
 
 // Phase timestamps (ms)
-const T_SLOGAN   = NAME_DONE * 1000;            // ~1690
-const T_EXIT     = (NAME_DONE + 1.5) * 1000;   // ~3190
-const T_COMPLETE = (NAME_DONE + 2.1) * 1000;   // ~3790
+const T_SLOGAN   = NAME_DONE * 1000;            // ~1450
+const T_EXIT     = (NAME_DONE + 1.2) * 1000;   // ~2650
+const T_COMPLETE = (NAME_DONE + 1.8) * 1000;   // ~3250
 
 /* ─── SHARED EASING ─────────────────────────────────── */
 const EASE_OUT_EXPO = [0.16, 1, 0.3, 1];
@@ -203,18 +203,16 @@ export default function LoadingScreen({ onComplete }) {
             ))}
           </div>
 
-          {/* SLOGAN + ROLE + LINE — fade in after name lands */}
+          {/* SLOGAN + ROLE + LINE — always in DOM, controlled by opacity for LCP */}
           <div className="flex flex-col items-center mt-8" style={{ minHeight: 90 }}>
-            <AnimatePresence>
-              {(phase === 'slogan' || phase === 'exit') && (
-                <motion.div
-                  key="sub-content"
-                  initial={{ opacity: 0, y: 14 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -6 }}
-                  transition={{ duration: 0.55, ease: 'easeOut' }}
-                  className="flex flex-col items-center gap-4"
-                >
+            <motion.div
+              key="sub-content"
+              initial={{ opacity: 0, y: 14 }}
+              animate={(phase === 'slogan' || phase === 'exit') ? { opacity: 1, y: 0 } : { opacity: 0, y: 14 }}
+              exit={{ opacity: 0, y: -6 }}
+              transition={{ duration: 0.55, ease: 'easeOut' }}
+              className="flex flex-col items-center gap-4"
+            >
                   {/* Slogan */}
                   <motion.p
                     initial={{ opacity: 0, letterSpacing: '0.55em' }}
@@ -258,8 +256,6 @@ export default function LoadingScreen({ onComplete }) {
                     }}
                   />
                 </motion.div>
-              )}
-            </AnimatePresence>
           </div>
         </div>
 

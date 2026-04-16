@@ -52,7 +52,10 @@ export default function TestimonialCarousel() {
           whileInView="visible"
           viewport={viewportOnce}
           onMouseMove={(e) => {
-            const rect = e.currentTarget.getBoundingClientRect();
+            if (!rectRef.current) {
+              rectRef.current = e.currentTarget.getBoundingClientRect();
+            }
+            const rect = rectRef.current;
             const x = ((e.clientX - rect.left) / rect.width) * 100;
             const y = ((e.clientY - rect.top) / rect.height) * 100;
             e.currentTarget.style.setProperty('--mx', `${x}%`);
@@ -61,6 +64,7 @@ export default function TestimonialCarousel() {
           onMouseLeave={(e) => {
             e.currentTarget.style.setProperty('--mx', `50%`);
             e.currentTarget.style.setProperty('--my', `50%`);
+            rectRef.current = null;
           }}
           className="relative group overflow-hidden rounded-2xl border border-white/12 bg-slate-800/50 backdrop-blur-md p-8 md:p-10"
         >

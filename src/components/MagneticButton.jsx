@@ -7,9 +7,11 @@ export default function MagneticButton({ children, className = '', href, ...prop
   const y = useMotionValue(0);
   const [isHovered, setIsHovered] = useState(false);
 
+  const rectRef = useRef(null);
+
   const handleMouseMove = (e) => {
-    if (!ref.current) return;
-    const rect = ref.current.getBoundingClientRect();
+    if (!ref.current || !rectRef.current) return;
+    const rect = rectRef.current;
     const centerX = rect.left + rect.width / 2;
     const centerY = rect.top + rect.height / 2;
     const distance = 60;
@@ -23,9 +25,15 @@ export default function MagneticButton({ children, className = '', href, ...prop
     x.set(0);
     y.set(0);
     setIsHovered(false);
+    rectRef.current = null;
   };
 
-  const handleMouseEnter = () => setIsHovered(true);
+  const handleMouseEnter = () => {
+    if (ref.current) {
+      rectRef.current = ref.current.getBoundingClientRect();
+      setIsHovered(true);
+    }
+  };
 
   const transform = useMotionTemplate`translate(${x}px, ${y}px)`;
 

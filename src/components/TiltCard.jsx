@@ -8,9 +8,14 @@ export default function TiltCard({ children, className = '', ...props }) {
   const x = useMotionValue(0);
   const y = useMotionValue(0);
 
+  const rectRef = useRef(null);
+
   const handleMouseMove = (e) => {
     if (!ref.current) return;
-    const rect = ref.current.getBoundingClientRect();
+    if (!rectRef.current) {
+      rectRef.current = ref.current.getBoundingClientRect();
+    }
+    const rect = rectRef.current;
     const centerX = rect.left + rect.width / 2;
     const centerY = rect.top + rect.height / 2;
     const moveX = (e.clientX - centerX) / (rect.width / 2);
@@ -26,6 +31,7 @@ export default function TiltCard({ children, className = '', ...props }) {
   const handleMouseLeave = () => {
     x.set(0);
     y.set(0);
+    rectRef.current = null;
     if (ref.current) {
       ref.current.style.setProperty('--mx', `50%`);
       ref.current.style.setProperty('--my', `50%`);
