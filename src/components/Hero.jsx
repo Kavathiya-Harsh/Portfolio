@@ -1,415 +1,435 @@
 import React, { useRef } from 'react';
-import { motion, useScroll, useTransform, useSpring } from 'framer-motion';
-import { ArrowRight, MapPin, GraduationCap, Download, CheckCircle2 } from 'lucide-react';
+import { motion, useScroll, useTransform, useSpring, AnimatePresence } from 'framer-motion';
+import { ArrowRight, MapPin, GraduationCap, Download, CheckCircle2, Sparkles } from 'lucide-react';
 import Typewriter from './Typewriter';
 import MagneticButton from './MagneticButton';
-import { fadeInUp, viewportOnce } from '../utils/motion';
 import { profile } from '../data/profile';
 import { useBreakpoint } from '../utils/useBreakpoint';
 import { usePerformance } from '../context/PerformanceContext';
 
-// Character-by-character animated title — uses tween (not spring) to avoid blur issues
-function AnimatedName({ firstName, lastName }) {
-  const allChars = [];
-  
-  // First name characters
-  firstName.split('').forEach((char, i) => {
-    allChars.push({ char, isLast: false, index: i });
-  });
-  // Space
-  allChars.push({ char: ' ', isLast: false, index: firstName.length });
-  // Last name characters (gradient)
-  lastName.split('').forEach((char, i) => {
-    allChars.push({ char, isLast: true, index: firstName.length + 1 + i });
-  });
+/* ─── Shared easing ─────────────────────────────────── */
+const EXPO = [0.16, 1, 0.3, 1];
+
+/* ─── Stagger container variant ─────────────────────── */
+const staggerContainer = (stagger = 0.09, delay = 0) => ({
+  hidden: {},
+  visible: { transition: { staggerChildren: stagger, delayChildren: delay } },
+});
+
+/* ─── Standard child variant ─────────────────────────── */
+const fadeUp = {
+  hidden: { opacity: 0, y: 28 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.65, ease: EXPO } },
+};
+
+/* ─────────────────────────────────────────────────────── */
+/* Animated Name — char-by-char, only once isReady fires  */
+/* ─────────────────────────────────────────────────────── */
+function AnimatedName({ firstName, lastName, isReady }) {
+  const chars = [];
+  firstName.split('').forEach((c, i) => chars.push({ c, gradient: false, idx: i }));
+  chars.push({ c: ' ', gradient: false, idx: firstName.length });
+  lastName.split('').forEach((c, i) =>
+    chars.push({ c, gradient: true, idx: firstName.length + 1 + i })
+  );
 
   return (
     <motion.h1
-      className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold tracking-tighter leading-[1.1] mb-3 sm:mb-4"
+      className="font-bold tracking-tighter leading-[1.05] mb-4 whitespace-nowrap"
+      style={{ fontSize: 'clamp(1.85rem, 5.8vw, 5.25rem)' }}
       initial="hidden"
-      animate="visible"
+      animate={isReady ? 'visible' : 'hidden'}
       aria-label={`${firstName} ${lastName}`}
       variants={{
         hidden: {},
-        visible: {
-          transition: { staggerChildren: 0.04, delayChildren: 0.2 },
-        },
+        visible: { transition: { staggerChildren: 0.042, delayChildren: 0.05 } },
       }}
     >
-      {allChars.map((item, i) => (
+      {chars.map((item, i) => (
         <motion.span
           key={i}
           aria-hidden="true"
           variants={{
-            hidden: { opacity: 0, y: 40, rotateX: -60 },
+            hidden: { opacity: 0, y: 38, rotateX: -55 },
             visible: {
-              opacity: 1,
-              y: 0,
-              rotateX: 0,
-              transition: { duration: 0.5, ease: [0.16, 1, 0.3, 1] },
+              opacity: 1, y: 0, rotateX: 0,
+              transition: { duration: 0.55, ease: EXPO },
             },
           }}
           className={`inline-block will-change-transform ${
-            item.isLast
-              ? 'bg-gradient-to-r from-blue-400 via-cyan-400 to-blue-500 bg-clip-text text-transparent'
+            item.gradient
+              ? 'bg-gradient-to-r from-blue-400 via-cyan-300 to-blue-500 bg-clip-text text-transparent'
               : 'text-white'
           }`}
-          style={{
-            transformOrigin: 'center bottom',
-            perspective: '600px',
-          }}
+          style={{ transformOrigin: 'center bottom', perspective: '700px' }}
         >
-          {item.char === ' ' ? '\u00A0' : item.char}
+          {item.c === ' ' ? '\u00A0' : item.c}
         </motion.span>
       ))}
     </motion.h1>
   );
 }
 
-export default function Hero() {
+/* ─────────────────────────────────────────────────────── */
+/* InfoCard — location + education glassmorphism card     */
+/* ─────────────────────────────────────────────────────── */
+function InfoCard({ isLowPower }) {
+  return (
+    <div className="relative group/card mb-7 sm:mb-8">
+      {/* Gradient border glow */}
+      <div
+        className="absolute -inset-px rounded-2xl pointer-events-none"
+        style={{
+          background:
+            'linear-gradient(135deg, rgba(56,189,248,0.18) 0%, rgba(99,102,241,0.15) 60%, rgba(56,189,248,0.08) 100%)',
+        }}
+      />
+      {/* Card body */}
+      <div
+        className="relative rounded-2xl overflow-hidden"
+        style={{ background: 'rgba(7,11,22,0.82)', backdropFilter: 'blur(24px)' }}
+      >
+        {/* Hover shimmer */}
+        {!isLowPower && (
+          <motion.div
+            className="absolute inset-0 pointer-events-none"
+            initial={{ x: '-110%', opacity: 0 }}
+            whileHover={{ x: '110%', opacity: 1 }}
+            transition={{ duration: 0.75, ease: 'easeInOut' }}
+            style={{
+              background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.035), transparent)',
+            }}
+          />
+        )}
+
+        {/* Ambient blobs */}
+        <div className="absolute -top-8 -right-8 w-32 h-32 bg-cyan-500/8 blur-[55px] rounded-full pointer-events-none" />
+        <div className="absolute -bottom-8 -left-8 w-28 h-28 bg-indigo-500/8 blur-[45px] rounded-full pointer-events-none" />
+
+        <div className="p-3.5 sm:p-4 space-y-0.5">
+          {/* Location row */}
+          <motion.div
+            whileHover={{ x: 5 }}
+            transition={{ type: 'spring', stiffness: 340, damping: 26 }}
+            className="flex items-center gap-3 sm:gap-4 p-3 rounded-xl cursor-default transition-colors duration-200"
+            onMouseEnter={e => (e.currentTarget.style.background = 'rgba(56,189,248,0.06)')}
+            onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
+          >
+            <div className="relative shrink-0">
+              <div
+                className="w-10 h-10 rounded-xl flex items-center justify-center"
+                style={{
+                  background: 'linear-gradient(135deg, rgba(56,189,248,0.16), rgba(56,189,248,0.06))',
+                  border: '1px solid rgba(56,189,248,0.22)',
+                  boxShadow: '0 0 16px rgba(56,189,248,0.1)',
+                }}
+              >
+                <MapPin className="w-4 h-4 text-cyan-400" />
+              </div>
+              {/* Live ping */}
+              <span className="absolute -top-0.5 -right-0.5 flex w-2.5 h-2.5">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-40" />
+                <span
+                  className="relative inline-flex rounded-full w-2.5 h-2.5 bg-cyan-500"
+                  style={{ boxShadow: '0 0 6px rgba(56,189,248,0.7)' }}
+                />
+              </span>
+            </div>
+            <div className="min-w-0">
+              <p className="text-[10px] font-mono uppercase tracking-[0.18em] mb-0.5 text-cyan-400/60">
+                Current Base
+              </p>
+              <p className="text-white text-sm font-semibold leading-tight">
+                Kalol &amp; Gandhinagar,{' '}
+                <span className="text-cyan-400">Gujarat</span>
+              </p>
+            </div>
+            <ArrowRight className="w-3.5 h-3.5 text-cyan-500/40 ml-auto shrink-0 opacity-0 group-hover/card:opacity-100 transition-opacity" />
+          </motion.div>
+
+          {/* Divider */}
+          <div
+            className="mx-3 h-px"
+            style={{ background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.055), transparent)' }}
+          />
+
+          {/* Education row */}
+          <motion.div
+            whileHover={{ x: 5 }}
+            transition={{ type: 'spring', stiffness: 340, damping: 26 }}
+            className="flex items-start gap-3 sm:gap-4 p-3 rounded-xl cursor-default transition-colors duration-200"
+            onMouseEnter={e => (e.currentTarget.style.background = 'rgba(99,102,241,0.06)')}
+            onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
+          >
+            <div className="shrink-0 mt-0.5">
+              <div
+                className="w-10 h-10 rounded-xl flex items-center justify-center"
+                style={{
+                  background: 'linear-gradient(135deg, rgba(99,102,241,0.16), rgba(99,102,241,0.06))',
+                  border: '1px solid rgba(99,102,241,0.22)',
+                  boxShadow: '0 0 16px rgba(99,102,241,0.1)',
+                }}
+              >
+                <GraduationCap className="w-4 h-4 text-indigo-400" />
+              </div>
+            </div>
+            <div className="min-w-0 flex-1">
+              <p className="text-[10px] font-mono uppercase tracking-[0.18em] mb-0.5 text-indigo-400/60">
+                Education
+              </p>
+              <p className="text-white text-sm font-bold leading-tight mb-1">
+                B.E. in Computer Science
+              </p>
+              <p className="text-slate-400 text-[11px] leading-snug mb-2">
+                Shree Swaminarayan University{' '}
+                <span className="text-indigo-400/80 font-medium">(CodingGita)</span>
+              </p>
+              <div
+                className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg"
+                style={{
+                  background: 'rgba(255,255,255,0.04)',
+                  border: '1px solid rgba(255,255,255,0.07)',
+                }}
+              >
+                <CheckCircle2 className="w-3 h-3 text-indigo-400" />
+                <span className="text-[10px] text-slate-400">
+                  10th &amp; 12th · <span className="text-slate-300">Modi School</span>
+                </span>
+              </div>
+            </div>
+          </motion.div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ─────────────────────────────────────────────────────── */
+/* PhotoSection — profile photo with premium orb effects  */
+/* ─────────────────────────────────────────────────────── */
+function PhotoSection({ isLowPower, isReady }) {
+  const [photoError, setPhotoError] = React.useState(false);
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, scale: 0.88, y: 20 }}
+      animate={isReady ? { opacity: 1, scale: 1, y: 0 } : { opacity: 0, scale: 0.88, y: 20 }}
+      transition={{ duration: 0.9, ease: EXPO, delay: 0.15 }}
+      className="flex justify-center items-center order-1 lg:order-2 will-change-transform"
+    >
+      <div className="relative group">
+        {/* Outer glow pulse */}
+        <motion.div
+          className="absolute -inset-16 rounded-full pointer-events-none"
+          style={{ background: 'radial-gradient(circle, rgba(59,130,246,0.12) 0%, transparent 70%)' }}
+          animate={{ opacity: [0.5, 1, 0.5] }}
+          transition={{ duration: 5, repeat: Infinity, ease: 'easeInOut' }}
+        />
+
+        {/* Orbiting dashed ring */}
+        <motion.div
+          className="absolute -inset-5 rounded-full border-2 border-dashed border-blue-500/20"
+          animate={!isLowPower ? { rotate: 360 } : {}}
+          transition={{ duration: 22, repeat: Infinity, ease: 'linear' }}
+        />
+        {/* Outer static ring */}
+        <motion.div
+          className="absolute -inset-9 rounded-full border border-cyan-400/8"
+          animate={!isLowPower ? { rotate: -360 } : {}}
+          transition={{ duration: 32, repeat: Infinity, ease: 'linear' }}
+        />
+
+        {/* Spinning gradient border */}
+        <motion.div
+          className="absolute -inset-1 rounded-full p-[3px]"
+          style={{
+            background: 'linear-gradient(135deg, #3b82f6, #06b6d4, #8b5cf6, #3b82f6)',
+            boxShadow: '0 0 70px -18px rgba(37,99,235,0.65)',
+          }}
+          animate={!isLowPower ? { rotate: 360 } : {}}
+          transition={{ duration: 14, repeat: Infinity, ease: 'linear' }}
+        >
+          <div className="w-full h-full rounded-full bg-[#080d1a]" />
+        </motion.div>
+
+        {/* Floating accent dots */}
+        {[
+          { top: '16%', right: '-10px', delay: 0 },
+          { top: '50%', left: '-10px', delay: 0.9 },
+          { top: '80%', right: '-10px', delay: 1.8 },
+        ].map((dot, i) => (
+          <motion.div
+            key={i}
+            className="absolute w-2 h-2 rounded-full bg-blue-400/70"
+            style={{ ...dot, boxShadow: '0 0 8px rgba(59,130,246,0.7)' }}
+            animate={{ y: [0, -10, 0], opacity: [0.5, 1, 0.5] }}
+            transition={{ duration: 3, delay: dot.delay, repeat: Infinity, ease: 'easeInOut' }}
+          />
+        ))}
+
+        {/* Photo */}
+        <div className="relative w-56 h-56 sm:w-72 sm:h-72 md:w-80 md:h-80 lg:w-[22rem] lg:h-[22rem] rounded-full overflow-hidden border-[5px] border-[#080d1a] bg-slate-800 z-10 shadow-2xl">
+          {!photoError ? (
+            <img
+              src={profile.photoUrl}
+              alt={profile.name}
+              width="352"
+              height="352"
+              fetchpriority="high"
+              loading="eager"
+              decoding="async"
+              className="w-full h-full object-cover object-top scale-105 group-hover:scale-110 transition-transform duration-[1.2s] will-change-transform"
+              onError={() => setPhotoError(true)}
+            />
+          ) : (
+            <div className="w-full h-full flex flex-col items-center justify-center bg-gradient-to-br from-blue-600 to-cyan-500">
+              <span className="text-5xl font-black text-white tracking-widest">{profile.initials}</span>
+              <p className="text-[10px] text-white/50 uppercase tracking-[0.2em] mt-2 font-mono">Profile</p>
+            </div>
+          )}
+        </div>
+
+
+      </div>
+    </motion.div>
+  );
+}
+
+/* ─────────────────────────────────────────────────────── */
+/* Hero — main section                                    */
+/* ─────────────────────────────────────────────────────── */
+export default function Hero({ isReady = false }) {
   const isMobile = useBreakpoint(1024);
   const { isLowPower } = usePerformance();
-  const [photoError, setPhotoError] = React.useState(false);
   const sectionRef = useRef(null);
 
   const { scrollYProgress } = useScroll({
     target: sectionRef,
     offset: ['start start', 'end start'],
   });
-
-  const smoothProgress = useSpring(scrollYProgress, {
-    stiffness: 100,
-    damping: 30,
-    restDelta: 0.001,
-  });
-
-  // Simplified parallax strategy to prevent layout hangs
-  const contentY = useTransform(smoothProgress, [0, 1], (isMobile || isLowPower) ? [0, 0] : [0, -60]);
-  
-  // Removed heavy scale/opacity transforms of the main photo during scroll
-  // Background parallax reduced if in low power mode
-  const bgOrb1Y = useTransform(smoothProgress, [0, 1], (isMobile || isLowPower) ? [0, 0] : [0, 80]);
-  const bgOrb2Y = useTransform(smoothProgress, [0, 1], (isMobile || isLowPower) ? [0, 0] : [0, 50]);
+  const smoothProgress = useSpring(scrollYProgress, { stiffness: 100, damping: 30, restDelta: 0.001 });
+  const noParallax = isMobile || isLowPower;
+  const contentY = useTransform(smoothProgress, [0, 1], noParallax ? [0, 0] : [0, -55]);
+  const bgOrb1Y  = useTransform(smoothProgress, [0, 1], noParallax ? [0, 0] : [0, 75]);
+  const bgOrb2Y  = useTransform(smoothProgress, [0, 1], noParallax ? [0, 0] : [0, 45]);
 
   const firstName = profile.name.split(' ')[0];
-  const lastName = profile.name.split(' ').slice(1).join(' ');
+  const lastName  = profile.name.split(' ').slice(1).join(' ');
 
   return (
     <section
       id="hero"
       ref={sectionRef}
-      className="relative min-h-screen flex flex-col justify-center pt-20 sm:pt-24 pb-12 sm:pb-16 px-4 sm:px-6 overflow-hidden"
+      className="relative min-h-screen flex flex-col justify-center pt-20 sm:pt-24 pb-16 px-4 sm:px-6 overflow-hidden"
     >
       {/* Background orbs */}
       <motion.div
-        className="absolute top-20 right-[10%] w-[300px] sm:w-[500px] h-[300px] sm:h-[500px] bg-blue-500/10 blur-[100px] sm:blur-[120px] rounded-full pointer-events-none animate-pulse will-change-transform"
-        style={{ y: bgOrb1Y }}
+        className="absolute top-24 right-[8%] w-[280px] sm:w-[480px] h-[280px] sm:h-[480px] rounded-full pointer-events-none will-change-transform"
+        style={{ y: bgOrb1Y, background: 'radial-gradient(circle, rgba(59,130,246,0.1) 0%, transparent 70%)', filter: 'blur(60px)' }}
       />
       <motion.div
-        className="absolute bottom-20 left-[5%] w-[250px] sm:w-[400px] h-[250px] sm:h-[400px] bg-cyan-500/5 blur-[80px] sm:blur-[100px] rounded-full pointer-events-none will-change-transform"
-        style={{ y: bgOrb2Y }}
+        className="absolute bottom-20 left-[3%] w-[240px] sm:w-[380px] h-[240px] sm:h-[380px] rounded-full pointer-events-none will-change-transform"
+        style={{ y: bgOrb2Y, background: 'radial-gradient(circle, rgba(6,182,212,0.07) 0%, transparent 70%)', filter: 'blur(60px)' }}
       />
 
       <div className="max-w-7xl mx-auto w-full relative z-10">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 sm:gap-16 lg:gap-24 items-center">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 xl:gap-28 items-center">
 
-          {/* LEFT: Content */}
+          {/* ── LEFT: Content ──────────────────────────────────── */}
           <motion.div
             initial="hidden"
-            animate="visible"
-            variants={{
-              visible: { transition: { staggerChildren: 0.08, delayChildren: 0.1 } },
-            }}
-            className="order-2 lg:order-1"
+            animate={isReady ? 'visible' : 'hidden'}
+            variants={staggerContainer(0.09, 0)}
+            className="order-2 lg:order-1 flex flex-col"
             style={{ y: contentY }}
           >
-            {/* Status Badge */}
-            <motion.div
-              variants={fadeInUp}
-              transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-              className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-medium mb-4 sm:mb-5 shadow-sm"
-            >
-              <span className="relative flex h-2 w-2">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+            {/* Status badge */}
+            <motion.div variants={fadeUp} className="mb-5">
+              <span
+                className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-semibold"
+                style={{
+                  background: 'rgba(16,185,129,0.08)',
+                  border: '1px solid rgba(16,185,129,0.2)',
+                  color: '#34d399',
+                  boxShadow: '0 0 20px rgba(16,185,129,0.06)',
+                }}
+              >
+                <Sparkles className="w-3 h-3" />
+                Open to Innovation &amp; Collaboration
               </span>
-              <span>Open to Innovation & Collaboration</span>
             </motion.div>
 
-            {/* Full Name — "Harsh" in white, "Kavathiya" in gradient, single line */}
-            <AnimatedName firstName={firstName} lastName={lastName} />
+            {/* Animated name */}
+            <AnimatedName firstName={firstName} lastName={lastName} isReady={isReady} />
 
-            {/* Role typewriter */}
+            {/* Typewriter role */}
             <motion.div
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.8, delay: 0.8, ease: [0.16, 1, 0.3, 1] }}
-              className="text-lg sm:text-xl md:text-2xl font-medium text-slate-300 flex items-center gap-3 mb-6 sm:mb-8"
+              variants={fadeUp}
+              className="text-lg sm:text-xl md:text-2xl font-medium text-slate-300 flex items-center gap-3 mb-7"
             >
               <motion.div
                 initial={{ width: 0 }}
-                animate={{ width: 32 }}
-                transition={{ duration: 0.6, delay: 1.0, ease: [0.16, 1, 0.3, 1] }}
-                className="h-px bg-blue-500/50 hidden sm:block"
+                animate={isReady ? { width: 28 } : { width: 0 }}
+                transition={{ duration: 0.55, delay: 0.5, ease: EXPO }}
+                className="h-px bg-blue-500/50 shrink-0 hidden sm:block"
               />
               <Typewriter />
             </motion.div>
 
-            {/* ── Info Card ── */}
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.5, ease: [0.16, 1, 0.3, 1] }}
-              className="relative mb-6 sm:mb-8 group/card"
-            >
-              {/* Animated gradient border - Disabled in low power mode */}
-              {!isLowPower && (
-                <div
-                  className="absolute -inset-[1px] rounded-2xl sm:rounded-3xl pointer-events-none"
-                  style={{
-                    background: 'linear-gradient(135deg, rgba(19, 44, 55, 0.4) 0%, rgba(99,102,241,0.2) 50%, rgba(56,189,248,0.1) 100%)',
-                  }}
-                />
-              )}
-
-              {/* Card body */}
-              <div className="relative rounded-2xl sm:rounded-3xl overflow-hidden"
-                style={{ background: 'rgba(8,13,26,0.85)', backdropFilter: 'blur(20px)' }}
-              >
-                {/* Shimmer sweep on hover */}
-                <motion.div
-                  className="absolute inset-0 pointer-events-none"
-                  initial={{ x: '-100%', opacity: 0 }}
-                  whileHover={{ x: '100%', opacity: 1 }}
-                  transition={{ duration: 0.7, ease: 'easeInOut' }}
-                  style={{
-                    background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.04), transparent)',
-                  }}
-                />
-
-                {/* Ambient blob */}
-                <div className="absolute -top-10 -right-10 w-40 h-40 bg-cyan-500/10 blur-[60px] rounded-full pointer-events-none" />
-                <div className="absolute -bottom-10 -left-10 w-32 h-32 bg-blue-500/10 blur-[50px] rounded-full pointer-events-none" />
-
-                <div className="p-4 sm:p-5 space-y-1">
-
-                  {/* ── Location Row ── */}
-                  <motion.div
-                    whileHover={{ x: 4 }}
-                    transition={{ type: 'spring', stiffness: 300, damping: 25 }}
-                    className="group/row flex items-center gap-3 sm:gap-4 p-3 sm:p-3.5 rounded-xl transition-colors duration-300 cursor-default"
-                    style={{ background: 'transparent' }}
-                    onMouseEnter={e => e.currentTarget.style.background = 'rgba(56,189,248,0.05)'}
-                    onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
-                  >
-                    {/* Icon bubble */}
-                    <div className="relative shrink-0">
-                      <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl flex items-center justify-center"
-                        style={{
-                          background: 'linear-gradient(135deg, rgba(56,189,248,0.15) 0%, rgba(56,189,248,0.05) 100%)',
-                          border: '1px solid rgba(56,189,248,0.25)',
-                          boxShadow: '0 0 16px rgba(56,189,248,0.12)',
-                        }}
-                      >
-                        <MapPin className="w-4 h-4 sm:w-5 sm:h-5 text-cyan-400" />
-                      </div>
-                      {/* Ping dot */}
-                      <span className="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 flex">
-                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-40" />
-                        <span className="relative inline-flex rounded-full w-2.5 h-2.5 bg-cyan-500"
-                          style={{ boxShadow: '0 0 6px rgba(56,189,248,0.8)' }} />
-                      </span>
-                    </div>
-
-                    <div className="min-w-0">
-                      <p className="text-[10px] font-mono uppercase tracking-[0.18em] mb-0.5"
-                        style={{ color: 'rgba(56,189,248,0.6)' }}>Current Base</p>
-                      <p className="text-white text-sm sm:text-[15px] font-semibold leading-tight">
-                        Kalol &amp; Gandhinagar,{' '}
-                        <span className="text-cyan-400">Gujarat</span>
-                      </p>
-                    </div>
-
-                    {/* Trailing arrow */}
-                    <motion.div
-                      initial={{ opacity: 0, x: -6 }}
-                      whileHover={{ opacity: 1, x: 0 }}
-                      className="ml-auto shrink-0 text-cyan-500/50"
-                    >
-                      <ArrowRight className="w-4 h-4" />
-                    </motion.div>
-                  </motion.div>
-
-                  {/* Divider */}
-                  <div className="mx-3 h-px"
-                    style={{ background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.06), transparent)' }} />
-
-                  {/* ── Education Row ── */}
-                  <motion.div
-                    whileHover={{ x: 4 }}
-                    transition={{ type: 'spring', stiffness: 300, damping: 25 }}
-                    className="flex items-start gap-3 sm:gap-4 p-3 sm:p-3.5 rounded-xl transition-colors duration-300 cursor-default"
-                    style={{ background: 'transparent' }}
-                    onMouseEnter={e => e.currentTarget.style.background = 'rgba(99,102,241,0.05)'}
-                    onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
-                  >
-                    {/* Icon bubble */}
-                    <div className="relative shrink-0 mt-0.5">
-                      <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl flex items-center justify-center"
-                        style={{
-                          background: 'linear-gradient(135deg, rgba(99,102,241,0.15) 0%, rgba(99,102,241,0.05) 100%)',
-                          border: '1px solid rgba(99,102,241,0.25)',
-                          boxShadow: '0 0 16px rgba(99,102,241,0.12)',
-                        }}
-                      >
-                        <GraduationCap className="w-4 h-4 sm:w-5 sm:h-5 text-indigo-400" />
-                      </div>
-                    </div>
-
-                    <div className="min-w-0 flex-1">
-                      <p className="text-[10px] font-mono uppercase tracking-[0.18em] mb-0.5"
-                        style={{ color: 'rgba(99,102,241,0.6)' }}>Education</p>
-                      <p className="text-white text-sm sm:text-[15px] font-bold leading-tight mb-1">
-                        B.E. in Computer Science
-                      </p>
-                      <p className="text-slate-400 text-[11px] sm:text-xs leading-snug mb-2">
-                        Shree Swaminarayan University{' '}
-                        <span className="text-indigo-400/80 font-medium">(CodingGita)</span>
-                      </p>
-
-                      {/* School badge */}
-                      <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg"
-                        style={{
-                          background: 'rgba(255,255,255,0.04)',
-                          border: '1px solid rgba(255,255,255,0.08)',
-                        }}
-                      >
-                        <CheckCircle2 className="w-3 h-3 text-indigo-400" />
-                        <span className="text-[10px] sm:text-[11px] text-slate-400">
-                          10th &amp; 12th · <span className="text-slate-300">Modi School</span>
-                        </span>
-                      </div>
-                    </div>
-                  </motion.div>
-
-                </div>
-              </div>
+            {/* Info card */}
+            <motion.div variants={fadeUp}>
+              <InfoCard isLowPower={isLowPower} />
             </motion.div>
-
 
             {/* CTAs */}
             <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.7, delay: 0.7, ease: [0.16, 1, 0.3, 1] }}
-              className="flex flex-col sm:flex-row flex-wrap items-stretch sm:items-center gap-3 sm:gap-5"
+              variants={fadeUp}
+              className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4"
             >
+              {/* Primary CTA */}
               <MagneticButton
                 href="#contact"
-                whileHover={{ 
-                  scale: 1.05, 
-                  y: -4,
-                  boxShadow: "0 20px 40px -10px rgba(37,99,235,0.5)"
-                }}
-                className="px-6 sm:px-8 py-4 rounded-xl sm:rounded-2xl bg-blue-600 text-white font-bold transition-all flex items-center justify-center gap-2 group text-sm sm:text-base border border-blue-400/20"
+                whileHover={{ scale: 1.04, y: -3, boxShadow: '0 18px 40px -10px rgba(37,99,235,0.55)' }}
+                whileTap={{ scale: 0.97 }}
+                className="relative px-7 py-3.5 rounded-xl text-white font-bold text-sm sm:text-base flex items-center justify-center gap-2 group overflow-hidden"
+                style={{ background: 'linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%)', border: '1px solid rgba(96,165,250,0.2)' }}
                 title="Contact Harsh Kavathiya"
               >
-                Let's Build Something <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                {/* Shimmer on hover */}
+                <motion.div
+                  className="absolute inset-0 pointer-events-none"
+                  initial={{ x: '-110%' }}
+                  whileHover={{ x: '110%' }}
+                  transition={{ duration: 0.6 }}
+                  style={{ background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.12), transparent)' }}
+                />
+                Let's Build Something
+                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-200" />
               </MagneticButton>
+
+              {/* Secondary CTA */}
               <MagneticButton
                 href={profile.resumeUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                whileHover={{ 
-                  scale: 1.05, 
-                  y: -4,
-                  boxShadow: "0 20px 40px -10px rgba(212,175,55,0.2)"
+                whileHover={{ scale: 1.04, y: -3, boxShadow: '0 14px 32px -8px rgba(0,0,0,0.3)' }}
+                whileTap={{ scale: 0.97 }}
+                className="px-7 py-3.5 rounded-xl font-bold text-sm sm:text-base flex items-center justify-center gap-2 text-slate-300 hover:text-white transition-colors duration-200"
+                style={{
+                  background: 'rgba(255,255,255,0.05)',
+                  border: '1px solid rgba(255,255,255,0.1)',
+                  backdropFilter: 'blur(8px)',
                 }}
-                className="px-6 sm:px-8 py-4 rounded-xl sm:rounded-2xl bg-white/5 text-white font-bold border border-white/10 hover:border-[#d4af37]/40 hover:text-[#d4af37] transition-all flex items-center justify-center gap-2 text-sm sm:text-base"
                 title="Download Harsh Kavathiya's Resume"
               >
-                <Download className="w-4 h-4" /> Download CV
+                <Download className="w-4 h-4" />
+                Download CV
               </MagneticButton>
             </motion.div>
           </motion.div>
 
-          {/* RIGHT: Photo */}
-          <motion.div
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ type: 'spring', stiffness: 50, damping: 20, delay: 0.3 }}
-            className="flex justify-center items-center order-1 lg:order-2 will-change-transform"
-          >
-            <div className="relative group">
-              {/* Animated gradient glow — static gradient with composited opacity pulse */}
-              <motion.div
-                className="absolute -inset-12 sm:-inset-16 rounded-full pointer-events-none"
-                style={{
-                  background: 'radial-gradient(circle, rgba(59,130,246,0.15) 0%, transparent 70%)',
-                }}
-                animate={{ opacity: [0.6, 1, 0.6] }}
-                transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut' }}
-              />
-
-              {/* Orbiting rings - Static in low power mode */}
-              <motion.div
-                className="absolute -inset-4 sm:-inset-5 rounded-full border-2 border-dashed border-blue-500/20"
-                animate={!isLowPower ? { rotate: 360 } : {}}
-                transition={{ duration: 20, repeat: Infinity, ease: 'linear' }}
-              />
-              <motion.div
-                className="absolute -inset-7 sm:-inset-9 rounded-full border border-cyan-400/10"
-                animate={!isLowPower ? { rotate: -360 } : {}}
-                transition={{ duration: 30, repeat: Infinity, ease: 'linear' }}
-              />
-
-              {/* Gradient spinning border */}
-              <motion.div
-                className="absolute -inset-1 rounded-full bg-gradient-to-tr from-blue-500 via-cyan-400 to-purple-500 p-1.5 shadow-[0_0_80px_-20px_rgba(37,99,235,0.6)]"
-                animate={!isLowPower ? { rotate: 360 } : {}}
-                transition={{ duration: 15, repeat: Infinity, ease: 'linear' }}
-              >
-                <div className="w-full h-full rounded-full bg-[#080d1a]" />
-              </motion.div>
-
-              {/* Floating dots */}
-              {[0, 1, 2].map((i) => (
-                <motion.div
-                  key={i}
-                  className="absolute w-2 h-2 rounded-full bg-blue-400/60 shadow-[0_0_8px_rgba(59,130,246,0.6)]"
-                  style={{
-                    top: `${20 + i * 30}%`,
-                    left: i === 1 ? '-8px' : 'auto',
-                    right: i !== 1 ? '-8px' : 'auto',
-                  }}
-                  animate={{ y: [0, -12, 0], opacity: [0.4, 1, 0.4] }}
-                  transition={{ duration: 3, delay: i * 0.8, repeat: Infinity, ease: 'easeInOut' }}
-                />
-              ))}
-
-              {/* Photo */}
-              <div className="relative w-52 h-52 sm:w-64 sm:h-64 md:w-80 md:h-80 lg:w-96 lg:h-96 rounded-full overflow-hidden border-[4px] sm:border-[6px] border-[#080d1a] bg-slate-800 z-10 shadow-2xl">
-                {!photoError ? (
-                  <img
-                    src={profile.photoUrl}
-                    alt={profile.name}
-                    width="384"
-                    height="384"
-                    fetchpriority="high"
-                    loading="eager"
-                    decoding="async"
-                    className="w-full h-full object-cover object-top scale-105 group-hover:scale-110 transition-transform duration-1000 will-change-transform"
-                    onError={() => setPhotoError(true)}
-                  />
-                ) : (
-                  <div className="w-full h-full flex flex-col items-center justify-center bg-gradient-to-br from-blue-600 to-cyan-500">
-                    <span className="text-4xl sm:text-6xl font-black text-white tracking-widest">{profile.initials}</span>
-                    <p className="text-[10px] text-white/50 uppercase tracking-[0.2em] mt-2 font-mono">Profile Avatar</p>
-                  </div>
-                )}
-              </div>
-            </div>
-          </motion.div>
+          {/* ── RIGHT: Photo ────────────────────────────────────── */}
+          <PhotoSection isLowPower={isLowPower} isReady={isReady} />
         </div>
       </div>
     </section>
