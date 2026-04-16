@@ -283,7 +283,7 @@ export default function Navbar() {
                     <a
                       href={link.href}
                       onClick={(e) => handleNavClick(e, link.href)}
-                      className={`flex items-center gap-3 px-4 py-3 rounded-xl font-medium text-sm transition-all duration-200 ${
+                      className={`flex items-center gap-3 px-4 py-3.5 rounded-xl font-medium text-sm transition-all duration-200 ${
                         isActive
                           ? 'text-[#d4af37] border border-[#d4af37]/20'
                           : 'text-slate-300 hover:text-white hover:bg-white/5'

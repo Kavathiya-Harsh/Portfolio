@@ -207,7 +207,7 @@ function InfoCard({ isLowPower }) {
 /* ─────────────────────────────────────────────────────── */
 /* PhotoSection — profile photo with premium orb effects  */
 /* ─────────────────────────────────────────────────────── */
-function PhotoSection({ isLowPower, isReady }) {
+function PhotoSection({ isLowPower, isReady, isMobile }) {
   const [photoError, setPhotoError] = React.useState(false);
 
   return (
@@ -429,7 +429,7 @@ export default function Hero({ isReady = false }) {
           </motion.div>
 
           {/* ── RIGHT: Photo ────────────────────────────────────── */}
-          <PhotoSection isLowPower={isLowPower} isReady={isReady} />
+          <PhotoSection isLowPower={isLowPower} isReady={isReady} isMobile={isMobile} />
         </div>
       </div>
     </section>
