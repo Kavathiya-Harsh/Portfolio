@@ -16,6 +16,7 @@ function SkillIcon({ iconName, className }) {
 function SkillCard({ skill, index, categoryColor }) {
   const isMobile = useBreakpoint(1024);
   const cardRef = useRef(null);
+  const rectRef = useRef(null); // Cache rect to avoid forced reflow
   const x = useMotionValue(0);
   const y = useMotionValue(0);
 
@@ -25,13 +26,18 @@ function SkillCard({ skill, index, categoryColor }) {
   const rotateX = useTransform(mouseYSpring, [-0.5, 0.5], ["10deg", "-10deg"]);
   const rotateY = useTransform(mouseXSpring, [-0.5, 0.5], ["-10deg", "10deg"]);
 
-  const handleMouseMove = (e) => {
+  const handleMouseEnter = () => {
     if (!cardRef.current || isMobile) return;
-    const rect = cardRef.current.getBoundingClientRect();
-    const width = rect.width;
-    const height = rect.height;
-    const mouseX = e.clientX - rect.left;
-    const mouseY = e.clientY - rect.top;
+    rectRef.current = cardRef.current.getBoundingClientRect();
+  };
+
+  const handleMouseMove = (e) => {
+    if (!rectRef.current || isMobile) return;
+    const { left, top, width, height } = rectRef.current;
+    
+    // Performance optimization: prevent layout thrashing by using cached rect
+    const mouseX = e.clientX - left;
+    const mouseY = e.clientY - top;
     const xPct = mouseX / width - 0.5;
     const yPct = mouseY / height - 0.5;
     x.set(xPct);
@@ -41,11 +47,13 @@ function SkillCard({ skill, index, categoryColor }) {
   const handleMouseLeave = () => {
     x.set(0);
     y.set(0);
+    rectRef.current = null;
   };
 
   return (
     <motion.div
       ref={cardRef}
+      onMouseEnter={handleMouseEnter}
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
       style={{

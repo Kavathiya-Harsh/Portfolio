@@ -1,6 +1,6 @@
 import React, { useRef, useState } from 'react';
 import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion';
-import { Search, FolderOpen, Zap } from 'lucide-react';
+import { Search, FolderOpen, Zap, X as CloseIcon } from 'lucide-react';
 import ProjectCard from './ProjectCard';
 import { projects } from '../data/projects';
 import {
@@ -15,8 +15,6 @@ import { useRecruiterMode } from '../context/RecruiterModeContext';
 import { useBreakpoint } from '../utils/useBreakpoint';
 
 export default function ProjectGallery({ typeFilter = 'all' }) {
-  const [filter, setFilter] = useState('all');
-  const [searchQuery, setSearchQuery] = useState('');
   const { recruiterMode } = useRecruiterMode();
   const sectionRef = useRef(null);
   const isMobile = useBreakpoint(1024);
@@ -28,18 +26,10 @@ export default function ProjectGallery({ typeFilter = 'all' }) {
   });
   const titleX = useTransform(scrollYProgress, [0, 1], isMobile ? [0, 0] : [40, -40]);
 
-  const categories = ['all', ...new Set(projects.map(p => p.category.toLowerCase()))];
-  
   const filteredProjects = projects.filter(project => {
     if (recruiterMode && !project.featured) return false;
-    
-    const matchesFilter = filter === 'all' || project.category.toLowerCase() === filter;
-    const matchesSearch = project.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
-                          project.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                          project.tags.some(tag => tag.toLowerCase().includes(searchQuery.toLowerCase()));
     const matchesType = typeFilter === 'all' || project.type === typeFilter;
-    
-    return matchesFilter && matchesSearch && matchesType;
+    return matchesType;
   });
 
   return (
@@ -54,7 +44,7 @@ export default function ProjectGallery({ typeFilter = 'all' }) {
             initial="hidden"
             whileInView="visible"
             viewport={viewportOnce}
-            variants={staggerContainer(0.1, 0)}
+            variants={staggerContainer(0.12, 0)}
             className="flex-1"
           >
             <motion.span
@@ -78,43 +68,8 @@ export default function ProjectGallery({ typeFilter = 'all' }) {
               A curated collection of my work—ranging from high-scale e-commerce platforms to internal developer tools and SaaS products.
             </motion.p>
           </motion.div>
-
-          {/* Filter & Search */}
-          <motion.div 
-            initial="hidden"
-            whileInView="visible"
-            viewport={viewportOnce}
-            variants={staggerContainer(0.08, 0.2)}
-            className="flex flex-col gap-6 min-w-[320px]"
-          >
-            <motion.div variants={slideInRight} className="relative group">
-              <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500 group-focus-within:text-blue-400 transition-all" />
-              <input
-                type="text"
-                placeholder="Search projects..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-12 pr-4 py-4 bg-slate-800/50 border border-white/12 rounded-2xl text-white placeholder:text-slate-600 focus:outline-none focus:border-blue-500/50 focus:bg-white/[0.05] transition-all"
-              />
-            </motion.div>
-            <motion.div variants={slideInRight} className="flex flex-wrap gap-2 md:justify-end">
-              {categories.map((cat) => (
-                <button
-                  key={cat}
-                  onClick={() => setFilter(cat)}
-                  aria-pressed={filter === cat}
-                  className={`px-6 py-3.5 rounded-xl text-xs font-semibold capitalize transition-all duration-300 ${
-                    filter === cat 
-                      ? 'bg-blue-600 text-white shadow-[0_0_25px_rgba(37, 99, 235,0.5)]' 
-                      : 'bg-slate-800/50 text-slate-400 hover:bg-white/10 border border-white/8'
-                  }`}
-                >
-                  {cat}
-                </button>
-              ))}
-            </motion.div>
-          </motion.div>
         </div>
+
 
         {/* Project Cards Grid — staggered blurScaleIn */}
         <motion.div 
@@ -138,12 +93,17 @@ export default function ProjectGallery({ typeFilter = 'all' }) {
         {/* Empty State */}
         {filteredProjects.length === 0 && (
           <motion.div 
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            className="py-20 text-center"
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="py-32 text-center"
           >
-            <FolderOpen className="w-16 h-16 text-slate-700 mx-auto mb-4" />
-            <p className="text-slate-300 text-lg">No projects found in this category.</p>
+            <FolderOpen className="w-16 h-16 text-slate-700 mx-auto mb-6" />
+            <h4 className="text-white text-xl font-bold mb-2">
+              No projects found
+            </h4>
+            <p className="text-slate-500 text-sm max-w-xs mx-auto">
+              Your filtered view didn't return any items. Try clearing your filters.
+            </p>
           </motion.div>
         )}
       </div>

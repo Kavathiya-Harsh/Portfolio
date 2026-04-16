@@ -6,6 +6,7 @@ import MagneticButton from './MagneticButton';
 import { fadeInUp, viewportOnce } from '../utils/motion';
 import { profile } from '../data/profile';
 import { useBreakpoint } from '../utils/useBreakpoint';
+import { usePerformance } from '../context/PerformanceContext';
 
 // Character-by-character animated title — uses tween (not spring) to avoid blur issues
 function AnimatedName({ firstName, lastName }) {
@@ -67,6 +68,7 @@ function AnimatedName({ firstName, lastName }) {
 
 export default function Hero() {
   const isMobile = useBreakpoint(1024);
+  const { isLowPower } = usePerformance();
   const [photoError, setPhotoError] = React.useState(false);
   const sectionRef = useRef(null);
 
@@ -81,11 +83,13 @@ export default function Hero() {
     restDelta: 0.001,
   });
 
-  const contentY = useTransform(smoothProgress, [0, 1], isMobile ? [0, 0] : [0, -60]);
-  const photoScale = useTransform(smoothProgress, [0, 1], isMobile ? [1, 1] : [1, 0.88]);
-  const photoOpacity = useTransform(smoothProgress, [0, 0.8], isMobile ? [1, 1] : [1, 0]);
-  const bgOrb1Y = useTransform(smoothProgress, [0, 1], isMobile ? [0, 0] : [0, 80]);
-  const bgOrb2Y = useTransform(smoothProgress, [0, 1], isMobile ? [0, 0] : [0, 50]);
+  // Simplified parallax strategy to prevent layout hangs
+  const contentY = useTransform(smoothProgress, [0, 1], (isMobile || isLowPower) ? [0, 0] : [0, -60]);
+  
+  // Removed heavy scale/opacity transforms of the main photo during scroll
+  // Background parallax reduced if in low power mode
+  const bgOrb1Y = useTransform(smoothProgress, [0, 1], (isMobile || isLowPower) ? [0, 0] : [0, 80]);
+  const bgOrb2Y = useTransform(smoothProgress, [0, 1], (isMobile || isLowPower) ? [0, 0] : [0, 50]);
 
   const firstName = profile.name.split(' ')[0];
   const lastName = profile.name.split(' ').slice(1).join(' ');
@@ -158,19 +162,21 @@ export default function Hero() {
               transition={{ duration: 0.8, delay: 0.5, ease: [0.16, 1, 0.3, 1] }}
               className="relative mb-6 sm:mb-8 group/card"
             >
-              {/* Animated gradient border */}
-              <motion.div
-                className="absolute -inset-[1px] rounded-2xl sm:rounded-3xl pointer-events-none"
-                animate={{
-                  background: [
-                    'linear-gradient(135deg, rgba(19, 44, 55, 0.4) 0%, rgba(99,102,241,0.2) 50%, rgba(56,189,248,0.1) 100%)',
-                    'linear-gradient(225deg, rgba(99,102,241,0.4) 0%, rgba(58, 107, 231, 0.48) 50%, rgba(212,175,55,0.2) 100%)',
-                    'linear-gradient(315deg, rgba(212,175,55,0.3) 0%, rgba(56, 120, 248, 0.3) 50%, rgba(99,102,241,0.2) 100%)',
-                    'linear-gradient(135deg, rgba(57, 105, 248, 0.4) 0%, rgba(40, 43, 220, 0.87) 50%, rgba(56,189,248,0.1) 100%)',
-                  ],
-                }}
-                transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut' }}
-              />
+              {/* Animated gradient border - Disabled in low power mode */}
+              {!isLowPower && (
+                <motion.div
+                  className="absolute -inset-[1px] rounded-2xl sm:rounded-3xl pointer-events-none"
+                  animate={{
+                    background: [
+                      'linear-gradient(135deg, rgba(19, 44, 55, 0.4) 0%, rgba(99,102,241,0.2) 50%, rgba(56,189,248,0.1) 100%)',
+                      'linear-gradient(225deg, rgba(99,102,241,0.4) 0%, rgba(58, 107, 231, 0.48) 50%, rgba(212,175,55,0.2) 100%)',
+                      'linear-gradient(315deg, rgba(212,175,55,0.3) 0%, rgba(56, 120, 248, 0.3) 50%, rgba(99,102,241,0.2) 100%)',
+                      'linear-gradient(135deg, rgba(57, 105, 248, 0.4) 0%, rgba(40, 43, 220, 0.87) 50%, rgba(56,189,248,0.1) 100%)',
+                    ],
+                  }}
+                  transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut' }}
+                />
+              )}
 
               {/* Card body */}
               <div className="relative rounded-2xl sm:rounded-3xl overflow-hidden"
@@ -338,8 +344,7 @@ export default function Hero() {
             initial={{ opacity: 0, scale: 0.8 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ type: 'spring', stiffness: 50, damping: 20, delay: 0.3 }}
-            className="flex justify-center items-center order-1 lg:order-2"
-            style={{ scale: photoScale, opacity: photoOpacity }}
+            className="flex justify-center items-center order-1 lg:order-2 will-change-transform"
           >
             <div className="relative group">
               {/* Animated gradient glow */}
@@ -356,22 +361,22 @@ export default function Hero() {
                 transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut' }}
               />
 
-              {/* Orbiting rings */}
+              {/* Orbiting rings - Static in low power mode */}
               <motion.div
                 className="absolute -inset-4 sm:-inset-5 rounded-full border-2 border-dashed border-blue-500/20"
-                animate={{ rotate: 360 }}
+                animate={!isLowPower ? { rotate: 360 } : {}}
                 transition={{ duration: 20, repeat: Infinity, ease: 'linear' }}
               />
               <motion.div
                 className="absolute -inset-7 sm:-inset-9 rounded-full border border-cyan-400/10"
-                animate={{ rotate: -360 }}
+                animate={!isLowPower ? { rotate: -360 } : {}}
                 transition={{ duration: 30, repeat: Infinity, ease: 'linear' }}
               />
 
               {/* Gradient spinning border */}
               <motion.div
                 className="absolute -inset-1 rounded-full bg-gradient-to-tr from-blue-500 via-cyan-400 to-purple-500 p-1.5 shadow-[0_0_80px_-20px_rgba(37,99,235,0.6)]"
-                animate={{ rotate: 360 }}
+                animate={!isLowPower ? { rotate: 360 } : {}}
                 transition={{ duration: 15, repeat: Infinity, ease: 'linear' }}
               >
                 <div className="w-full h-full rounded-full bg-[#080d1a]" />
@@ -396,7 +401,7 @@ export default function Hero() {
               <div className="relative w-52 h-52 sm:w-64 sm:h-64 md:w-80 md:h-80 lg:w-96 lg:h-96 rounded-full overflow-hidden border-[4px] sm:border-[6px] border-[#080d1a] bg-slate-800 z-10 shadow-2xl">
                 {!photoError ? (
                   <img
-                    src="/photo.jpg"
+                    src={profile.photoUrl}
                     alt={profile.name}
                     fetchpriority="high"
                     loading="eager"

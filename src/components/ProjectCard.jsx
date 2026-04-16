@@ -38,6 +38,7 @@ function PerformanceBadge({ score }) {
 
 export default function ProjectCard({ project, index = 0 }) {
   const cardRef = useRef(null);
+  const rectRef = useRef(null); // Cache rect to avoid forced reflow
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
   const [showCode, setShowCode] = useState(false);
@@ -45,11 +46,18 @@ export default function ProjectCard({ project, index = 0 }) {
   const rotateX = useSpring(useTransform(mouseY, [-0.5, 0.5], [8, -8]), { stiffness: 100, damping: 30 });
   const rotateY = useSpring(useTransform(mouseX, [-0.5, 0.5], [-8, 8]), { stiffness: 100, damping: 30 });
 
-  function onMouseMove(e) {
+  function onMouseEnter() {
     if (!cardRef.current) return;
-    const rect = cardRef.current.getBoundingClientRect();
-    const x = (e.clientX - rect.left) / rect.width - 0.5;
-    const y = (e.clientY - rect.top) / rect.height - 0.5;
+    rectRef.current = cardRef.current.getBoundingClientRect();
+  }
+
+  function onMouseMove(e) {
+    if (!rectRef.current) return;
+    const { left, top, width, height } = rectRef.current;
+    
+    // Performance: prevent layout thrashing
+    const x = (e.clientX - left) / width - 0.5;
+    const y = (e.clientY - top) / height - 0.5;
     mouseX.set(x);
     mouseY.set(y);
   }
@@ -57,6 +65,7 @@ export default function ProjectCard({ project, index = 0 }) {
   function onMouseLeave() {
     mouseX.set(0);
     mouseY.set(0);
+    rectRef.current = null;
   }
 
   const { metrics, codeSnippet } = project;
@@ -69,6 +78,7 @@ export default function ProjectCard({ project, index = 0 }) {
       >
         <motion.div
           ref={cardRef}
+          onMouseEnter={onMouseEnter}
           onMouseMove={onMouseMove}
           onMouseLeave={onMouseLeave}
           style={{ rotateX, rotateY, transformStyle: 'preserve-3d' }}

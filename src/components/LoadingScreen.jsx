@@ -1,222 +1,177 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { profile } from '../data/profile';
 
 const firstName = 'Harsh';
 const lastName = 'Kavathiya';
 const slogan = 'Engineering with Passion • Designing with Purpose';
-const totalChars = firstName.length + 1 + lastName.length;
-const charDelay = 0.03;
-const nameAnimDur = totalChars * charDelay + 0.4;
 
 export default function LoadingScreen({ onComplete }) {
-  const [phase, setPhase] = useState('name'); // name → slogan → exit
+  const [phase, setPhase] = useState('singularity'); // singularity -> horizon -> reveal -> exit
   const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
     setIsMobile(window.innerWidth < 768);
-  }, []);
-
-  // Reduce particle count for mobile
-  const particleCount = isMobile ? 8 : 18;
-
-  useEffect(() => {
-    // Phase 1: Name reveal
-    // Phase 2: Slogan/Role reveal — faster transition
-    const t1 = setTimeout(() => setPhase('role'), (nameAnimDur + 0.05) * 1000);
-    // Phase 3: Exit — start exit sooner
-    const t2 = setTimeout(() => setPhase('exit'), (nameAnimDur + 0.7) * 1000);
-    // Phase 4: Complete — fire callback quickly after exit starts
-    const t3 = setTimeout(() => onComplete?.(), (nameAnimDur + 1.1) * 1000);
-    return () => { clearTimeout(t1); clearTimeout(t2); clearTimeout(t3); };
+    
+    // Cinematic Timeline
+    const tSingularity = setTimeout(() => setPhase('horizon'), 1600);   // Logo Pulsing (Increased from 1200)
+    const tHorizon     = setTimeout(() => setPhase('reveal'), 2000);    // The Slicing Reveal (Tightened)
+    const tExit        = setTimeout(() => setPhase('exit'), 4600);      // Immersive Exit (Shifted)
+    const tComplete    = setTimeout(() => onComplete?.(), 5400);         // Final Call (Shifted)
+    
+    return () => {
+      clearTimeout(tSingularity);
+      clearTimeout(tHorizon);
+      clearTimeout(tExit);
+      clearTimeout(tComplete);
+    };
   }, [onComplete]);
+
+  // Performance particles
+  const particles = useMemo(() => {
+    return Array.from({ length: isMobile ? 10 : 25 }).map((_, i) => ({
+      id: i,
+      left: `${Math.random() * 100}%`,
+      top: `${Math.random() * 100}%`,
+      size: Math.random() * 2 + 1,
+      duration: Math.random() * 8 + 8,
+      delay: Math.random() * 5
+    }));
+  }, [isMobile]);
 
   return (
     <AnimatePresence mode="wait">
       {phase !== 'complete' && (
         <motion.div
-          key="loader"
-          initial={{ opacity: 1 }}
-          animate={phase === 'exit' ? { opacity: 0, scale: 1.05, filter: 'blur(10px)' } : { opacity: 1 }}
+          key="loader-container"
+          className="fixed inset-0 z-[250] flex items-center justify-center bg-[#050810] overflow-hidden"
           exit={{ opacity: 0 }}
-          transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-          className="fixed inset-0 z-[200] flex items-center justify-center overflow-hidden"
-          style={{ background: 'linear-gradient(135deg, #080d1a 0%, #0c1629 40%, #0a1628 100%)' }}
         >
-          {/* Grid pattern overlay */}
-          <div
-            className="absolute inset-0 opacity-[0.03] pointer-events-none"
-            style={{
-              backgroundImage: `linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px),
-                               linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px)`,
-              backgroundSize: '80px 80px',
-            }}
+          {/* ── BACKGROUND PANELS (SHUTTER EXIT) ── */}
+          <motion.div 
+            initial={{ y: 0 }}
+            animate={phase === 'exit' ? { y: '-100%' } : { y: 0 }}
+            transition={{ duration: 1, ease: [0.77, 0, 0.175, 1] }}
+            className="absolute inset-0 h-1/2 bg-[#080d1a] border-b border-white/5 z-0"
+          />
+          <motion.div 
+            initial={{ y: 0 }}
+            animate={phase === 'exit' ? { y: '100%' } : { y: 0 }}
+            transition={{ duration: 1, ease: [0.77, 0, 0.175, 1] }}
+            className="absolute inset-x-0 bottom-0 h-1/2 bg-[#080d1a] border-t border-white/5 z-0"
           />
 
-          {/* Animated gradient orbs — simplified */}
-          <motion.div
-            className="absolute w-[400px] h-[400px] rounded-full pointer-events-none"
-            style={{ top: '15%', left: '10%' }}
-            animate={{
-              scale: [1, 1.3, 1],
-              opacity: [0.1, 0.2, 0.1],
-            }}
-            transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut' }}
-          >
-            <div className="w-full h-full rounded-full bg-blue-600/20 blur-[100px]" />
-          </motion.div>
-          <motion.div
-            className="absolute w-[350px] h-[350px] rounded-full pointer-events-none"
-            style={{ bottom: '10%', right: '10%' }}
-            animate={{
-              scale: [1, 1.2, 1],
-              opacity: [0.08, 0.15, 0.08],
-            }}
-            transition={{ duration: 8, repeat: Infinity, ease: 'easeInOut', delay: 1 }}
-          >
-            <div className="w-full h-full rounded-full bg-cyan-500/15 blur-[100px]" />
-          </motion.div>
-
-          {/* Rising particles — reduced count */}
-          {Array.from({ length: particleCount }).map((_, i) => (
+          {/* ── STELAR FOG ── */}
+          <div className="absolute inset-0 overflow-hidden pointer-events-none">
+             {particles.map(p => (
+              <motion.div
+                key={p.id}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: [0, 0.4, 0], scale: [1, 1.5, 1], y: [0, -50] }}
+                transition={{ duration: p.duration, delay: p.delay, repeat: Infinity, ease: "linear" }}
+                className="absolute bg-blue-500 rounded-full"
+                style={{ left: p.left, top: p.top, width: p.size, height: p.size, filter: 'blur(1px)' }}
+              />
+            ))}
             <motion.div
-              key={i}
-              className="absolute w-[1.5px] h-[1.5px] rounded-full"
-              style={{
-                left: `${5 + Math.random() * 90}%`,
-                bottom: '-2%',
-                background: i % 2 === 0 ? '#60a5fa' : '#22d3ee',
-              }}
-              animate={{
-                y: [0, -900],
-                opacity: [0, 0.4, 0],
-              }}
-              transition={{
-                duration: 4 + Math.random() * 4,
-                delay: Math.random() * 3,
-                repeat: Infinity,
-                ease: 'linear',
-              }}
+              animate={phase === 'exit' ? { scale: 2, opacity: 0 } : { scale: [1, 1.2, 1], opacity: [0.1, 0.3, 0.1] }}
+              transition={{ duration: 8, repeat: Infinity }}
+              className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-blue-600/5 blur-[150px] rounded-full"
             />
-          ))}
+          </div>
 
-          {/* Content */}
-          <div className="relative z-10 flex flex-col items-center gap-8 px-6 max-w-4xl w-full">
+          {/* ── CONTENT ── */}
+          <div className="relative z-10 flex flex-col items-center">
             
-            {/* Main Name Group */}
-            <div className="flex flex-col items-center gap-2">
-              <div className="flex flex-wrap justify-center items-baseline gap-x-4 sm:gap-x-6">
-                {/* First name */}
-                <div className="flex">
-                  {firstName.split('').map((char, i) => (
-                    <motion.span
-                      key={`f-${i}`}
-                      initial={{ opacity: 0, y: 60, rotateX: -90, scale: 0.6 }}
-                      animate={{ opacity: 1, y: 0, rotateX: 0, scale: 1 }}
-                      transition={{
-                        delay: 0.3 + i * charDelay,
-                        duration: 0.6,
-                        ease: [0.16, 1, 0.3, 1],
-                      }}
-                      className="text-6xl sm:text-7xl md:text-9xl font-black text-white tracking-tighter inline-block will-change-transform"
-                      style={{
-                        transformOrigin: 'center bottom',
-                        perspective: '1000px',
-                        textShadow: '0 20px 50px rgba(0,0,0,0.5)',
-                      }}
-                    >
-                      {char}
-                    </motion.span>
-                  ))}
+            {/* PHASE 1: THE SINGULARITY (Logo Pulse) */}
+            <AnimatePresence>
+              {phase === 'singularity' && (
+                <motion.div
+                  key="logo-pulse"
+                  initial={{ scale: 0.8, opacity: 0, filter: 'blur(10px)' }}
+                  animate={{ scale: 1, opacity: 1, filter: 'blur(0px)' }}
+                  exit={{ scale: 1.2, opacity: 0, filter: 'blur(40px)' }}
+                  transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+                  className="relative group"
+                >
+                  <img 
+                    src={profile.photoUrl} 
+                    alt="Harsh Kavathiya" 
+                    className="w-40 h-40 md:w-56 md:h-56 object-cover rounded-full shadow-[0_0_60px_rgba(59,130,246,0.6)] border-4 border-white/20"
+                  />
+                  <div className="absolute inset-0 rounded-full bg-blue-500/20 animate-ping" />
+                </motion.div>
+              )}
+
+              {/* PHASE 2 & 3: HORIZON & REVEAL */}
+              {(phase === 'horizon' || phase === 'reveal') && (
+                <div className="relative flex flex-col items-center">
+                   {/* Horizontal Slice Line */}
+                   <motion.div 
+                     initial={{ scaleX: 0, opacity: 0 }}
+                     animate={{ scaleX: 1, opacity: 1 }}
+                     exit={{ scaleX: 0, opacity: 0 }}
+                     transition={{ duration: 0.8, ease: "circInOut" }}
+                     className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-80 sm:w-[500px] h-[1px] bg-gradient-to-r from-transparent via-blue-400 to-transparent z-20"
+                   />
+
+                   <div className="overflow-hidden py-4">
+                      <motion.h1
+                        initial={{ y: 200, letterSpacing: '2em', filter: 'blur(20px)' }}
+                        animate={phase === 'reveal' ? { y: 0, letterSpacing: isMobile ? '0.1em' : '0.25em', filter: 'blur(0px)' } : {}}
+                        transition={{ duration: 1.2, ease: [0.23, 1, 0.32, 1] }}
+                        className="text-4xl sm:text-7xl md:text-8xl font-black text-white uppercase text-center relative will-change-transform"
+                      >
+                         <span className="opacity-40 italic">{firstName}</span> 
+                         <span className="bg-gradient-to-r from-blue-400 via-cyan-300 to-indigo-400 bg-clip-text text-transparent ml-4">
+                            {lastName}
+                         </span>
+
+                         {/* Prismatic Sweep */}
+                         <motion.div 
+                           initial={{ x: '-150%' }}
+                           animate={{ x: '150%' }}
+                           transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut', repeatDelay: 0.5 }}
+                           className="absolute inset-0 bg-gradient-to-r from-transparent via-blue-400/30 to-transparent skew-x-[-30deg] pointer-events-none"
+                         />
+                      </motion.h1>
+                   </div>
+
+                   <motion.div
+                     initial={{ opacity: 0 }}
+                     animate={phase === 'reveal' ? { opacity: 1 } : { opacity: 0 }}
+                     transition={{ delay: 0.8, duration: 1 }}
+                     className="text-[10px] sm:text-xs font-mono uppercase text-slate-400 tracking-[0.5em] text-center mt-6"
+                   >
+                     {slogan}
+                   </motion.div>
                 </div>
+              )}
 
-                {/* Last name */}
-                <div className="flex">
-                  {lastName.split('').map((char, i) => (
-                    <motion.span
-                      key={`l-${i}`}
-                      initial={{ opacity: 0, y: 60, rotateX: -90, scale: 0.6 }}
-                      animate={{ opacity: 1, y: 0, rotateX: 0, scale: 1 }}
-                      transition={{
-                        delay: 0.3 + (firstName.length + 1 + i) * charDelay,
-                        duration: 0.6,
-                        ease: [0.16, 1, 0.3, 1],
-                      }}
-                      className="text-6xl sm:text-7xl md:text-9xl font-black tracking-tighter inline-block will-change-transform bg-gradient-to-br from-blue-400 via-cyan-300 to-indigo-500 bg-clip-text text-transparent"
-                      style={{
-                        transformOrigin: 'center bottom',
-                        perspective: '1000px',
-                      }}
-                    >
-                      {char}
-                    </motion.span>
-                  ))}
-                </div>
-              </div>
-            </div>
+              {/* PHASE 4: IMMERSIVE EXIT (Through Camera) */}
+              {phase === 'exit' && (
+                <motion.div
+                  key="exit-view"
+                  initial={{ scale: 1, opacity: 1 }}
+                  animate={{ scale: 5, opacity: 0, filter: 'blur(20px)' }}
+                  transition={{ duration: 1, ease: [0.7, 0, 0.3, 1] }}
+                  className="flex flex-col items-center gap-12"
+                >
+                   <img src={profile.photoUrl} className="w-16 h-16 rounded-full opacity-40 object-cover" alt="" />
+                   <h2 className="text-9xl font-black text-white opacity-20 uppercase tracking-[2em]">
+                     {firstName}
+                   </h2>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
 
-            {/* Slogan & Role Reveal */}
-            <div className="h-16 flex flex-col items-center justify-center gap-3">
-              <AnimatePresence mode="wait">
-                {(phase === 'role' || phase === 'exit') && (
-                  <motion.div
-                    key="slogan-box"
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ duration: 0.6 }}
-                    className="flex flex-col items-center gap-3"
-                  >
-                    {/* Slogan */}
-                    <motion.p
-                      initial={{ opacity: 0, letterSpacing: '0.5em', y: 8 }}
-                      animate={{ opacity: 1, letterSpacing: '0.25em', y: 0 }}
-                      transition={{ duration: 0.6, ease: "easeOut" }}
-                      className="text-sm sm:text-lg font-medium text-blue-100/90 text-center tracking-[0.25em]"
-                    >
-                      {slogan}
-                    </motion.p>
-
-                    {/* Decorative line */}
-                    <motion.div
-                      initial={{ scaleX: 0 }}
-                      animate={{ scaleX: 1 }}
-                      transition={{ duration: 0.8, delay: 0.15, ease: [0.16, 1, 0.3, 1] }}
-                      className="w-full h-px bg-gradient-to-r from-transparent via-blue-500/50 to-transparent"
-                    />
-
-                    {/* Role */}
-                    <motion.span
-                      initial={{ opacity: 0, y: 8 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: 0.3, duration: 0.5 }}
-                      className="text-[10px] sm:text-xs font-mono uppercase tracking-[0.5em] text-cyan-400 animate-pulse"
-                    >
-                      Full Stack Developer
-                    </motion.span>
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </div>
-
-            {/* Progress Bar Container */}
-            <div className="w-64 sm:w-80 h-[2px] bg-white/5 rounded-full overflow-hidden mt-2 relative">
-              <motion.div
-                initial={{ scaleX: 0 }}
-                animate={{ scaleX: 1 }}
-                transition={{
-                  duration: 1.0,
-                  delay: 0.1,
-                  ease: [0.16, 1, 0.3, 1],
-                }}
-                className="h-full bg-gradient-to-r from-blue-600 via-cyan-400 to-indigo-500 rounded-full shadow-[0_0_20px_rgba(59,130,246,0.8)]"
-                style={{ transformOrigin: 'left center' }}
-              />
-              {/* Shimmer effect on bar */}
-              <motion.div
-                className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent w-1/2"
-                animate={{ x: ['-100%', '200%'] }}
-                transition={{ duration: 1.2, repeat: Infinity, ease: 'linear', delay: 0.5 }}
-              />
-            </div>
+          {/* ── TECHNICAL OVERLAY (ENGINEERING FEEL) ── */}
+          <div className="absolute inset-0 pointer-events-none p-12 overflow-hidden opacity-10">
+             <div className="h-full w-full border border-white/20 rounded-[4rem] relative">
+                <div className="absolute top-8 left-8 text-[8px] font-mono text-white tracking-widest uppercase">System Initialization...</div>
+                <div className="absolute bottom-8 right-8 text-[8px] font-mono text-white tracking-widest uppercase">Ready to Reveal</div>
+             </div>
           </div>
         </motion.div>
       )}

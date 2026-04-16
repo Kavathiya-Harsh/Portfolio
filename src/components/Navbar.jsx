@@ -228,9 +228,11 @@ export default function Navbar() {
         >
           <motion.div whileHover={{ rotateY: 12, rotateX: -6 }} className="relative z-10">
             <img
-              src="/hk_logo.png"
+              src="https://res.cloudinary.com/dvv5mtpli/image/upload/q_auto/f_auto/v1776355358/hk_logo_pb2u8w.jpg"
               alt="Harsh Kavathiya Logo"
-              className="w-10 h-10 rounded-xl object-cover will-change-transform"
+              width="40"
+              height="40"
+              className="w-10 h-10 rounded-xl object-contain will-change-transform"
               style={{ filter: 'drop-shadow(0 0 8px rgba(212,175,55,0.5))' }}
             />
           </motion.div>
