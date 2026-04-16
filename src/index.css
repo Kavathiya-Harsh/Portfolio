@@ -22,10 +22,10 @@
     --glass: rgba(15, 23, 42, 0.9); /* More opaque, no blur */
   }
 
-  /* Text — enhanced visibility */
-  --text: #f1f5f9;
-  --text-secondary: #b0bfe0;
-  --text-muted: #8293ab;
+  /* Text — enhanced visibility for accessibility (WCAG AA/AAA) */
+  --text: #f8fafc;
+  --text-secondary: #cbd5e1;
+  --text-muted: #94a3b8;
 }
 
 /* Smooth transitions for interactive elements only */

@@ -5,8 +5,8 @@ const firstName = 'Harsh';
 const lastName = 'Kavathiya';
 const slogan = 'Engineering with Passion • Designing with Purpose';
 const totalChars = firstName.length + 1 + lastName.length;
-const charDelay = 0.04;
-const nameAnimDur = totalChars * charDelay + 0.5;
+const charDelay = 0.03;
+const nameAnimDur = totalChars * charDelay + 0.4;
 
 export default function LoadingScreen({ onComplete }) {
   const [phase, setPhase] = useState('name'); // name → slogan → exit
@@ -22,11 +22,11 @@ export default function LoadingScreen({ onComplete }) {
   useEffect(() => {
     // Phase 1: Name reveal
     // Phase 2: Slogan/Role reveal — faster transition
-    const t1 = setTimeout(() => setPhase('role'), (nameAnimDur + 0.1) * 1000);
+    const t1 = setTimeout(() => setPhase('role'), (nameAnimDur + 0.05) * 1000);
     // Phase 3: Exit — start exit sooner
-    const t2 = setTimeout(() => setPhase('exit'), (nameAnimDur + 1.2) * 1000);
+    const t2 = setTimeout(() => setPhase('exit'), (nameAnimDur + 0.7) * 1000);
     // Phase 4: Complete — fire callback quickly after exit starts
-    const t3 = setTimeout(() => onComplete?.(), (nameAnimDur + 1.8) * 1000);
+    const t3 = setTimeout(() => onComplete?.(), (nameAnimDur + 1.1) * 1000);
     return () => { clearTimeout(t1); clearTimeout(t2); clearTimeout(t3); };
   }, [onComplete]);
 
@@ -203,8 +203,8 @@ export default function LoadingScreen({ onComplete }) {
                 initial={{ scaleX: 0 }}
                 animate={{ scaleX: 1 }}
                 transition={{
-                  duration: 1.6,
-                  delay: 0.2,
+                  duration: 1.0,
+                  delay: 0.1,
                   ease: [0.16, 1, 0.3, 1],
                 }}
                 className="h-full bg-gradient-to-r from-blue-600 via-cyan-400 to-indigo-500 rounded-full shadow-[0_0_20px_rgba(59,130,246,0.8)]"

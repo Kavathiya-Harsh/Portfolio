@@ -75,13 +75,15 @@ export default function CertificatesAwards() {
           <div className="absolute inset-x-0 top-1/2 -translate-y-1/2 flex justify-between px-4 md:px-12 z-40 pointer-events-none">
             <button
               onClick={prev}
-              className="p-4 rounded-full bg-white/5 border border-white/10 text-white hover:bg-white/10 hover:scale-110 active:scale-95 transition-all pointer-events-auto backdrop-blur-md shadow-2xl"
+              className="p-5 rounded-full bg-white/5 border border-white/10 text-white hover:bg-white/10 hover:scale-110 active:scale-95 transition-all pointer-events-auto backdrop-blur-md shadow-2xl"
+              aria-label="Previous certificate"
             >
               <ChevronLeft className="w-6 h-6" />
             </button>
             <button
               onClick={next}
-              className="p-4 rounded-full bg-white/5 border border-white/10 text-white hover:bg-white/10 hover:scale-110 active:scale-95 transition-all pointer-events-auto backdrop-blur-md shadow-2xl"
+              className="p-5 rounded-full bg-white/5 border border-white/10 text-white hover:bg-white/10 hover:scale-110 active:scale-95 transition-all pointer-events-auto backdrop-blur-md shadow-2xl"
+              aria-label="Next certificate"
             >
               <ChevronRight className="w-6 h-6" />
             </button>
@@ -185,6 +187,7 @@ export default function CertificatesAwards() {
             <button
               key={i}
               onClick={() => setCurrentIndex(i)}
+              aria-label={`Go to certificate ${i + 1}`}
               className={`h-1.5 rounded-full transition-all duration-500 ${
                 i === currentIndex ? 'w-10 bg-blue-500 shadow-[0_0_15px_rgba(59,130,246,0.6)]' : 'w-2 bg-slate-700 hover:bg-slate-600'
               }`}
@@ -216,6 +219,7 @@ export default function CertificatesAwards() {
               />
               <button
                 className="absolute top-0 right-0 p-4 text-white/50 hover:text-white transition-colors"
+                aria-label="Close fullscreen view"
                 onClick={(e) => {
                   e.stopPropagation();
                   setIsFullscreen(false);

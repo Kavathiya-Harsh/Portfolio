@@ -110,9 +110,10 @@ export default function GitHubActivity() {
               href={`https://github.com/${GITHUB_USERNAME}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-slate-500 hover:text-blue-400 transition-colors"
+              className="p-3 -m-2 text-slate-500 hover:text-blue-400 transition-colors"
+              aria-label="View GitHub Profile"
             >
-              <ExternalLink className="w-4 h-4" />
+              <ExternalLink className="w-5 h-5" />
             </a>
           </div>
 

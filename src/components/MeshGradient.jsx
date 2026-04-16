@@ -88,13 +88,19 @@ export default function MeshGradient() {
       />
 
       {/* High-Performance Cursor Spotlight - Only for desktop */}
+      {/* High-Performance GPU-Accelerated Cursor Spotlight - Only for desktop */}
       {!isMobile && (
         <motion.div
-          className="absolute inset-0 z-10"
+          className="absolute pointer-events-none -z-10"
           style={{
-            background: `radial-gradient(600px circle at var(--x) var(--y), rgba(59, 130, 246, 0.07), transparent 80%)`,
-            '--x': smoothX,
-            '--y': smoothY,
+            width: '1200px',
+            height: '1200px',
+            left: '-600px',
+            top: '-600px',
+            background: 'radial-gradient(circle, rgba(59, 130, 246, 0.07) 0%, transparent 70%)',
+            x: smoothX,
+            y: smoothY,
+            willChange: 'transform',
           }}
         />
       )}

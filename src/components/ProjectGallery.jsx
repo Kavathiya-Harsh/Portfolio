@@ -102,7 +102,8 @@ export default function ProjectGallery({ typeFilter = 'all' }) {
                 <button
                   key={cat}
                   onClick={() => setFilter(cat)}
-                  className={`px-5 py-2 rounded-xl text-xs font-semibold capitalize transition-all duration-300 ${
+                  aria-pressed={filter === cat}
+                  className={`px-6 py-3.5 rounded-xl text-xs font-semibold capitalize transition-all duration-300 ${
                     filter === cat 
                       ? 'bg-blue-600 text-white shadow-[0_0_25px_rgba(37, 99, 235,0.5)]' 
                       : 'bg-slate-800/50 text-slate-400 hover:bg-white/10 border border-white/8'

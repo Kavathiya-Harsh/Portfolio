@@ -96,7 +96,8 @@ function PortfolioMain() {
       transition={{ duration: 0.5 }}
       className="pb-40 md:pb-12"
     >
-      <Hero />
+      <main>
+        <Hero />
       <Suspense fallback={<SectionFallback />}>
         <SectionDivider />
         <GitHubActivity />
@@ -117,6 +118,7 @@ function PortfolioMain() {
         <QuickActionsDock />
         <Footer />
       </Suspense>
+      </main>
     </motion.div>
   );
 }
@@ -149,8 +151,12 @@ export default function App() {
           {isLoading && <LoadingScreen onComplete={handleLoadingComplete} />}
         </AnimatePresence>
         
-        <MeshGradient />
-        {(!isLowPower && !isMobile) && <CodeScrollIndicator />}
+        {!isLoading && (
+          <>
+            <MeshGradient />
+            {(!isLowPower && !isMobile) && <CodeScrollIndicator />}
+          </>
+        )}
         <Navbar />
         
         <Suspense fallback={null}>

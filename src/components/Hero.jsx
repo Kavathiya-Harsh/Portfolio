@@ -311,7 +311,7 @@ export default function Hero() {
                   y: -4,
                   boxShadow: "0 20px 40px -10px rgba(37,99,235,0.5)"
                 }}
-                className="px-6 sm:px-8 py-3 sm:py-4 rounded-xl sm:rounded-2xl bg-blue-600 text-white font-bold transition-all flex items-center justify-center gap-2 group text-sm sm:text-base border border-blue-400/20"
+                className="px-6 sm:px-8 py-4 rounded-xl sm:rounded-2xl bg-blue-600 text-white font-bold transition-all flex items-center justify-center gap-2 group text-sm sm:text-base border border-blue-400/20"
                 title="Contact Harsh Kavathiya"
               >
                 Let's Build Something <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
@@ -325,7 +325,7 @@ export default function Hero() {
                   y: -4,
                   boxShadow: "0 20px 40px -10px rgba(212,175,55,0.2)"
                 }}
-                className="px-6 sm:px-8 py-3 sm:py-4 rounded-xl sm:rounded-2xl bg-white/5 text-white font-bold border border-white/10 hover:border-[#d4af37]/40 hover:text-[#d4af37] transition-all flex items-center justify-center gap-2 text-sm sm:text-base"
+                className="px-6 sm:px-8 py-4 rounded-xl sm:rounded-2xl bg-white/5 text-white font-bold border border-white/10 hover:border-[#d4af37]/40 hover:text-[#d4af37] transition-all flex items-center justify-center gap-2 text-sm sm:text-base"
                 title="Download Harsh Kavathiya's Resume"
               >
                 <Download className="w-4 h-4" /> Download CV
@@ -398,6 +398,8 @@ export default function Hero() {
                   <img
                     src="/photo.jpg"
                     alt={profile.name}
+                    fetchpriority="high"
+                    loading="eager"
                     className="w-full h-full object-cover object-top scale-105 group-hover:scale-110 transition-transform duration-1000 will-change-transform"
                     onError={() => setPhotoError(true)}
                   />

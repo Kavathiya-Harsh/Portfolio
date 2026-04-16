@@ -86,6 +86,7 @@ function ContactCard({ item, index }) {
       variants={slideInLeft}
       whileHover={{ y: -5, scale: 1.02 }}
       className="group relative flex items-center gap-4 p-4 rounded-2xl bg-white/5 border border-white/10 hover:border-[#d4af37]/30 hover:bg-white/10 transition-all duration-300 backdrop-blur-md overflow-hidden"
+      aria-label={`Contact me via ${item.label}: ${item.value}`}
     >
       {/* Dynamic Background Glow */}
       <div className={`absolute inset-0 ${item.bg} opacity-0 group-hover:opacity-100 transition-opacity blur-2xl -z-10`} />
@@ -103,8 +104,9 @@ function ContactCard({ item, index }) {
         onClick={copyToClipboard}
         whileHover={{ scale: 1.1, rotate: 5 }}
         whileTap={{ scale: 0.9 }}
-        className="shrink-0 p-2 rounded-lg hover:bg-white/10 text-slate-500 hover:text-white transition-colors relative"
+        className="shrink-0 p-3.5 rounded-lg hover:bg-white/10 text-slate-500 hover:text-white transition-colors relative"
         title="Copy"
+        aria-label={`Copy ${item.label} to clipboard`}
       >
         <AnimatePresence mode="wait">
           {copied ? (

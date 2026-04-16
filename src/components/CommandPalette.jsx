@@ -174,6 +174,7 @@ export default function CommandPalette({ isOpen, onClose }) {
                 ref={inputRef}
                 type="text"
                 placeholder="Type a command or search..."
+                aria-label="Search commands"
                 className="flex-1 bg-transparent text-white outline-none placeholder:text-slate-500 text-lg"
                 value={query}
                 onChange={(e) => {
@@ -210,6 +211,8 @@ export default function CommandPalette({ isOpen, onClose }) {
                               key={cmd.id}
                               onClick={() => handleSelect(cmd)}
                               onMouseEnter={() => setActiveIndex(index)}
+                              role="option"
+                              aria-selected={activeIndex === index}
                               className={`w-full flex items-center gap-3 px-3 py-3 rounded-xl transition-all duration-200 group text-left ${
                                 activeIndex === index
                                   ? 'bg-blue-500/10 border border-blue-500/20'

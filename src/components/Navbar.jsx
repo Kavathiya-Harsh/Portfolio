@@ -45,7 +45,7 @@ function NavItem({ link, isActive, isHovered, onHoverEnter, onHoverLeave, onClic
       <a
         href={link.href}
         onClick={(e) => onClick(e, link.href)}
-        className="relative flex flex-col items-center px-4 py-2.5 rounded-xl select-none cursor-pointer outline-none"
+        className="relative flex flex-col items-center px-4 py-3.5 rounded-xl select-none cursor-pointer outline-none"
       >
         {/* Glowing dot — slides between active items */}
         <AnimatePresence>
@@ -224,6 +224,7 @@ export default function Navbar() {
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
           title="Harsh Kavathiya - Home"
+          aria-label="Harsh Kavathiya - Portfolio Home"
         >
           <motion.div whileHover={{ rotateY: 12, rotateX: -6 }} className="relative z-10">
             <img
@@ -260,10 +261,10 @@ export default function Navbar() {
         {/* Mobile toggle */}
         <motion.button
           type="button"
-          className="md:hidden p-2 text-slate-400 hover:text-white rounded-lg hover:bg-white/5 transition-colors"
+          className="md:hidden p-3.5 text-slate-400 hover:text-white rounded-xl hover:bg-white/5 transition-colors"
           onClick={() => setMobileOpen(!mobileOpen)}
           whileTap={{ scale: 0.9 }}
-          aria-label="Toggle menu"
+          aria-label={mobileOpen ? "Close menu" : "Open navigation menu"}
         >
           <AnimatePresence mode="wait" initial={false}>
             {mobileOpen ? (

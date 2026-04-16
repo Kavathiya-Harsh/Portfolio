@@ -60,6 +60,7 @@ export default function CodeSnippetModal({ snippet, onClose }) {
             <div className="flex items-center gap-2">
               <button
                 onClick={handleCopy}
+                aria-label={copied ? "Copied to clipboard" : "Copy code snippet"}
                 className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-800 border border-slate-600/50 text-slate-400 hover:text-white hover:border-blue-500/40 transition-all text-xs"
               >
                 {copied ? <Check className="w-3.5 h-3.5 text-green-400" /> : <Copy className="w-3.5 h-3.5" />}
@@ -67,6 +68,7 @@ export default function CodeSnippetModal({ snippet, onClose }) {
               </button>
               <button
                 onClick={onClose}
+                aria-label="Close modal"
                 className="p-1.5 rounded-lg text-slate-500 hover:text-white hover:bg-slate-800 transition-all"
               >
                 <X className="w-5 h-5" />
