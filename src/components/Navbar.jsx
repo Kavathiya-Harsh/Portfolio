@@ -109,49 +109,21 @@ function NavItem({ link, isActive, isHovered, onHoverEnter, onHoverLeave, onClic
 
 /* ─── Resume Button ──────────────────────────────────────────────────────── */
 function ResumeBtn() {
-  const [hovered, setHovered] = useState(false);
   return (
     <motion.a
       href={RESUME_URL}
       target="_blank"
       rel="noopener noreferrer"
-      onHoverStart={() => setHovered(true)}
-      onHoverEnd={() => setHovered(false)}
       whileHover={{ scale: 1.06, y: -2 }}
       whileTap={{ scale: 0.94 }}
-      className="relative flex items-center gap-2 px-5 py-2.5 rounded-xl overflow-hidden text-xs font-bold uppercase tracking-widest will-change-transform ml-3"
+      className="relative flex items-center gap-2 px-5 py-2.5 rounded-xl overflow-hidden text-xs font-bold uppercase tracking-widest will-change-transform ml-3 text-white"
+      style={{
+        background: 'linear-gradient(135deg, #2563eb 0%, #06b6d4 100%)',
+        boxShadow: '0 4px 18px rgba(37,99,235,0.38)',
+      }}
     >
-      {/* bg gradient */}
-      <motion.span
-        className="absolute inset-0"
-        animate={{
-          background: hovered
-            ? 'linear-gradient(135deg, #c9a227 0%, #f0d060 50%, #c9a227 100%)'
-            : 'linear-gradient(135deg, #2563eb 0%, #06b6d4 100%)',
-        }}
-        transition={{ duration: 0.38 }}
-      />
-      {/* glow ring */}
-      <motion.span
-        className="absolute inset-0 rounded-xl"
-        animate={{
-          boxShadow: hovered
-            ? '0 0 22px rgba(212,175,55,0.65), 0 0 44px rgba(212,175,55,0.28), inset 0 1px 0 rgba(255,255,255,0.15)'
-            : '0 4px 18px rgba(37,99,235,0.38)',
-        }}
-        transition={{ duration: 0.28 }}
-      />
-      {/* content */}
-      <motion.span
-        animate={{ color: hovered ? '#0b1120' : '#ffffff' }}
-        transition={{ duration: 0.26 }}
-        className="relative z-10 flex items-center gap-2"
-      >
-        <motion.span animate={{ rotate: hovered ? [0, -10, 0] : 0 }} transition={{ duration: 0.4 }}>
-          <FileDown className="w-3.5 h-3.5" />
-        </motion.span>
-        Resume
-      </motion.span>
+      <FileDown className="w-3.5 h-3.5" />
+      <span className="relative z-10">Resume</span>
     </motion.a>
   );
 }

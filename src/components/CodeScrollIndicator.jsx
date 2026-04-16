@@ -25,7 +25,7 @@ export default function CodeScrollIndicator() {
       
       {/* Percentage Tag */}
       <div className="absolute right-4 top-4 font-mono text-[10px] hidden md:flex items-center gap-1.5 opacity-60">
-        <span className="text-slate-500">//</span>
+        <span className="text-slate-400">//</span>
         <span className="text-blue-400">current_progress:</span>
         <span className={`text-white transition-all duration-300 ${percent > 0 ? 'opacity-100' : 'opacity-0'}`}>
           {percent}%

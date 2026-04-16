@@ -54,7 +54,7 @@ export default function CodeSnippetModal({ snippet, onClose }) {
               </div>
               <div>
                 <h3 className="text-sm font-semibold text-white">{snippet.title}</h3>
-                <span className="text-[10px] font-mono text-slate-500 uppercase">{snippet.language}</span>
+                <span className="text-[10px] font-mono text-slate-400 uppercase">{snippet.language}</span>
               </div>
             </div>
             <div className="flex items-center gap-2">
@@ -69,7 +69,7 @@ export default function CodeSnippetModal({ snippet, onClose }) {
               <button
                 onClick={onClose}
                 aria-label="Close modal"
-                className="p-1.5 rounded-lg text-slate-500 hover:text-white hover:bg-slate-800 transition-all"
+                className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition-all"
               >
                 <X className="w-5 h-5" />
               </button>

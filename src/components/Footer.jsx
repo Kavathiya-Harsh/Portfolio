@@ -28,7 +28,7 @@ export default function Footer() {
         viewport={viewportOnce}
         className="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4"
       >
-        <p className="text-slate-500 text-sm">
+        <p className="text-slate-400 text-sm">
           © {year} Portfolio. Built with React, Tailwind & Framer Motion.
         </p>
         <motion.div

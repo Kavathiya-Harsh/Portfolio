@@ -65,7 +65,7 @@ const HackathonCard = ({ hackathon, index }) => {
 
           <h3 className="text-2xl md:text-3xl font-bold text-white mb-2 tracking-tight">{hackathon.title}</h3>
           
-          <div className="flex items-center gap-2 mb-4 text-sm text-slate-500 font-mono">
+          <div className="flex items-center gap-2 mb-4 text-sm text-slate-400 font-mono">
             <span className="text-blue-400">{hackathon.issuer}</span>
             <span>•</span>
             <span className="flex items-center gap-1.5"><Calendar className="w-3.5 h-3.5" /> {hackathon.date}</span>
@@ -78,7 +78,7 @@ const HackathonCard = ({ hackathon, index }) => {
                 <Code className="w-5 h-5 text-blue-400" />
              </div>
              <div>
-                <p className="text-[10px] font-mono text-slate-500 uppercase tracking-widest mb-0.5">Project Built</p>
+                <p className="text-[10px] font-mono text-slate-400 uppercase tracking-widest mb-0.5">Project Built</p>
                 <p className="font-bold text-sm text-white">{hackathon.project}</p>
              </div>
           </div>
@@ -91,7 +91,7 @@ const HackathonCard = ({ hackathon, index }) => {
             ))}
           </div>
 
-          <div className="flex items-center gap-2 text-[10px] font-mono text-slate-500 uppercase tracking-[0.2em]">
+          <div className="flex items-center gap-2 text-[10px] font-mono text-slate-400 uppercase tracking-[0.2em]">
             <Target className="w-3.5 h-3.5 text-blue-500" />
             <span>Role: {hackathon.role}</span>
           </div>
@@ -160,7 +160,7 @@ export default function HackathonJourney() {
           viewport={viewportOnce}
           className="mt-32 text-center"
         >
-          <p className="text-slate-500 font-mono text-sm mb-6 tracking-widest uppercase">Hungry for more challenges</p>
+          <p className="text-slate-400 font-mono text-sm mb-6 tracking-widest uppercase">Hungry for more challenges</p>
           <div className="inline-flex items-center gap-2 text-white group cursor-pointer justify-center">
             <span className="text-xl font-bold group-hover:text-blue-400 transition-colors">Always building, always learning</span>
             <ExternalLink className="w-5 h-5 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />

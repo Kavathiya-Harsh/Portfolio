@@ -164,17 +164,11 @@ export default function Hero() {
             >
               {/* Animated gradient border - Disabled in low power mode */}
               {!isLowPower && (
-                <motion.div
+                <div
                   className="absolute -inset-[1px] rounded-2xl sm:rounded-3xl pointer-events-none"
-                  animate={{
-                    background: [
-                      'linear-gradient(135deg, rgba(19, 44, 55, 0.4) 0%, rgba(99,102,241,0.2) 50%, rgba(56,189,248,0.1) 100%)',
-                      'linear-gradient(225deg, rgba(99,102,241,0.4) 0%, rgba(58, 107, 231, 0.48) 50%, rgba(212,175,55,0.2) 100%)',
-                      'linear-gradient(315deg, rgba(212,175,55,0.3) 0%, rgba(56, 120, 248, 0.3) 50%, rgba(99,102,241,0.2) 100%)',
-                      'linear-gradient(135deg, rgba(57, 105, 248, 0.4) 0%, rgba(40, 43, 220, 0.87) 50%, rgba(56,189,248,0.1) 100%)',
-                    ],
+                  style={{
+                    background: 'linear-gradient(135deg, rgba(19, 44, 55, 0.4) 0%, rgba(99,102,241,0.2) 50%, rgba(56,189,248,0.1) 100%)',
                   }}
-                  transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut' }}
                 />
               )}
 
@@ -347,17 +341,13 @@ export default function Hero() {
             className="flex justify-center items-center order-1 lg:order-2 will-change-transform"
           >
             <div className="relative group">
-              {/* Animated gradient glow */}
+              {/* Animated gradient glow — static gradient with composited opacity pulse */}
               <motion.div
                 className="absolute -inset-12 sm:-inset-16 rounded-full pointer-events-none"
-                animate={{
-                  background: [
-                    'radial-gradient(circle, rgba(59,130,246,0.15) 0%, transparent 70%)',
-                    'radial-gradient(circle, rgba(6,182,212,0.12) 0%, transparent 70%)',
-                    'radial-gradient(circle, rgba(139,92,246,0.1) 0%, transparent 70%)',
-                    'radial-gradient(circle, rgba(59,130,246,0.15) 0%, transparent 70%)',
-                  ],
+                style={{
+                  background: 'radial-gradient(circle, rgba(59,130,246,0.15) 0%, transparent 70%)',
                 }}
+                animate={{ opacity: [0.6, 1, 0.6] }}
                 transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut' }}
               />
 
@@ -403,8 +393,11 @@ export default function Hero() {
                   <img
                     src={profile.photoUrl}
                     alt={profile.name}
+                    width="384"
+                    height="384"
                     fetchpriority="high"
                     loading="eager"
+                    decoding="async"
                     className="w-full h-full object-cover object-top scale-105 group-hover:scale-110 transition-transform duration-1000 will-change-transform"
                     onError={() => setPhotoError(true)}
                   />

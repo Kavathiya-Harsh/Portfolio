@@ -88,22 +88,21 @@ function TraitRow({ trait, index }) {
         borderColor: hovered ? 'rgba(56,189,248,0.25)' : 'rgba(255,255,255,0.06)',
       }}
     >
-      <motion.div
-        animate={{
+      <div
+        className="w-11 h-11 rounded-xl flex items-center justify-center shrink-0 transition-all duration-300"
+        style={{
           background: hovered ? 'rgba(56,189,248,0.15)' : 'rgba(255,255,255,0.04)',
-          scale: hovered ? 1.1 : 1,
+          transform: hovered ? 'scale(1.1)' : 'scale(1)',
         }}
-        transition={{ duration: 0.25 }}
-        className="w-11 h-11 rounded-xl flex items-center justify-center shrink-0"
       >
         <trait.icon
           className="w-5 h-5 transition-colors duration-300"
           style={{ color: hovered ? '#38bdf8' : '#64748b' }}
         />
-      </motion.div>
+      </div>
       <div className="min-w-0">
         <p className="text-sm font-semibold text-white">{trait.label}</p>
-        <p className="text-xs text-slate-500 mt-0.5">{trait.desc}</p>
+        <p className="text-xs text-slate-400 mt-0.5">{trait.desc}</p>
       </div>
       <motion.div
         animate={{ opacity: hovered ? 1 : 0, x: hovered ? 0 : -4 }}

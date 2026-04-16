@@ -103,14 +103,14 @@ export default function GitHubActivity() {
                     LIVE
                   </span>
                 </div>
-                <p className="text-xs text-slate-500">@{GITHUB_USERNAME}</p>
+                <p className="text-xs text-slate-400">@{GITHUB_USERNAME}</p>
               </div>
             </div>
             <a
               href={`https://github.com/${GITHUB_USERNAME}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="p-3 -m-2 text-slate-500 hover:text-blue-400 transition-colors"
+              className="p-3 -m-2 text-slate-400 hover:text-blue-400 transition-colors"
               aria-label="View GitHub Profile"
             >
               <ExternalLink className="w-5 h-5" />
@@ -120,7 +120,7 @@ export default function GitHubActivity() {
           {loading && <Skeleton />}
 
           {error && (
-            <p className="text-xs text-slate-500 flex items-center gap-2">
+            <p className="text-xs text-slate-400 flex items-center gap-2">
               <Github className="w-4 h-4" />
               {error === 'GitHub API: 403'
                 ? 'Rate-limited. Most features work best with dynamic data.'
@@ -129,7 +129,7 @@ export default function GitHubActivity() {
           )}
 
           {!loading && !error && events.length === 0 && (
-            <p className="text-xs text-slate-500">No recent public activity found.</p>
+            <p className="text-xs text-slate-400">No recent public activity found.</p>
           )}
 
           {!loading && !error && events.length > 0 && (

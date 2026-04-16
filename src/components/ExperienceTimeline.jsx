@@ -134,7 +134,7 @@ export default function ExperienceTimeline() {
                 {item.highlights && item.highlights.length > 0 && (
                   <ul className="space-y-1">
                     {item.highlights.map((h) => (
-                      <li key={h} className="text-slate-500 text-sm flex items-start gap-2">
+                      <li key={h} className="text-slate-400 text-sm flex items-start gap-2">
                         <span className="text-blue-400 mt-0.5">▹</span>
                         {h}
                       </li>

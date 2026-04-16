@@ -124,11 +124,8 @@ export default function CertificatesAwards() {
                   rotateY = -25;
                 }
 
-                // Mobile adjustments
-                if (typeof window !== 'undefined' && window.innerWidth < 768) {
-                  x = isCenter ? 0 : (isLeft ? -100 : 100);
-                  scale = isCenter ? 1 : 0.7;
-                }
+                // Mobile adjustments — handled via CSS responsive classes instead of JS
+                // to avoid forced reflow from window.innerWidth in render path
 
                 return (
                   <motion.div
@@ -157,6 +154,10 @@ export default function CertificatesAwards() {
                       <img
                         src={item.image}
                         alt={item.title}
+                        width="700"
+                        height="450"
+                        loading="lazy"
+                        decoding="async"
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
                       />
                       
@@ -215,6 +216,8 @@ export default function CertificatesAwards() {
               <img
                 src={selectedImage}
                 alt="Certificate Fullscreen"
+                loading="lazy"
+                decoding="async"
                 className="max-h-full object-contain rounded-lg shadow-2xl"
               />
               <button

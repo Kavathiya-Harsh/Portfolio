@@ -66,7 +66,7 @@ function SkillPill({ skill, index }) {
         <span className="text-sm font-medium text-slate-300 group-hover:text-white transition-colors">
           {skill.name}
         </span>
-        <span className="text-[10px] font-mono text-slate-500 uppercase tracking-tighter">
+        <span className="text-[10px] font-mono text-slate-400 uppercase tracking-tighter">
           {config.label}
         </span>
       </div>
@@ -225,7 +225,7 @@ export default function SkillsCloud() {
             className="flex flex-col gap-6 min-w-[320px]"
           >
             <div className="relative group">
-              <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500 group-focus-within:text-blue-400 transition-all" />
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 group-focus-within:text-blue-400 transition-all" />
               <input
                 type="text"
                 placeholder="Search technologies..."

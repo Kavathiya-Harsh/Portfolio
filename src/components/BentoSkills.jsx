@@ -79,7 +79,7 @@ function SkillCard({ skill, index, categoryColor }) {
             className="w-1.5 h-1.5 rounded-full animate-pulse shadow-[0_0_12px_var(--skill-color)]"
             style={{ backgroundColor: 'var(--skill-color)' }}
           />
-          <span className="text-[10px] font-mono text-slate-500 uppercase tracking-widest">{skill.level}</span>
+          <span className="text-[10px] font-mono text-slate-400 uppercase tracking-widest">{skill.level}</span>
         </div>
         <h4 className="text-lg font-bold text-white tracking-tight group-hover:translate-x-1 transition-transform">
           {skill.name}
@@ -118,7 +118,7 @@ function CategorySection({ category, catIndex }) {
         </div>
         <div>
           <h3 className="text-xl sm:text-2xl font-bold text-white mb-1">{category.title}</h3>
-          <p className="text-slate-500 text-sm font-mono">{category.description}</p>
+          <p className="text-slate-400 text-sm font-mono">{category.description}</p>
         </div>
       </div>
 

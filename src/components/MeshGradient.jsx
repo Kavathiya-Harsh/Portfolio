@@ -36,41 +36,38 @@ export default function MeshGradient() {
         }}
       />
 
-      {/* Primary Aurora — Deep Blue */}
+      {/* Primary Aurora — Deep Blue (static gradient, composited animation only) */}
       <motion.div
         className="absolute w-[120vw] h-[120vh] -left-[10vw] -top-[10vh]"
         style={{
           background: `radial-gradient(circle at 20% 30%, rgba(30, 58, 138, 0.25) 0%, transparent 60%)`,
         }}
         animate={isMobile ? false : {
-          rotate: [0, 5, 0],
-          scale: [1, 1.1, 1],
+          opacity: [0.6, 1, 0.6],
         }}
         transition={{ duration: 25, repeat: Infinity, ease: 'easeInOut' }}
       />
 
-      {/* Secondary Aurora — Soft Cyan */}
+      {/* Secondary Aurora — Soft Cyan (static gradient, composited animation only) */}
       <motion.div
         className="absolute w-[100vw] h-[100vh] -right-[10vw] -bottom-[10vh]"
         style={{
           background: `radial-gradient(circle at 80% 80%, rgba(8, 145, 178, 0.15) 0%, transparent 60%)`,
         }}
         animate={isMobile ? false : {
-          rotate: [0, -8, 0],
-          scale: [1, 1.15, 1],
+          opacity: [0.5, 1, 0.5],
         }}
         transition={{ duration: 30, repeat: Infinity, ease: 'easeInOut', delay: 2 }}
       />
 
-      {/* Accent Orb — Muted Violet */}
+      {/* Accent Orb — Muted Violet (composited transform only) */}
       <motion.div
         className="absolute w-[80vw] h-[80vh] left-[10vw] top-[20vh]"
         style={{
           background: `radial-gradient(circle at center, rgba(109, 40, 217, 0.08) 0%, transparent 50%)`,
         }}
         animate={isMobile ? false : {
-          x: [0, 40, -40, 0],
-          y: [0, -30, 20, 0],
+          opacity: [0.5, 1, 0.5],
         }}
         transition={{ duration: 35, repeat: Infinity, ease: 'easeInOut', delay: 5 }}
       />

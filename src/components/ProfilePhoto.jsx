@@ -22,6 +22,10 @@ export function ProfilePhoto({ size = 'lg', className = '', showRing = true }) {
         <img
           src={photoUrl}
           alt={profile.name}
+          width="160"
+          height="160"
+          loading="lazy"
+          decoding="async"
           className="h-full w-full object-cover"
           onError={(e) => {
             console.error("Photo load error:", e);

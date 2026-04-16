@@ -76,9 +76,9 @@ export default function TestimonialCarousel() {
           <AnimatePresence mode="wait">
             <motion.div
               key={t.id}
-              initial={{ opacity: 0, x: 20, filter: 'blur(4px)' }}
-              animate={{ opacity: 1, x: 0, filter: 'blur(0px)' }}
-              exit={{ opacity: 0, x: -20, filter: 'blur(4px)' }}
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -20 }}
               transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
               className="relative"
             >
@@ -89,6 +89,10 @@ export default function TestimonialCarousel() {
                 <img
                   src={t.avatar}
                   alt={t.author}
+                  width="48"
+                  height="48"
+                  loading="lazy"
+                  decoding="async"
                   className="w-12 h-12 rounded-full object-cover border-2 border-white/12"
                 />
                 <div>

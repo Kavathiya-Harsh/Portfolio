@@ -101,7 +101,7 @@ export default function ProjectGallery({ typeFilter = 'all' }) {
             <h4 className="text-white text-xl font-bold mb-2">
               No projects found
             </h4>
-            <p className="text-slate-500 text-sm max-w-xs mx-auto">
+            <p className="text-slate-400 text-sm max-w-xs mx-auto">
               Your filtered view didn't return any items. Try clearing your filters.
             </p>
           </motion.div>

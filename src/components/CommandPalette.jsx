@@ -175,7 +175,7 @@ export default function CommandPalette({ isOpen, onClose }) {
                 type="text"
                 placeholder="Type a command or search..."
                 aria-label="Search commands"
-                className="flex-1 bg-transparent text-white outline-none placeholder:text-slate-500 text-lg"
+                className="flex-1 bg-transparent text-white outline-none placeholder:text-slate-400 text-lg"
                 value={query}
                 onChange={(e) => {
                   setQuery(e.target.value);
@@ -199,7 +199,7 @@ export default function CommandPalette({ isOpen, onClose }) {
                     }, {})
                   ).map(([category, items]) => (
                     <div key={category} className="px-2">
-                      <h3 className="text-[10px] font-bold uppercase tracking-widest text-slate-500 mb-2 px-2">
+                      <h3 className="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-2 px-2">
                         {category}
                       </h3>
                       <div className="space-y-1">
@@ -235,7 +235,7 @@ export default function CommandPalette({ isOpen, onClose }) {
                                     <ArrowRight className="w-3.5 h-3.5 text-blue-400 animate-in fade-in slide-in-from-left-2 duration-300" />
                                   )}
                                 </div>
-                                <p className="text-xs text-slate-500 truncate mt-0.5">
+                                <p className="text-xs text-slate-400 truncate mt-0.5">
                                   {cmd.description}
                                 </p>
                               </div>
@@ -247,7 +247,7 @@ export default function CommandPalette({ isOpen, onClose }) {
                   ))}
                 </div>
               ) : (
-                <div className="py-12 text-center text-slate-500">
+                <div className="py-12 text-center text-slate-400">
                   <CommandIcon className="w-12 h-12 mx-auto mb-4 opacity-10" />
                   <p className="text-sm">No results found for "{query}"</p>
                 </div>
@@ -256,7 +256,7 @@ export default function CommandPalette({ isOpen, onClose }) {
 
             {/* Footer */}
             <div className="border-t border-slate-700/50 bg-slate-900/50 px-4 py-3 flex items-center justify-between">
-              <div className="flex items-center gap-4 text-[10px] text-slate-500 font-medium">
+              <div className="flex items-center gap-4 text-[10px] text-slate-400 font-medium">
                 <span className="flex items-center gap-1">
                   <span className="px-1 py-0.5 rounded border border-slate-700 bg-slate-800">↑↓</span> to navigate
                 </span>
@@ -264,7 +264,7 @@ export default function CommandPalette({ isOpen, onClose }) {
                   <span className="px-1.5 py-0.5 rounded border border-slate-700 bg-slate-800 font-mono text-xs">↵</span> to select
                 </span>
               </div>
-              <div className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">
+              <div className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">
                 Command Palette
               </div>
             </div>

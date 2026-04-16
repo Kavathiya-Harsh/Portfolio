@@ -70,7 +70,7 @@ export default function QRCodeModal({ isOpen, onClose }) {
               <span className="text-xs font-mono text-slate-400 truncate flex-1">
                 {portfolioUrl}
               </span>
-              <ExternalLink className="w-3.5 h-3.5 text-slate-500 group-hover:text-blue-400" />
+              <ExternalLink className="w-3.5 h-3.5 text-slate-400 group-hover:text-blue-400" />
             </div>
 
             {/* Action Buttons */}
@@ -87,7 +87,7 @@ export default function QRCodeModal({ isOpen, onClose }) {
             </div>
 
             {/* Footer Text */}
-            <p className="mt-4 text-[10px] text-center text-slate-500 uppercase tracking-widest font-bold">
+            <p className="mt-4 text-[10px] text-center text-slate-400 uppercase tracking-widest font-bold">
               Portfolio Navigation
             </p>
           </motion.div>

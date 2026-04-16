@@ -54,7 +54,7 @@ export default function ProjectRecommender({ onFilter }) {
             {selected && (
               <button
                 onClick={(e) => { e.stopPropagation(); handleReset(); }}
-                className="ml-2 p-1 rounded-md hover:bg-slate-700 text-slate-500 hover:text-white transition-all"
+                className="ml-2 p-1 rounded-md hover:bg-slate-700 text-slate-400 hover:text-white transition-all"
               >
                 <RotateCcw className="w-3.5 h-3.5" />
               </button>
@@ -75,7 +75,7 @@ export default function ProjectRecommender({ onFilter }) {
               </div>
               <button
                 onClick={() => setIsOpen(false)}
-                className="text-xs text-slate-500 hover:text-white transition-colors"
+                className="text-xs text-slate-400 hover:text-white transition-colors"
               >
                 Cancel
               </button>

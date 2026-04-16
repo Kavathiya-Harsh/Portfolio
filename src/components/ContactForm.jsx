@@ -104,7 +104,7 @@ function ContactCard({ item, index }) {
         onClick={copyToClipboard}
         whileHover={{ scale: 1.1, rotate: 5 }}
         whileTap={{ scale: 0.9 }}
-        className="shrink-0 p-3.5 rounded-lg hover:bg-white/10 text-slate-500 hover:text-white transition-colors relative"
+        className="shrink-0 p-3.5 rounded-lg hover:bg-white/10 text-slate-400 hover:text-white transition-colors relative"
         title="Copy"
         aria-label={`Copy ${item.label} to clipboard`}
       >
@@ -286,7 +286,7 @@ export default function ContactForm() {
             >
               <div className="grid sm:grid-cols-2 gap-6">
                 <div>
-                  <label htmlFor="name" className="block text-xs font-mono uppercase tracking-[0.2em] text-slate-500 mb-2 ml-1">Full Name</label>
+                  <label htmlFor="name" className="block text-xs font-mono uppercase tracking-[0.2em] text-slate-400 mb-2 ml-1">Full Name</label>
                   <input
                     type="text"
                     id="name"
@@ -298,7 +298,7 @@ export default function ContactForm() {
                   />
                 </div>
                 <div>
-                  <label htmlFor="email" className="block text-xs font-mono uppercase tracking-[0.2em] text-slate-500 mb-2 ml-1">Email Address</label>
+                  <label htmlFor="email" className="block text-xs font-mono uppercase tracking-[0.2em] text-slate-400 mb-2 ml-1">Email Address</label>
                   <input
                     type="email"
                     id="email"
@@ -312,7 +312,7 @@ export default function ContactForm() {
               </div>
 
               <div>
-                <label htmlFor="message" className="block text-xs font-mono uppercase tracking-[0.2em] text-slate-500 mb-2 ml-1">Your Message</label>
+                <label htmlFor="message" className="block text-xs font-mono uppercase tracking-[0.2em] text-slate-400 mb-2 ml-1">Your Message</label>
                 <textarea
                   id="message"
                   required

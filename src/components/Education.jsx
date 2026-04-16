@@ -48,11 +48,11 @@ function EducationCard({ item, index }) {
           </div>
           
           <div className="flex flex-col md:items-end">
-            <div className="flex items-center gap-2 text-slate-500 font-mono text-xs uppercase tracking-wider mb-1">
+            <div className="flex items-center gap-2 text-slate-400 font-mono text-xs uppercase tracking-wider mb-1">
               <Calendar className="w-3.5 h-3.5" />
               <span>{item.period}</span>
             </div>
-            <div className="flex items-center gap-2 text-slate-500 font-mono text-xs uppercase tracking-wider">
+            <div className="flex items-center gap-2 text-slate-400 font-mono text-xs uppercase tracking-wider">
               <MapPin className="w-3.5 h-3.5" />
               <span>{item.location}</span>
             </div>
@@ -61,7 +61,7 @@ function EducationCard({ item, index }) {
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
-            <p className="text-xs font-mono uppercase tracking-[0.2em] text-slate-500 mb-4">Focus & Specialization</p>
+            <p className="text-xs font-mono uppercase tracking-[0.2em] text-slate-400 mb-4">Focus & Specialization</p>
             <div className="inline-flex px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 text-slate-300 text-sm font-medium mb-4">
               {item.specialization}
             </div>
@@ -72,7 +72,7 @@ function EducationCard({ item, index }) {
           </div>
 
           <div>
-            <p className="text-xs font-mono uppercase tracking-[0.2em] text-slate-500 mb-4">Key Achievements</p>
+            <p className="text-xs font-mono uppercase tracking-[0.2em] text-slate-400 mb-4">Key Achievements</p>
             <ul className="space-y-3">
               {item.details.map((detail, idx) => (
                 <li key={idx} className="flex items-start gap-3 group/item">
