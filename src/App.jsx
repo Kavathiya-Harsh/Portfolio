@@ -138,7 +138,7 @@ export default function App() {
         {/* Main page content — always in DOM, no conditional rendering */}
         <div className="pb-40 md:pb-12">
           <main>
-            <Hero />
+            <Hero isReady={!isLoading} />
             <Suspense fallback={<SectionFallback />}>
               <SectionDivider />
               <GitHubActivity />

@@ -1,212 +1,284 @@
-import React, { useState, useEffect, useMemo } from 'react';
+/**
+ * LoadingScreen — cinematic intro animation
+ * Performance: GPU-composited (transform + opacity only), stable particles,
+ *              will-change scoped, clean unmount, zero layout thrash.
+ */
+import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
-const firstName = 'Harsh';
-const lastName  = 'Kavathiya';
-const slogan    = 'Engineering with Passion \u2022 Designing with Purpose';
+/* ─── CONSTANTS ─────────────────────────────────────── */
+const FIRST_NAME = 'Harsh';
+const LAST_NAME  = 'Kavathiya';
+const SLOGAN     = 'Engineering with Passion \u2022 Designing with Purpose';
+const ROLE       = 'Full Stack Developer';
 
-const charDelay  = 0.04;
-const nameAnimDur = (firstName.length + 1 + lastName.length) * charDelay + 0.5; // ~1.36s
+// Per-character stagger
+const F_DELAY = 0.22;   // delay before first char of firstName
+const F_STEP  = 0.055;  // stagger per char — firstName
+const L_DELAY = 0.52;   // delay before firstchar of lastName
+const L_STEP  = 0.048;  // stagger per char — lastName
 
-// Total loader duration = nameAnimDur + 1.8s  ≈ 3.2s
-const T_ROLE     = (nameAnimDur + 0.15) * 1000;  // name done → show slogan
-const T_EXIT     = (nameAnimDur + 1.3)  * 1000;  // begin fade-out
-const T_COMPLETE = (nameAnimDur + 1.9)  * 1000;  // fire onComplete
+// When last char of lastName finishes landing (~0.65s animation)
+const NAME_DONE = L_DELAY + LAST_NAME.length * L_STEP + 0.65; // ≈ 1.69s
 
+// Phase timestamps (ms)
+const T_SLOGAN   = NAME_DONE * 1000;            // ~1690
+const T_EXIT     = (NAME_DONE + 1.5) * 1000;   // ~3190
+const T_COMPLETE = (NAME_DONE + 2.1) * 1000;   // ~3790
+
+/* ─── SHARED EASING ─────────────────────────────────── */
+const EASE_OUT_EXPO = [0.16, 1, 0.3, 1];
+
+/* ─── CHAR ANIMATION VARIANTS ───────────────────────── */
+const charVariants = {
+  hidden: { opacity: 0, y: 56, rotateX: -80, scale: 0.55 },
+  visible: (delay) => ({
+    opacity: 1, y: 0, rotateX: 0, scale: 1,
+    transition: { delay, duration: 0.65, ease: EASE_OUT_EXPO },
+  }),
+};
+
+/* ─── COMPONENT ─────────────────────────────────────── */
 export default function LoadingScreen({ onComplete }) {
-  const [phase, setPhase] = useState('name'); // name → role → exit → done
-  const [isMobile, setIsMobile] = useState(false);
+  const [phase, setPhase] = useState('name'); // name → slogan → exit → done
+  const [mounted, setMounted] = useState(false);
+  const timersRef = useRef([]);
 
-  useEffect(() => {
-    setIsMobile(window.innerWidth < 768);
+  /* detect mobile once */
+  const isMobile = useMemo(() => {
+    if (typeof window === 'undefined') return false;
+    return window.innerWidth < 768;
   }, []);
 
-  useEffect(() => {
-    const t1 = setTimeout(() => setPhase('role'),     T_ROLE);
-    const t2 = setTimeout(() => setPhase('exit'),     T_EXIT);
-    const t3 = setTimeout(() => {
-      setPhase('done');
-      onComplete?.();
-    }, T_COMPLETE);
-    return () => { clearTimeout(t1); clearTimeout(t2); clearTimeout(t3); };
-  }, [onComplete]);
-
-  // Stable random particles — computed once
+  /* stable particles — computed once, never re-randomised */
   const particles = useMemo(() => {
-    const count = isMobile ? 10 : 20;
-    return Array.from({ length: count }, (_, i) => ({
-      id: i,
-      left:     `${5 + (i / count) * 90 + (i % 3) * 2}%`,
-      duration: 4 + (i % 5),
-      delay:    (i * 0.4) % 3,
-      color:    i % 2 === 0 ? '#60a5fa' : '#22d3ee',
-    }));
+    const count = isMobile ? 10 : 24;
+    return Array.from({ length: count }, (_, i) => {
+      const t = i / count;
+      return {
+        id:       i,
+        left:     `${3 + t * 94}%`,
+        duration: 4.5 + (i % 6) * 0.8,
+        delay:    (i * 0.28) % 3.5,
+        color:    ['#60a5fa', '#22d3ee', '#818cf8'][i % 3],
+        size:     i % 4 === 0 ? 2.5 : 1.8,
+      };
+    });
   }, [isMobile]);
 
-  if (phase === 'done') return null;
+  /* viewport height ref — no recalc on tick */
+  const vhRef = useRef(typeof window !== 'undefined' ? window.innerHeight + 60 : 860);
+
+  useEffect(() => {
+    setMounted(true);
+    const push = (fn, ms) => {
+      const id = setTimeout(fn, ms);
+      timersRef.current.push(id);
+    };
+    push(() => setPhase('slogan'),  T_SLOGAN);
+    push(() => setPhase('exit'),    T_EXIT);
+    push(() => { setPhase('done'); onComplete?.(); }, T_COMPLETE);
+    return () => timersRef.current.forEach(clearTimeout);
+  }, [onComplete]);
+
+  if (phase === 'done' || !mounted) return null;
 
   return (
     <AnimatePresence mode="wait">
       <motion.div
-        key="loader"
+        key="loading-screen"
         initial={{ opacity: 1 }}
-        animate={phase === 'exit' ? { opacity: 0, scale: 1.04, filter: 'blur(8px)' } : { opacity: 1 }}
-        transition={{ duration: 0.55, ease: [0.16, 1, 0.3, 1] }}
-        className="fixed inset-0 z-[200] flex items-center justify-center overflow-hidden"
-        style={{ background: 'linear-gradient(135deg, #080d1a 0%, #0c1629 40%, #0a1628 100%)' }}
+        animate={
+          phase === 'exit'
+            ? { opacity: 0, scale: 1.035, filter: 'blur(10px)' }
+            : { opacity: 1, scale: 1,     filter: 'blur(0px)'  }
+        }
+        transition={{ duration: 0.65, ease: EASE_OUT_EXPO }}
+        className="fixed inset-0 z-[9999] flex items-center justify-center overflow-hidden"
+        style={{
+          background: 'linear-gradient(150deg, #060c1a 0%, #0b1628 55%, #07101f 100%)',
+          contain: 'strict',
+        }}
+        aria-hidden="true"
       >
-        {/* ── GRID OVERLAY ── */}
+
+        {/* ── SUBTLE GRID ────────────────────────────── */}
         <div
-          className="absolute inset-0 opacity-[0.03] pointer-events-none"
+          aria-hidden="true"
+          className="absolute inset-0 pointer-events-none"
           style={{
-            backgroundImage: `linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px),
-                              linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px)`,
+            opacity: 0.022,
+            backgroundImage:
+              'linear-gradient(rgba(255,255,255,.15) 1px,transparent 1px),' +
+              'linear-gradient(90deg,rgba(255,255,255,.15) 1px,transparent 1px)',
             backgroundSize: '80px 80px',
           }}
         />
 
-        {/* ── GRADIENT ORBS ── */}
+        {/* ── AMBIENT ORBS (GPU blur, no layout) ─────── */}
         <motion.div
-          className="absolute w-[450px] h-[450px] rounded-full pointer-events-none"
-          style={{ top: '10%', left: '8%' }}
-          animate={{ scale: [1, 1.3, 1], opacity: [0.1, 0.22, 0.1] }}
-          transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut' }}
+          aria-hidden="true"
+          className="absolute pointer-events-none rounded-full"
+          style={{ width: 520, height: 520, top: '-5%', left: '-8%', willChange: 'transform, opacity' }}
+          animate={{ scale: [1, 1.28, 1], opacity: [0.09, 0.2, 0.09] }}
+          transition={{ duration: 7, repeat: Infinity, ease: 'easeInOut' }}
         >
-          <div className="w-full h-full rounded-full bg-blue-600/20 blur-[100px]" />
+          <div style={{ width: '100%', height: '100%', borderRadius: '50%', background: 'rgba(59,130,246,0.18)', filter: 'blur(110px)' }} />
         </motion.div>
         <motion.div
-          className="absolute w-[380px] h-[380px] rounded-full pointer-events-none"
-          style={{ bottom: '8%', right: '8%' }}
-          animate={{ scale: [1, 1.2, 1], opacity: [0.07, 0.16, 0.07] }}
-          transition={{ duration: 8, repeat: Infinity, ease: 'easeInOut', delay: 1 }}
+          aria-hidden="true"
+          className="absolute pointer-events-none rounded-full"
+          style={{ width: 440, height: 440, bottom: '-5%', right: '-8%', willChange: 'transform, opacity' }}
+          animate={{ scale: [1, 1.22, 1], opacity: [0.06, 0.14, 0.06] }}
+          transition={{ duration: 9, repeat: Infinity, ease: 'easeInOut', delay: 1.5 }}
         >
-          <div className="w-full h-full rounded-full bg-cyan-500/15 blur-[100px]" />
+          <div style={{ width: '100%', height: '100%', borderRadius: '50%', background: 'rgba(6,182,212,0.14)', filter: 'blur(110px)' }} />
         </motion.div>
 
-        {/* ── RISING PARTICLES ── */}
+        {/* ── RISING PARTICLES ────────────────────────── */}
         {particles.map(p => (
           <motion.div
             key={p.id}
-            className="absolute w-[2px] h-[2px] rounded-full pointer-events-none"
-            style={{ left: p.left, bottom: '-2%', background: p.color }}
-            animate={{ y: [0, -window.innerHeight * 1.05], opacity: [0, 0.45, 0] }}
+            aria-hidden="true"
+            className="absolute pointer-events-none rounded-full"
+            style={{ width: p.size, height: p.size, left: p.left, bottom: '-2%', background: p.color, willChange: 'transform, opacity' }}
+            animate={{ y: [0, -vhRef.current], opacity: [0, 0.5, 0] }}
             transition={{ duration: p.duration, delay: p.delay, repeat: Infinity, ease: 'linear' }}
           />
         ))}
 
-        {/* ── MAIN CONTENT ── */}
-        <div className="relative z-10 flex flex-col items-center gap-10 px-6 max-w-4xl w-full">
+        {/* ── MAIN CONTENT ─────────────────────────────── */}
+        <div
+          className="relative z-10 flex flex-col items-center px-4"
+          style={{ perspective: '1200px', userSelect: 'none' }}
+        >
 
-          {/* NAME — character flip-in */}
-          <div className="flex flex-wrap justify-center items-baseline gap-x-4 sm:gap-x-6">
-            {/* First name — white */}
-            <div className="flex">
-              {firstName.split('').map((char, i) => (
-                <motion.span
-                  key={`f-${i}`}
-                  initial={{ opacity: 0, y: 60, rotateX: -90, scale: 0.6 }}
-                  animate={{ opacity: 1, y: 0, rotateX: 0, scale: 1 }}
-                  transition={{ delay: 0.3 + i * charDelay, duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-                  className="text-6xl sm:text-7xl md:text-9xl font-black text-white tracking-tighter inline-block will-change-transform"
-                  style={{ transformOrigin: 'center bottom', perspective: '1000px', textShadow: '0 20px 50px rgba(0,0,0,0.5)' }}
-                >
-                  {char}
-                </motion.span>
-              ))}
-            </div>
-
-            {/* Last name — gradient */}
-            <div className="flex">
-              {lastName.split('').map((char, i) => (
-                <motion.span
-                  key={`l-${i}`}
-                  initial={{ opacity: 0, y: 60, rotateX: -90, scale: 0.6 }}
-                  animate={{ opacity: 1, y: 0, rotateX: 0, scale: 1 }}
-                  transition={{ delay: 0.3 + (firstName.length + 1 + i) * charDelay, duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-                  className="text-6xl sm:text-7xl md:text-9xl font-black tracking-tighter inline-block will-change-transform bg-gradient-to-br from-blue-400 via-cyan-300 to-indigo-500 bg-clip-text text-transparent"
-                  style={{ transformOrigin: 'center bottom', perspective: '1000px' }}
-                >
-                  {char}
-                </motion.span>
-              ))}
-            </div>
+          {/* FIRST NAME — "Harsh" — cream/off-white */}
+          <div className="flex justify-center" style={{ lineHeight: 1.02, marginBottom: '-0.06em' }}>
+            {FIRST_NAME.split('').map((char, i) => (
+              <motion.span
+                key={`f${i}`}
+                custom={F_DELAY + i * F_STEP}
+                variants={charVariants}
+                initial="hidden"
+                animate="visible"
+                className="inline-block font-black"
+                style={{
+                  fontSize: 'clamp(4.5rem, 13vw, 9rem)',
+                  color: '#ede9df',                   /* warm cream — matches screenshot */
+                  letterSpacing: '-0.03em',
+                  transformOrigin: 'center bottom',
+                  willChange: 'transform, opacity',
+                  textShadow: '0 18px 45px rgba(0,0,0,0.55)',
+                }}
+              >
+                {char}
+              </motion.span>
+            ))}
           </div>
 
-          {/* SLOGAN + ROLE — appear after name finishes */}
-          <div className="flex flex-col items-center gap-3 min-h-[72px]">
+          {/* LAST NAME — "Kavathiya" — larger, cyan→blue gradient */}
+          <div className="flex justify-center" style={{ lineHeight: 1.02 }}>
+            {LAST_NAME.split('').map((char, i) => (
+              <motion.span
+                key={`l${i}`}
+                custom={L_DELAY + i * L_STEP}
+                variants={charVariants}
+                initial="hidden"
+                animate="visible"
+                className="inline-block font-black"
+                style={{
+                  fontSize: 'clamp(4.5rem, 13vw, 9rem)',
+                  letterSpacing: '-0.03em',
+                  background: 'linear-gradient(135deg, #67e8f9 0%, #38bdf8 28%, #3b82f6 65%, #6366f1 100%)',
+                  WebkitBackgroundClip: 'text',
+                  WebkitTextFillColor: 'transparent',
+                  backgroundClip: 'text',
+                  transformOrigin: 'center bottom',
+                  willChange: 'transform, opacity',
+                }}
+              >
+                {char}
+              </motion.span>
+            ))}
+          </div>
+
+          {/* SLOGAN + ROLE + LINE — fade in after name lands */}
+          <div className="flex flex-col items-center mt-8" style={{ minHeight: 90 }}>
             <AnimatePresence>
-              {(phase === 'role' || phase === 'exit') && (
+              {(phase === 'slogan' || phase === 'exit') && (
                 <motion.div
-                  key="slogan-block"
-                  initial={{ opacity: 0, y: 12 }}
+                  key="sub-content"
+                  initial={{ opacity: 0, y: 14 }}
                   animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0 }}
+                  exit={{ opacity: 0, y: -6 }}
                   transition={{ duration: 0.55, ease: 'easeOut' }}
-                  className="flex flex-col items-center gap-3"
+                  className="flex flex-col items-center gap-4"
                 >
                   {/* Slogan */}
                   <motion.p
-                    initial={{ opacity: 0, letterSpacing: '0.45em' }}
-                    animate={{ opacity: 1, letterSpacing: '0.25em' }}
-                    transition={{ duration: 0.65, ease: 'easeOut' }}
-                    className="text-sm sm:text-base font-medium text-blue-100/90 text-center"
-                    style={{ letterSpacing: '0.25em' }}
+                    initial={{ opacity: 0, letterSpacing: '0.55em' }}
+                    animate={{ opacity: 0.72, letterSpacing: '0.28em' }}
+                    transition={{ duration: 0.75, ease: 'easeOut' }}
+                    className="text-center font-light text-slate-300"
+                    style={{
+                      fontSize: 'clamp(0.6rem, 1.5vw, 0.85rem)',
+                      letterSpacing: '0.28em',
+                      fontFamily: '"SF Mono", "Fira Code", "Consolas", monospace',
+                    }}
                   >
-                    {slogan}
+                    {SLOGAN}
                   </motion.p>
 
-                  {/* Divider line */}
+                  {/* Role */}
+                  <motion.p
+                    initial={{ opacity: 0, y: 6 }}
+                    animate={{ opacity: 0.55, y: 0 }}
+                    transition={{ delay: 0.22, duration: 0.55, ease: 'easeOut' }}
+                    className="text-center font-mono uppercase text-cyan-400"
+                    style={{
+                      fontSize: 'clamp(0.55rem, 1.2vw, 0.7rem)',
+                      letterSpacing: '0.55em',
+                    }}
+                  >
+                    {ROLE}
+                  </motion.p>
+
+                  {/* Gradient divider */}
                   <motion.div
                     initial={{ scaleX: 0 }}
                     animate={{ scaleX: 1 }}
-                    transition={{ duration: 0.75, delay: 0.18, ease: [0.16, 1, 0.3, 1] }}
-                    className="w-64 sm:w-80 h-px bg-gradient-to-r from-transparent via-blue-500/60 to-transparent"
+                    transition={{ duration: 0.85, delay: 0.12, ease: EASE_OUT_EXPO }}
+                    style={{
+                      width: 'clamp(200px, 38vw, 340px)',
+                      height: 1,
+                      background: 'linear-gradient(90deg, transparent 0%, #3b82f6 30%, #06b6d4 70%, transparent 100%)',
+                      transformOrigin: 'center',
+                      willChange: 'transform',
+                    }}
                   />
-
-                  {/* Role badge */}
-                  <motion.span
-                    initial={{ opacity: 0, y: 6 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.32, duration: 0.5 }}
-                    className="text-[10px] sm:text-xs font-mono uppercase tracking-[0.5em] text-cyan-400"
-                    style={{ animation: 'pulse 2s cubic-bezier(0.4,0,0.6,1) infinite' }}
-                  >
-                    Full Stack Developer
-                  </motion.span>
                 </motion.div>
               )}
             </AnimatePresence>
           </div>
-
-          {/* PROGRESS BAR — synced to total nameAnimDur */}
-          <div className="w-56 sm:w-72 h-[2px] bg-white/5 rounded-full overflow-hidden relative">
-            <motion.div
-              initial={{ scaleX: 0 }}
-              animate={{ scaleX: 1 }}
-              transition={{ duration: nameAnimDur + 0.6, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
-              className="h-full bg-gradient-to-r from-blue-600 via-cyan-400 to-indigo-500 rounded-full"
-              style={{ transformOrigin: 'left center', boxShadow: '0 0 16px rgba(59,130,246,0.8)' }}
-            />
-            {/* Shimmer */}
-            <motion.div
-              className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent w-1/2"
-              animate={{ x: ['-100%', '200%'] }}
-              transition={{ duration: 1.1, repeat: Infinity, ease: 'linear', delay: 0.4 }}
-            />
-          </div>
         </div>
 
-        {/* ── CORNER HUD ── */}
-        <div className="absolute inset-0 pointer-events-none p-10 overflow-hidden opacity-[0.07]">
-          <div className="h-full w-full border border-white/30 rounded-[3rem] relative">
-            <span className="absolute top-6 left-8 text-[8px] font-mono text-white tracking-widest uppercase">
+        {/* ── CORNER HUD (very subtle) ─────────────────── */}
+        <div
+          aria-hidden="true"
+          className="absolute inset-0 pointer-events-none"
+          style={{ padding: 40, opacity: 0.055 }}
+        >
+          <div style={{ width: '100%', height: '100%', border: '1px solid rgba(255,255,255,0.28)', borderRadius: 48, position: 'relative' }}>
+            <span style={{ position: 'absolute', top: 20, left: 28, fontSize: 7, fontFamily: 'monospace', color: '#fff', letterSpacing: '0.2em', textTransform: 'uppercase' }}>
               Portfolio v2.0
             </span>
-            <span className="absolute bottom-6 right-8 text-[8px] font-mono text-white tracking-widest uppercase">
+            <span style={{ position: 'absolute', bottom: 20, right: 28, fontSize: 7, fontFamily: 'monospace', color: '#fff', letterSpacing: '0.2em', textTransform: 'uppercase' }}>
               Initializing...
             </span>
           </div>
         </div>
+
       </motion.div>
     </AnimatePresence>
   );
