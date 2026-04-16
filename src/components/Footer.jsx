@@ -12,7 +12,7 @@ const links = [
   { href: 'https://github.com/Kavathiya-Harsh', icon: Github, label: 'GitHub' },
   { href: 'https://www.linkedin.com/in/harshkavathiya', icon: Linkedin, label: 'LinkedIn' },
   { href: 'https://x.com/HarshK62610', icon: Twitter, label: 'Twitter / X' },
-  { href: 'https://youtube.com/@harshkavathiya-c3k', icon: Youtube, label: 'YouTube' },
+  { href: 'https://www.youtube.com/@harsh_kavathiya-001', icon: Youtube, label: 'YouTube' },
   { href: 'mailto:harsh.kavathiya.cg@gmail.com', icon: Mail, label: 'Email' },
 ];
 
@@ -49,6 +49,7 @@ export default function Footer() {
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.95 }}
               aria-label={label}
+              title={label}
             >
               <Icon className="w-5 h-5" />
             </motion.a>

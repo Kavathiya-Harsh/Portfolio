@@ -1,6 +1,9 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { User, Code2, Rocket, Brain, Coffee, GraduationCap, MapPin } from 'lucide-react';
+import {
+  User, Code2, Rocket, MapPin, Trophy, GitBranch,
+  Layers, Zap, GraduationCap, ArrowUpRight
+} from 'lucide-react';
 import ScrollReveal from './ScrollReveal';
 import {
   slideInLeft,
@@ -11,57 +14,169 @@ import {
   viewportOnce,
 } from '../utils/motion';
 
-const aboutData = {
-  title: "Passion Meets Innovation",
-  subtitle: "Decoding complexity, one hackathon at a time.",
-  description: [
-    "I am a results-driven Computer Science student at Shree Swaminarayan University (codinggita), currently in my first year of B.E. My journey in tech is fueled by a deep-seated passion for building systems that solve real-world problems.",
-    "Based in Gujarat (Kalol), I've spent my early academic years refining my logic and problem-solving skills at Modi School. Since starting my degree, I've dived head-first into the world of Full-Stack development and Algorithmic logic.",
-    "What defines me? It's the 'Hackathon Mindset'. I've competed in and won 5 major hackathons across top premier institutes like IIT Madras, IIT Hyderabad, and DA-IICT. I thrive in high-pressure environments where innovation meets execution."
-  ],
-  stats: [
-    { label: 'Location', value: 'Kalol, Gandhinagar', icon: MapPin, color: 'text-blue-400' },
-    { label: 'Rapid Builder', icon: Rocket, color: 'text-cyan-400' },
-    { label: 'Clean Coder', icon: Code2, color: 'text-emerald-400' }
-  ]
-};
+/* ── Data ────────────────────────────────────────────────────────────────── */
+const stats = [
+  { value: '5+',   label: 'Hackathons Won', icon: Trophy,    color: '#d4af37', bg: 'rgba(212,175,55,0.08)'  },
+  { value: '12+',  label: 'Projects Built', icon: Layers,    color: '#38bdf8', bg: 'rgba(56,189,248,0.08)'  },
+  { value: '1st',  label: 'Year B.E. CS',   icon: GraduationCap, color: '#34d399', bg: 'rgba(52,211,153,0.08)' },
+  { value: '∞',    label: 'Lines of Code',  icon: Code2,     color: '#a78bfa', bg: 'rgba(167,139,250,0.08)' },
+];
 
+const traits = [
+  { icon: Rocket,    label: 'Rapid Builder',      desc: 'Ship fast, iterate faster'      },
+  { icon: Code2,     label: 'Clean Coder',         desc: 'Readable, scalable code'        },
+  { icon: Zap,       label: 'Hackathon Mindset',   desc: 'High-pressure, sharp execution' },
+  { icon: GitBranch, label: 'Full-Stack Dev',      desc: 'End-to-end product builder'     },
+];
+
+const tags = [
+  { icon: GraduationCap, label: 'Modi School Alumnus', color: '#38bdf8' },
+  { icon: MapPin,         label: 'Gujarat, India',       color: '#34d399' },
+  { icon: Trophy,         label: '5× Hackathon Winner',  color: '#d4af37' },
+];
+
+const paragraphs = [
+  "I'm a first-year B.E. Computer Science student at Shree Swaminarayan University (CodingGita), driven by a relentless passion for building systems that solve real-world problems.",
+  "I've competed and won across top-tier institutes including IIT Madras, IIT Hyderabad, and DA-IICT — thriving in high-pressure environments where innovation meets execution.",
+];
+
+/* ── Stat Card ───────────────────────────────────────────────────────────── */
+function StatCard({ stat, index }) {
+  const [hovered, setHovered] = useState(false);
+  return (
+    <motion.div
+      variants={blurScaleIn}
+      custom={index}
+      onHoverStart={() => setHovered(true)}
+      onHoverEnd={() => setHovered(false)}
+      whileHover={{ y: -4, scale: 1.03 }}
+      className="relative flex flex-col items-center justify-center p-5 rounded-2xl border cursor-default text-center overflow-hidden transition-colors duration-300"
+      style={{
+        background: hovered ? stat.bg : 'rgba(255,255,255,0.02)',
+        borderColor: hovered ? stat.color + '55' : 'rgba(255,255,255,0.06)',
+      }}
+    >
+      {/* glow blob */}
+      <motion.div
+        animate={{ opacity: hovered ? 1 : 0 }}
+        transition={{ duration: 0.3 }}
+        className="absolute inset-0 pointer-events-none"
+        style={{
+          background: `radial-gradient(circle at 50% 50%, ${stat.color}22 0%, transparent 70%)`,
+        }}
+      />
+      <stat.icon className="w-5 h-5 mb-3" style={{ color: stat.color }} />
+      <p className="text-3xl font-black text-white leading-none">{stat.value}</p>
+      <p className="text-xs text-slate-400 mt-1.5 font-medium leading-tight">{stat.label}</p>
+    </motion.div>
+  );
+}
+
+/* ── Trait Row ───────────────────────────────────────────────────────────── */
+function TraitRow({ trait, index }) {
+  const [hovered, setHovered] = useState(false);
+  return (
+    <motion.div
+      variants={slideInLeft}
+      custom={index}
+      onHoverStart={() => setHovered(true)}
+      onHoverEnd={() => setHovered(false)}
+      whileHover={{ x: 6 }}
+      className="group flex items-center gap-4 p-4 rounded-2xl border transition-all duration-300 cursor-default"
+      style={{
+        background: hovered ? 'rgba(56,189,248,0.05)' : 'rgba(255,255,255,0.02)',
+        borderColor: hovered ? 'rgba(56,189,248,0.25)' : 'rgba(255,255,255,0.06)',
+      }}
+    >
+      <motion.div
+        animate={{
+          background: hovered ? 'rgba(56,189,248,0.15)' : 'rgba(255,255,255,0.04)',
+          scale: hovered ? 1.1 : 1,
+        }}
+        transition={{ duration: 0.25 }}
+        className="w-11 h-11 rounded-xl flex items-center justify-center shrink-0"
+      >
+        <trait.icon
+          className="w-5 h-5 transition-colors duration-300"
+          style={{ color: hovered ? '#38bdf8' : '#64748b' }}
+        />
+      </motion.div>
+      <div className="min-w-0">
+        <p className="text-sm font-semibold text-white">{trait.label}</p>
+        <p className="text-xs text-slate-500 mt-0.5">{trait.desc}</p>
+      </div>
+      <motion.div
+        animate={{ opacity: hovered ? 1 : 0, x: hovered ? 0 : -4 }}
+        transition={{ duration: 0.2 }}
+        className="ml-auto shrink-0"
+      >
+        <ArrowUpRight className="w-4 h-4 text-cyan-400" />
+      </motion.div>
+    </motion.div>
+  );
+}
+
+/* ── Main Component ──────────────────────────────────────────────────────── */
 export default function About() {
   return (
-    <section id="about" className="py-24 px-6 relative overflow-hidden">
+    <section id="about" className="py-28 px-6 relative overflow-hidden">
+
+      {/* ── Ambient background glows ── */}
+      <div className="absolute top-0 left-1/4 w-96 h-96 bg-blue-600/8 blur-[120px] rounded-full pointer-events-none" />
+      <div className="absolute bottom-0 right-1/4 w-80 h-80 bg-cyan-500/8 blur-[120px] rounded-full pointer-events-none" />
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-px bg-gradient-to-r from-transparent via-white/5 to-transparent pointer-events-none" />
+
       <div className="max-w-7xl mx-auto relative z-10">
-        <div className="grid lg:grid-cols-2 gap-16 items-center">
-          
-          {/* Left Side: Visual/Stats — staggered slide-in from left with blur */}
+
+        {/* ── Section badge ── */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={viewportOnce}
+          transition={{ duration: 0.5 }}
+          className="flex justify-center mb-20"
+        >
+          <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border text-xs font-mono uppercase tracking-[0.2em]"
+            style={{
+              background: 'rgba(56,189,248,0.06)',
+              borderColor: 'rgba(56,189,248,0.2)',
+              color: '#38bdf8',
+            }}
+          >
+            <User className="w-3 h-3" />
+            About Me
+          </span>
+        </motion.div>
+
+        <div className="grid lg:grid-cols-[1fr_1.1fr] gap-20 items-start">
+
+          {/* ══ LEFT COLUMN ══════════════════════════════════════════════ */}
           <motion.div
-            variants={staggerContainer(0.15, 0.1)}
+            variants={staggerContainer(0.12, 0.05)}
             initial="hidden"
             whileInView="visible"
             viewport={viewportOnce}
-            className="order-2 lg:order-1 grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-1 gap-6"
+            className="order-2 lg:order-1 flex flex-col gap-6"
           >
-            {aboutData.stats.map((stat, i) => (
-              <motion.div
-                key={stat.label}
-                variants={slideInLeft}
-                whileHover={{ x: 10 }}
-                className="group p-6 rounded-[2rem] bg-white/[0.03] border border-white/10 backdrop-blur-xl flex items-center gap-6 hover:bg-white/[0.05] hover:border-blue-500/30 transition-all duration-300"
-              >
-                <div className={`w-14 h-14 rounded-2xl bg-slate-800/50 flex items-center justify-center group-hover:scale-110 transition-transform`}>
-                  <stat.icon className={`w-7 h-7 ${stat.color}`} />
-                </div>
-                <div>
-                  <p className="text-white font-bold text-lg">{stat.label}</p>
-                  <p className="text-slate-500 text-xs uppercase tracking-widest font-mono">Core Value</p>
-                </div>
-              </motion.div>
+
+            {/* Trait rows */}
+            {traits.map((trait, i) => (
+              <TraitRow key={trait.label} trait={trait} index={i} />
             ))}
 
-            {/* Ambient Background Decorative for Left side */}
-            <div className="absolute top-1/2 left-0 -translate-y-1/2 -translate-x-1/2 w-64 h-64 bg-blue-500/10 blur-[100px] pointer-events-none rounded-full" />
+            {/* Stats 2×2 grid */}
+            <motion.div
+              variants={staggerContainer(0.08, 0.2)}
+              className="grid grid-cols-2 gap-3 mt-2"
+            >
+              {stats.map((stat, i) => (
+                <StatCard key={stat.label} stat={stat} index={i} />
+              ))}
+            </motion.div>
+
           </motion.div>
 
-          {/* Right Side: Content — slide in from right */}
+          {/* ══ RIGHT COLUMN ═════════════════════════════════════════════ */}
           <ScrollReveal direction="right" blur distance={50} className="order-1 lg:order-2">
             <motion.div
               initial="hidden"
@@ -69,56 +184,115 @@ export default function About() {
               viewport={viewportOnce}
               variants={staggerContainer(0.12, 0)}
             >
-              <motion.div
-                variants={textRevealUp}
-                className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-xs font-mono uppercase tracking-[0.2em] mb-6"
-              >
-                <User className="w-3 h-3" />
-                <span>About Me</span>
-              </motion.div>
-              
+
+              {/* Heading */}
               <motion.h2
                 variants={textRevealUp}
-                className="text-4xl sm:text-5xl md:text-7xl font-bold text-white leading-[1.1] tracking-tight mb-8"
+                className="text-4xl sm:text-5xl lg:text-6xl font-black text-white leading-[1.05] tracking-tight mb-8"
               >
-                {aboutData.title.split(' ').slice(0, 2).join(' ')} <br/>
-                <span className="bg-gradient-to-r from-blue-400 via-cyan-400 to-blue-500 bg-clip-text text-transparent">
-                  {aboutData.title.split(' ').slice(2).join(' ')}
+                Passion Meets<br />
+                <span
+                  className="bg-clip-text text-transparent"
+                  style={{ backgroundImage: 'linear-gradient(135deg, #38bdf8 0%, #818cf8 50%, #34d399 100%)' }}
+                >
+                  Innovation
                 </span>
               </motion.h2>
 
-              <div className="space-y-6 text-slate-300 text-lg leading-relaxed">
-                {aboutData.description.map((p, i) => (
+              {/* Body paragraphs */}
+              <div className="space-y-5 mb-10">
+                {paragraphs.map((p, i) => (
                   <motion.p
                     key={i}
                     variants={slideInRight}
                     custom={i}
+                    className="text-slate-300 text-base leading-relaxed"
                   >
                     {p}
                   </motion.p>
                 ))}
               </div>
 
-              {/* Small Quick Info Tags */}
+              {/* ── Slogan Card ── */}
               <motion.div
-                variants={staggerContainer(0.1, 0.3)}
-                className="flex flex-wrap gap-4 mt-10 pt-10 border-t border-white/5"
+                variants={blurScaleIn}
+                className="relative mb-10 rounded-2xl overflow-hidden"
+                style={{ border: '1px solid rgba(56,189,248,0.18)' }}
               >
-                {[
-                  { icon: GraduationCap, label: 'Modi School Alumnus', color: 'text-blue-400' },
-                  { icon: MapPin, label: 'Gujarat Based', color: 'text-cyan-400' },
-                  { icon: Coffee, label: '12+ Projects Built', color: 'text-emerald-400' },
-                ].map((tag) => (
+                {/* gradient background */}
+                <div
+                  className="absolute inset-0"
+                  style={{
+                    background:
+                      'linear-gradient(135deg, rgba(56,189,248,0.07) 0%, rgba(129,140,248,0.07) 50%, rgba(52,211,153,0.05) 100%)',
+                  }}
+                />
+                {/* animated shimmer */}
+                <motion.div
+                  className="absolute inset-0 pointer-events-none"
+                  animate={{ x: ['-100%', '100%'] }}
+                  transition={{ duration: 3.5, repeat: Infinity, ease: 'easeInOut', repeatDelay: 2 }}
+                  style={{
+                    background:
+                      'linear-gradient(90deg, transparent, rgba(56,189,248,0.06), transparent)',
+                  }}
+                />
+                {/* left accent bar */}
+                <div
+                  className="absolute left-0 top-0 bottom-0 w-0.5"
+                  style={{
+                    background:
+                      'linear-gradient(180deg, #38bdf8, #818cf8 50%, #34d399)',
+                  }}
+                />
+
+                <div className="relative px-7 py-5">
+                  {/* slogan text */}
+                  <p
+                    className="text-xl sm:text-2xl font-black tracking-tight bg-clip-text text-transparent leading-snug"
+                    style={{
+                      backgroundImage:
+                        'linear-gradient(135deg, #38bdf8 0%, #818cf8 55%, #34d399 100%)',
+                    }}
+                  >
+                    Code. Build. Disrupt.
+                  </p>
+                  <p className="mt-1.5 text-xs sm:text-sm text-slate-400 font-medium tracking-wide">
+                    Turning ideas into scalable solutions — one commit at a time.
+                  </p>
+                </div>
+              </motion.div>
+
+              {/* ── Divider ── */}
+              <motion.div
+                variants={textRevealUp}
+                className="h-px mb-8"
+                style={{ background: 'linear-gradient(90deg, rgba(56,189,248,0.3), transparent)' }}
+              />
+
+              {/* ── Tags row ── */}
+              <motion.div
+                variants={staggerContainer(0.08, 0.1)}
+                className="flex flex-wrap gap-3"
+              >
+                {tags.map((tag) => (
                   <motion.div
                     key={tag.label}
                     variants={blurScaleIn}
-                    className="flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-800/40 text-xs text-slate-300 border border-white/5"
+                    whileHover={{ scale: 1.05, y: -2 }}
+                    className="flex items-center gap-2 px-4 py-2 rounded-xl border text-xs font-medium cursor-default transition-all duration-300"
+                    style={{
+                      background: `${tag.color}0d`,
+                      borderColor: `${tag.color}28`,
+                      color: tag.color,
+                    }}
                   >
-                    <tag.icon className={`w-4 h-4 ${tag.color}`} />
-                    <span>{tag.label}</span>
+                    <tag.icon className="w-3.5 h-3.5" />
+                    {tag.label}
                   </motion.div>
                 ))}
               </motion.div>
+
             </motion.div>
           </ScrollReveal>
 

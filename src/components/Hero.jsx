@@ -27,6 +27,7 @@ function AnimatedName({ firstName, lastName }) {
       className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold tracking-tighter leading-[1.1] mb-3 sm:mb-4"
       initial="hidden"
       animate="visible"
+      aria-label={`${firstName} ${lastName}`}
       variants={{
         hidden: {},
         visible: {
@@ -37,6 +38,7 @@ function AnimatedName({ firstName, lastName }) {
       {allChars.map((item, i) => (
         <motion.span
           key={i}
+          aria-hidden="true"
           variants={{
             hidden: { opacity: 0, y: 40, rotateX: -60 },
             visible: {
@@ -149,44 +151,151 @@ export default function Hero() {
               <Typewriter />
             </motion.div>
 
-            {/* Education Card */}
+            {/* ── Info Card ── */}
             <motion.div
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.5, ease: [0.16, 1, 0.3, 1] }}
-              className="grid gap-3 sm:gap-4 mb-6 sm:mb-8 p-4 sm:p-6 rounded-2xl sm:rounded-3xl bg-white/5 border border-white/10 backdrop-blur-xl shadow-2xl relative overflow-hidden"
+              className="relative mb-6 sm:mb-8 group/card"
             >
-              {/* Ambient Glows — simplified for mobile performance */}
-              <div className="absolute top-1/4 -left-20 w-80 h-80 bg-blue-500/10 blur-[100px] rounded-full hidden md:block" />
-              <div className="absolute bottom-1/4 -right-20 w-80 h-80 bg-cyan-500/10 blur-[100px] rounded-full hidden md:block" />
-              
-              <div className="flex items-start gap-3 sm:gap-4">
-                <div className="p-2 sm:p-2.5 rounded-lg sm:rounded-xl bg-cyan-500/10 border border-cyan-500/20">
-                  <MapPin className="w-4 h-4 sm:w-5 sm:h-5 text-cyan-400" />
-                </div>
-                <div>
-                  <p className="text-[10px] sm:text-xs text-slate-500 font-mono uppercase tracking-widest mb-0.5">Current Base</p>
-                  <p className="text-slate-200 text-xs sm:text-sm font-medium">Kalol & Gandhinagar, Gujarat</p>
-                </div>
-              </div>
+              {/* Animated gradient border */}
+              <motion.div
+                className="absolute -inset-[1px] rounded-2xl sm:rounded-3xl pointer-events-none"
+                animate={{
+                  background: [
+                    'linear-gradient(135deg, rgba(19, 44, 55, 0.4) 0%, rgba(99,102,241,0.2) 50%, rgba(56,189,248,0.1) 100%)',
+                    'linear-gradient(225deg, rgba(99,102,241,0.4) 0%, rgba(58, 107, 231, 0.48) 50%, rgba(212,175,55,0.2) 100%)',
+                    'linear-gradient(315deg, rgba(212,175,55,0.3) 0%, rgba(56, 120, 248, 0.3) 50%, rgba(99,102,241,0.2) 100%)',
+                    'linear-gradient(135deg, rgba(57, 105, 248, 0.4) 0%, rgba(40, 43, 220, 0.87) 50%, rgba(56,189,248,0.1) 100%)',
+                  ],
+                }}
+                transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut' }}
+              />
 
-              <div className="h-px bg-white/5 mx-2" />
+              {/* Card body */}
+              <div className="relative rounded-2xl sm:rounded-3xl overflow-hidden"
+                style={{ background: 'rgba(8,13,26,0.85)', backdropFilter: 'blur(20px)' }}
+              >
+                {/* Shimmer sweep on hover */}
+                <motion.div
+                  className="absolute inset-0 pointer-events-none"
+                  initial={{ x: '-100%', opacity: 0 }}
+                  whileHover={{ x: '100%', opacity: 1 }}
+                  transition={{ duration: 0.7, ease: 'easeInOut' }}
+                  style={{
+                    background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.04), transparent)',
+                  }}
+                />
 
-              <div className="flex items-start gap-3 sm:gap-4">
-                <div className="p-2 sm:p-2.5 rounded-lg sm:rounded-xl bg-blue-500/10 border border-blue-500/20">
-                  <GraduationCap className="w-4 h-4 sm:w-5 sm:h-5 text-blue-400" />
-                </div>
-                <div>
-                  <p className="text-[10px] sm:text-xs text-slate-500 font-mono uppercase tracking-widest mb-0.5">Education</p>
-                  <p className="text-slate-200 text-sm sm:text-base font-bold mb-0.5">B.E in Computer Science</p>
-                  <p className="text-slate-400 text-xs sm:text-sm">Shree Swaminarayan University (codinggita)</p>
-                  <div className="flex items-center gap-2 mt-1.5">
-                    <CheckCircle2 className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-blue-500" />
-                    <span className="text-[10px] sm:text-xs text-slate-500">10th & 12th: Modi School</span>
-                  </div>
+                {/* Ambient blob */}
+                <div className="absolute -top-10 -right-10 w-40 h-40 bg-cyan-500/10 blur-[60px] rounded-full pointer-events-none" />
+                <div className="absolute -bottom-10 -left-10 w-32 h-32 bg-blue-500/10 blur-[50px] rounded-full pointer-events-none" />
+
+                <div className="p-4 sm:p-5 space-y-1">
+
+                  {/* ── Location Row ── */}
+                  <motion.div
+                    whileHover={{ x: 4 }}
+                    transition={{ type: 'spring', stiffness: 300, damping: 25 }}
+                    className="group/row flex items-center gap-3 sm:gap-4 p-3 sm:p-3.5 rounded-xl transition-colors duration-300 cursor-default"
+                    style={{ background: 'transparent' }}
+                    onMouseEnter={e => e.currentTarget.style.background = 'rgba(56,189,248,0.05)'}
+                    onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
+                  >
+                    {/* Icon bubble */}
+                    <div className="relative shrink-0">
+                      <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl flex items-center justify-center"
+                        style={{
+                          background: 'linear-gradient(135deg, rgba(56,189,248,0.15) 0%, rgba(56,189,248,0.05) 100%)',
+                          border: '1px solid rgba(56,189,248,0.25)',
+                          boxShadow: '0 0 16px rgba(56,189,248,0.12)',
+                        }}
+                      >
+                        <MapPin className="w-4 h-4 sm:w-5 sm:h-5 text-cyan-400" />
+                      </div>
+                      {/* Ping dot */}
+                      <span className="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 flex">
+                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-40" />
+                        <span className="relative inline-flex rounded-full w-2.5 h-2.5 bg-cyan-500"
+                          style={{ boxShadow: '0 0 6px rgba(56,189,248,0.8)' }} />
+                      </span>
+                    </div>
+
+                    <div className="min-w-0">
+                      <p className="text-[10px] font-mono uppercase tracking-[0.18em] mb-0.5"
+                        style={{ color: 'rgba(56,189,248,0.6)' }}>Current Base</p>
+                      <p className="text-white text-sm sm:text-[15px] font-semibold leading-tight">
+                        Kalol &amp; Gandhinagar,{' '}
+                        <span className="text-cyan-400">Gujarat</span>
+                      </p>
+                    </div>
+
+                    {/* Trailing arrow */}
+                    <motion.div
+                      initial={{ opacity: 0, x: -6 }}
+                      whileHover={{ opacity: 1, x: 0 }}
+                      className="ml-auto shrink-0 text-cyan-500/50"
+                    >
+                      <ArrowRight className="w-4 h-4" />
+                    </motion.div>
+                  </motion.div>
+
+                  {/* Divider */}
+                  <div className="mx-3 h-px"
+                    style={{ background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.06), transparent)' }} />
+
+                  {/* ── Education Row ── */}
+                  <motion.div
+                    whileHover={{ x: 4 }}
+                    transition={{ type: 'spring', stiffness: 300, damping: 25 }}
+                    className="flex items-start gap-3 sm:gap-4 p-3 sm:p-3.5 rounded-xl transition-colors duration-300 cursor-default"
+                    style={{ background: 'transparent' }}
+                    onMouseEnter={e => e.currentTarget.style.background = 'rgba(99,102,241,0.05)'}
+                    onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
+                  >
+                    {/* Icon bubble */}
+                    <div className="relative shrink-0 mt-0.5">
+                      <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl flex items-center justify-center"
+                        style={{
+                          background: 'linear-gradient(135deg, rgba(99,102,241,0.15) 0%, rgba(99,102,241,0.05) 100%)',
+                          border: '1px solid rgba(99,102,241,0.25)',
+                          boxShadow: '0 0 16px rgba(99,102,241,0.12)',
+                        }}
+                      >
+                        <GraduationCap className="w-4 h-4 sm:w-5 sm:h-5 text-indigo-400" />
+                      </div>
+                    </div>
+
+                    <div className="min-w-0 flex-1">
+                      <p className="text-[10px] font-mono uppercase tracking-[0.18em] mb-0.5"
+                        style={{ color: 'rgba(99,102,241,0.6)' }}>Education</p>
+                      <p className="text-white text-sm sm:text-[15px] font-bold leading-tight mb-1">
+                        B.E. in Computer Science
+                      </p>
+                      <p className="text-slate-400 text-[11px] sm:text-xs leading-snug mb-2">
+                        Shree Swaminarayan University{' '}
+                        <span className="text-indigo-400/80 font-medium">(CodingGita)</span>
+                      </p>
+
+                      {/* School badge */}
+                      <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg"
+                        style={{
+                          background: 'rgba(255,255,255,0.04)',
+                          border: '1px solid rgba(255,255,255,0.08)',
+                        }}
+                      >
+                        <CheckCircle2 className="w-3 h-3 text-indigo-400" />
+                        <span className="text-[10px] sm:text-[11px] text-slate-400">
+                          10th &amp; 12th · <span className="text-slate-300">Modi School</span>
+                        </span>
+                      </div>
+                    </div>
+                  </motion.div>
+
                 </div>
               </div>
             </motion.div>
+
 
             {/* CTAs */}
             <motion.div
@@ -203,6 +312,7 @@ export default function Hero() {
                   boxShadow: "0 20px 40px -10px rgba(37,99,235,0.5)"
                 }}
                 className="px-6 sm:px-8 py-3 sm:py-4 rounded-xl sm:rounded-2xl bg-blue-600 text-white font-bold transition-all flex items-center justify-center gap-2 group text-sm sm:text-base border border-blue-400/20"
+                title="Contact Harsh Kavathiya"
               >
                 Let's Build Something <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
               </MagneticButton>
@@ -216,6 +326,7 @@ export default function Hero() {
                   boxShadow: "0 20px 40px -10px rgba(212,175,55,0.2)"
                 }}
                 className="px-6 sm:px-8 py-3 sm:py-4 rounded-xl sm:rounded-2xl bg-white/5 text-white font-bold border border-white/10 hover:border-[#d4af37]/40 hover:text-[#d4af37] transition-all flex items-center justify-center gap-2 text-sm sm:text-base"
+                title="Download Harsh Kavathiya's Resume"
               >
                 <Download className="w-4 h-4" /> Download CV
               </MagneticButton>
