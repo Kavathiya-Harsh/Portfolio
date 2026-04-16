@@ -36,7 +36,7 @@ function AnimatedName({ firstName, lastName, isReady }) {
   return (
     <motion.h1
       className="font-bold tracking-tighter leading-[1.05] mb-4 whitespace-nowrap"
-      style={{ fontSize: 'clamp(1.85rem, 5.8vw, 5.25rem)' }}
+      style={{ fontSize: 'clamp(1.7rem, 5.5vw, 5.25rem)' }}
       initial="hidden"
       animate={isReady ? 'visible' : 'hidden'}
       aria-label={`${firstName} ${lastName}`}
@@ -271,10 +271,10 @@ function PhotoSection({ isLowPower, isReady }) {
         <div className="relative w-56 h-56 sm:w-72 sm:h-72 md:w-80 md:h-80 lg:w-[22rem] lg:h-[22rem] rounded-full overflow-hidden border-[5px] border-[#080d1a] bg-slate-800 z-10 shadow-2xl">
           {!photoError ? (
             <img
-              src={profile.photoUrl}
+              src={profile.photoUrl.replace('w_600', isMobile ? 'w_400' : 'w_800')}
               alt={profile.name}
-              width="352"
-              height="352"
+              width={isMobile ? "288" : "352"}
+              height={isMobile ? "288" : "352"}
               fetchpriority="high"
               loading="eager"
               decoding="async"

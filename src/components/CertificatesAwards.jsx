@@ -210,9 +210,9 @@ export default function CertificatesAwards() {
             onClick={() => setIsFullscreen(false)}
           >
             <motion.div
-              initial={{ scale: 0.9, y: 20, filter: 'blur(8px)' }}
-              animate={{ scale: 1, y: 0, filter: 'blur(0px)' }}
-              exit={{ scale: 0.9, y: 20, filter: 'blur(8px)' }}
+              initial={{ scale: 0.9, y: 20, opacity: 0 }}
+              animate={{ scale: 1, y: 0, opacity: 1 }}
+              exit={{ scale: 0.9, y: 20, opacity: 0 }}
               className="relative max-w-6xl w-full h-full flex items-center justify-center"
             >
               <img

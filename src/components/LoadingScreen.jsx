@@ -90,8 +90,8 @@ export default function LoadingScreen({ onComplete }) {
         initial={{ opacity: 1 }}
         animate={
           phase === 'exit'
-            ? { opacity: 0, scale: 1.035, filter: 'blur(10px)' }
-            : { opacity: 1, scale: 1,     filter: 'blur(0px)'  }
+            ? { opacity: 0, scale: 1.04 }
+            : { opacity: 1, scale: 1   }
         }
         transition={{ duration: 0.65, ease: EASE_OUT_EXPO }}
         className="fixed inset-0 z-[9999] flex items-center justify-center overflow-hidden"

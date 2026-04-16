@@ -109,7 +109,7 @@ export default function HackathonJourney() {
       <div className="absolute bottom-[-150px] right-[-100px] w-[500px] h-[500px] rounded-full bg-purple-500/[0.06] blur-[120px] pointer-events-none" />
       <div className="absolute top-[40%] left-[45%] w-[400px] h-[400px] rounded-full bg-cyan-500/[0.05] blur-[120px] pointer-events-none" />
 
-      <div className="max-w-7xl mx-auto relative px-4">
+      <div className="max-w-7xl mx-auto relative px-0">
         <motion.div
           initial="hidden"
           whileInView="visible"

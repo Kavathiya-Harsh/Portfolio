@@ -200,7 +200,7 @@ export default function Navbar() {
         >
           <motion.div whileHover={{ rotateY: 12, rotateX: -6 }} className="relative z-10">
             <img
-              src="https://res.cloudinary.com/dvv5mtpli/image/upload/q_auto/f_auto/v1776355358/hk_logo_pb2u8w.jpg"
+              src="https://res.cloudinary.com/dvv5mtpli/image/upload/q_auto,f_auto,w_80,h_80,c_fill/v1776355358/hk_logo_pb2u8w.jpg"
               alt="Harsh Kavathiya Logo"
               width="40"
               height="40"
