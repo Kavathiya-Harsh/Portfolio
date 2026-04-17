@@ -5,8 +5,12 @@ import tailwindcss from '@tailwindcss/vite';
 export default defineConfig({
   plugins: [react(), tailwindcss()],
   build: {
+    target: 'esnext',
+    minify: 'esbuild',
     chunkSizeWarningLimit: 500,
     cssCodeSplit: true,
+    cssMinify: true,
+    reportCompressedSize: false,
     rollupOptions: {
       output: {
         manualChunks: {

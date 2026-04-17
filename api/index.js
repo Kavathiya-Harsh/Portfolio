@@ -1,5 +1,6 @@
 import express from 'express';
 import cors from 'cors';
+import compression from 'compression';
 import dotenv from 'dotenv';
 import connectToDatabase from './lib/db.js';
 import Message from './models/Message.js';
@@ -8,9 +9,10 @@ dotenv.config();
 
 const app = express();
 
-// Middleware
-app.use(cors());
-app.use(express.json());
+// Middleware — compression must be FIRST to gzip all responses
+app.use(compression({ level: 6, threshold: 1024 }));
+app.use(cors({ origin: 'https://harshkavathiya.vercel.app', credentials: true }));
+app.use(express.json({ limit: '10kb' }));
 
 // Early Environment Check
 if (!process.env.MONGODB_URI) {
