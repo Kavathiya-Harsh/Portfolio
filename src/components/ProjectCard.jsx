@@ -1,6 +1,6 @@
 import React, { useRef, useState } from 'react';
 import { motion, useMotionValue, useSpring, useTransform } from 'framer-motion';
-import { ExternalLink, Github, Code2, Star, ArrowUpRight, Gauge, FileCode, Layers } from 'lucide-react';
+import { ExternalLink, Github, Code2, ArrowUpRight, Gauge, FileCode, Layers, Play, X } from 'lucide-react';
 import { transitionSpring, blurScaleIn } from '../utils/motion';
 import CodeSnippetModal from './CodeSnippetModal';
 
@@ -42,6 +42,7 @@ export default function ProjectCard({ project, index = 0 }) {
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
   const [showCode, setShowCode] = useState(false);
+  const [showVideo, setShowVideo] = useState(false);
 
   const rotateX = useSpring(useTransform(mouseY, [-0.5, 0.5], [8, -8]), { stiffness: 100, damping: 30 });
   const rotateY = useSpring(useTransform(mouseX, [-0.5, 0.5], [-8, 8]), { stiffness: 100, damping: 30 });
@@ -69,7 +70,7 @@ export default function ProjectCard({ project, index = 0 }) {
     rectRef.current = null;
   }
 
-  const { metrics, codeSnippet } = project;
+  const { metrics, codeSnippet, video } = project;
 
   return (
     <>
@@ -96,15 +97,6 @@ export default function ProjectCard({ project, index = 0 }) {
             }}
           />
 
-          {/* Featured Badge */}
-          {project.featured && (
-            <div className="absolute top-4 left-4 z-20">
-              <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-500 text-white text-[10px] font-bold uppercase tracking-wider shadow-lg shadow-blue-500/30">
-                <Star className="w-3 h-3 fill-current" />
-                Featured
-              </div>
-            </div>
-          )}
 
           {/* Image */}
           <div className="relative h-48 overflow-hidden">
@@ -121,6 +113,19 @@ export default function ProjectCard({ project, index = 0 }) {
 
             {/* Quick Actions */}
             <div className="absolute bottom-3 right-3 flex gap-2 translate-y-8 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300 z-20">
+              {/* Play Demo Button */}
+              {video && (
+                <motion.button
+                  onClick={() => setShowVideo(true)}
+                  whileHover={{ scale: 1.1, y: -2 }}
+                  whileTap={{ scale: 0.9 }}
+                  className="p-3.5 bg-red-600/90 backdrop-blur-sm rounded-xl text-white hover:bg-red-500 transition-all border border-red-500/50 hover:border-red-400 shadow-lg shadow-red-500/30"
+                  title="Watch Demo"
+                  aria-label={`Watch demo video for ${project.title}`}
+                >
+                  <Play className="w-4 h-4 fill-current" />
+                </motion.button>
+              )}
               {codeSnippet && (
                 <motion.button
                   onClick={() => setShowCode(true)}
@@ -216,6 +221,56 @@ export default function ProjectCard({ project, index = 0 }) {
       {/* Code Snippet Modal */}
       {showCode && codeSnippet && (
         <CodeSnippetModal snippet={codeSnippet} onClose={() => setShowCode(false)} />
+      )}
+
+      {/* Video Demo Modal */}
+      {showVideo && video && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          className="fixed inset-0 z-[9999] flex items-center justify-center p-4"
+          onClick={() => setShowVideo(false)}
+        >
+          {/* Backdrop */}
+          <div className="absolute inset-0 bg-black/80 backdrop-blur-sm" />
+
+          {/* Modal */}
+          <motion.div
+            initial={{ scale: 0.85, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            exit={{ scale: 0.85, opacity: 0 }}
+            transition={{ type: 'spring', stiffness: 260, damping: 24 }}
+            className="relative w-full max-w-3xl rounded-2xl overflow-hidden border border-slate-700/60 shadow-2xl shadow-black/60"
+            onClick={e => e.stopPropagation()}
+          >
+            {/* Header */}
+            <div className="flex items-center justify-between px-4 py-3 bg-[#0d1117] border-b border-slate-800">
+              <div className="flex items-center gap-2">
+                <Play className="w-4 h-4 text-red-400 fill-current" />
+                <span className="text-sm font-semibold text-white">{project.title} — Demo</span>
+              </div>
+              <button
+                onClick={() => setShowVideo(false)}
+                className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition-all"
+                aria-label="Close video"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            {/* Video */}
+            <div className="relative w-full" style={{ paddingTop: '56.25%' }}>
+              <iframe
+                src={`${video}?autoplay=1&rel=0&modestbranding=1`}
+                title={`${project.title} Demo`}
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+                className="absolute inset-0 w-full h-full"
+              />
+            </div>
+          </motion.div>
+        </motion.div>
       )}
     </>
   );
