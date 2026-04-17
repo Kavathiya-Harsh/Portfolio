@@ -11,64 +11,6 @@ import {
 } from '../utils/motion';
 import { useBreakpoint } from '../utils/useBreakpoint';
 
-export default function ExperienceTimeline() {
-  const sectionRef = useRef(null);
-
-  const { scrollYProgress } = useScroll({
-    target: sectionRef,
-    offset: ['start 80%', 'end 20%'],
-  });
-
-  const scaleY = useSpring(scrollYProgress, {
-    stiffness: 80,
-    damping: 25,
-    restDelta: 0.001,
-  });
-
-  const isMobile = useBreakpoint(1024);
-  const glowOpacity = useTransform(scrollYProgress, [0, 0.5, 1], isMobile ? [0.6, 0.6, 0.6] : [0.3, 1, 0.6]);
-  const finalScaleY = useTransform(scaleY, (v) => isMobile ? 1 : v);
-
-  return (
-    <section id="experience" ref={sectionRef} className="py-24 px-6">
-      <div className="max-w-3xl mx-auto">
-        {/* Section header with text reveal */}
-        <motion.div
-          initial="hidden"
-          whileInView="visible"
-          viewport={viewportOnce}
-          variants={staggerContainer(0.1, 0)}
-        >
-          <motion.h2
-            variants={textRevealUp}
-            className="text-3xl md:text-4xl font-bold text-white mb-4"
-          >
-            Experience
-          </motion.h2>
-          <motion.p
-            variants={textRevealUp}
-            className="text-slate-300 mb-12"
-          >
-            Career and education journey.
-          </motion.p>
-        </motion.div>
-
-        <div className="relative">
-          {/* Static background track */}
-          <div className="absolute left-[19px] top-2 bottom-2 w-px bg-white/10 rounded-full" />
-
-          {/* Animated glowing fill line */}
-          <motion.div
-            className="absolute left-[19px] top-2 w-px rounded-full origin-top"
-            style={{
-              scaleY: finalScaleY,
-              height: 'calc(100% - 1rem)',
-              background: 'linear-gradient(to bottom, #3b82f6, #06b6d4)',
-              boxShadow: '0 0 12px 2px rgba(59, 130, 246,0.7)',
-              opacity: glowOpacity,
-            }}
-          />
-
 function TimelineCard({ item, index }) {
   const cardRef = useRef(null);
   const rectRef = useRef(null);
@@ -161,6 +103,66 @@ function TimelineCard({ item, index }) {
     </motion.div>
   );
 }
+
+export default function ExperienceTimeline() {
+  const sectionRef = useRef(null);
+
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ['start 80%', 'end 20%'],
+  });
+
+  const scaleY = useSpring(scrollYProgress, {
+    stiffness: 80,
+    damping: 25,
+    restDelta: 0.001,
+  });
+
+  const isMobile = useBreakpoint(1024);
+  const glowOpacity = useTransform(scrollYProgress, [0, 0.5, 1], isMobile ? [0.6, 0.6, 0.6] : [0.3, 1, 0.6]);
+  const finalScaleY = useTransform(scaleY, (v) => isMobile ? 1 : v);
+
+  return (
+    <section id="experience" ref={sectionRef} className="py-24 px-6">
+      <div className="max-w-3xl mx-auto">
+        {/* Section header with text reveal */}
+        <motion.div
+          initial="hidden"
+          whileInView="visible"
+          viewport={viewportOnce}
+          variants={staggerContainer(0.1, 0)}
+        >
+          <motion.h2
+            variants={textRevealUp}
+            className="text-3xl md:text-4xl font-bold text-white mb-4"
+          >
+            Experience
+          </motion.h2>
+          <motion.p
+            variants={textRevealUp}
+            className="text-slate-300 mb-12"
+          >
+            Career and education journey.
+          </motion.p>
+        </motion.div>
+
+        <div className="relative">
+          {/* Static background track */}
+          <div className="absolute left-[19px] top-2 bottom-2 w-px bg-white/10 rounded-full" />
+
+          {/* Animated glowing fill line */}
+          <motion.div
+            className="absolute left-[19px] top-2 w-px rounded-full origin-top"
+            style={{
+              scaleY: finalScaleY,
+              height: 'calc(100% - 1rem)',
+              background: 'linear-gradient(to bottom, #3b82f6, #06b6d4)',
+              boxShadow: '0 0 12px 2px rgba(59, 130, 246,0.7)',
+              opacity: glowOpacity,
+            }}
+          />
+
+
           <div className="relative z-10">
             {experience.map((item, i) => (
               <TimelineCard key={item.id} item={item} index={i} />

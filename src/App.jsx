@@ -1,5 +1,6 @@
-import React, { useState, useEffect, useCallback, lazy, Suspense } from 'react';
+import React, { useState, useEffect, useCallback, lazy, Suspense, useMemo } from 'react';
 import { motion, AnimatePresence, MotionConfig } from 'framer-motion';
+import { useLocation } from 'react-router-dom';
 import { useBreakpoint } from './utils/useBreakpoint';
 import { FileText, Linkedin } from 'lucide-react';
 
@@ -32,42 +33,76 @@ const CommandPalette = lazy(() => import('./components/CommandPalette'));
 const RESUME_URL = profile.resumeUrl;
 const LINKEDIN_URL = 'https://www.linkedin.com/in/harshkavathiya';
 
+/**
+ * Helper component that manages smooth scrolling to sections when 
+ * the URL hash changes (e.g., /#about). Handles fixed navbar offset.
+ */
+function ScrollToHashElement() {
+  const { hash } = useLocation();
+
+  useEffect(() => {
+    if (hash) {
+      const id = hash.replace('#', '');
+      const element = document.getElementById(id);
+      if (element) {
+        // Offset for the fixed navbar (approx 80px)
+        const offset = 80;
+        const bodyRect = document.body.getBoundingClientRect().top;
+        const elementRect = element.getBoundingClientRect().top;
+        const elementPosition = elementRect - bodyRect;
+        const offsetPosition = elementPosition - offset;
+
+        window.scrollTo({
+          top: offsetPosition,
+          behavior: 'smooth',
+        });
+      }
+    } else {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  }, [hash]);
+
+  return null;
+}
+
 function QuickActionsDock() {
   return (
     <motion.div
       initial={{ opacity: 0, y: 40 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, delay: 0.8 }}
-      className="hidden sm:flex fixed inset-x-0 bottom-4 md:bottom-6 justify-center pointer-events-none z-[100]"
+      className="fixed inset-x-0 bottom-0 sm:bottom-4 md:bottom-6 flex justify-center z-[100]"
     >
-      <div className="pointer-events-auto inline-flex items-center gap-2 md:gap-3 rounded-2xl bg-[#111827]/90 border border-slate-700/60 backdrop-blur-xl px-3 py-2 md:px-4 md:py-2.5 shadow-[0_24px_60px_rgba(0,0,0,0.6)]"
-           style={{ marginBottom: 'env(safe-area-inset-bottom, 0px)' }}>
-        <span className="hidden md:inline text-xs font-medium uppercase tracking-[0.2em] text-slate-400">
-          Quick Actions
-        </span>
-        <div className="flex items-center gap-1.5 md:gap-2">
-          <motion.a
-            href={RESUME_URL}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-1 md:gap-1.5 rounded-xl bg-blue-500 px-2.5 py-1.5 md:px-3 md:py-2 text-[10px] md:text-xs font-semibold text-white shadow-md shadow-blue-500/25 hover:bg-blue-400 transition-colors"
-            whileHover={{ scale: 1.03 }}
-            whileTap={{ scale: 0.97 }}
-          >
-            <FileText className="w-3.5 h-3.5 md:w-4 md:h-4" />
-            <span>PDF</span>
-          </motion.a>
-          <motion.a
-            href={LINKEDIN_URL}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-1 md:gap-1.5 rounded-xl bg-slate-800 px-2.5 py-1.5 md:px-3 md:py-2 text-[10px] md:text-xs font-semibold text-white border border-slate-600/60 hover:bg-slate-700 transition-colors"
-            whileHover={{ scale: 1.03 }}
-            whileTap={{ scale: 0.97 }}
-          >
-            <Linkedin className="w-3.5 h-3.5 md:w-4 md:h-4" />
-            <span>LinkedIn</span>
-          </motion.a>
+      <div className="w-full sm:w-auto p-4 sm:p-0 pointer-events-none">
+        <div className="pointer-events-auto flex items-center gap-3 rounded-t-2xl sm:rounded-2xl bg-[#111827]/95 border-t sm:border border-slate-700/60 backdrop-blur-xl px-4 py-3 sm:px-4 sm:py-2.5 shadow-[0_-8px_30px_rgba(0,0,0,0.5)] sm:shadow-[0_24px_60px_rgba(0,0,0,0.6)] w-full sm:w-auto"
+             style={{ paddingBottom: 'calc(0.75rem + env(safe-area-inset-bottom, 0px))' }}>
+          <span className="hidden lg:inline text-[10px] font-medium uppercase tracking-[0.2em] text-slate-400 mr-2">
+            Quick Actions
+          </span>
+          <div className="grid grid-cols-2 sm:flex items-center gap-3 w-full sm:w-auto">
+            <motion.a
+              href={RESUME_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center justify-center gap-2 rounded-xl bg-blue-600 px-4 py-3 sm:px-3 sm:py-2 text-xs font-bold text-white shadow-md shadow-blue-500/20 hover:bg-blue-500 transition-colors min-h-[44px] sm:min-h-0"
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+            >
+              <FileText className="w-4 h-4" />
+              <span>PDF</span>
+            </motion.a>
+            <motion.a
+              href={LINKEDIN_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center justify-center gap-2 rounded-xl bg-slate-800 px-4 py-3 sm:px-3 sm:py-2 text-xs font-bold text-white border border-slate-600/60 hover:bg-slate-700 transition-colors min-h-[44px] sm:min-h-0"
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+            >
+              <Linkedin className="w-4 h-4" />
+              <span>LinkedIn</span>
+            </motion.a>
+          </div>
         </div>
       </div>
     </motion.div>
@@ -110,7 +145,9 @@ export default function App() {
   }, []);
 
   return (
-    <MotionConfig reducedMotion={isLowPower ? 'always' : 'user'}>
+    <>
+      <ScrollToHashElement />
+      <MotionConfig reducedMotion={isLowPower ? 'always' : 'user'}>
       <RecruiterModeProvider>
         {/* 
           PERFORMANCE FIX: Always render ALL content from the start.
@@ -137,32 +174,33 @@ export default function App() {
         </Suspense>
 
         {/* Main page content — always in DOM, no conditional rendering */}
-        <div className="pb-40 md:pb-12" style={{ paddingBottom: 'calc(10rem + env(safe-area-inset-bottom, 0px))' }}>
+        <div className="pb-32 sm:pb-40 md:pb-12" style={{ paddingBottom: 'calc(10rem + env(safe-area-inset-bottom, 0px))' }}>
           <main>
-            <Hero isReady={!isLoading} />
+            <div id="hero"><Hero isReady={!isLoading} /></div>
             <Suspense fallback={<SectionFallback />}>
               <SectionDivider />
               <GitHubActivity />
               <SectionDivider />
-              <About />
+              <div id="about"><About /></div>
               <SectionDivider />
-              <BentoSkills />
+              <div id="skills"><BentoSkills /></div>
               <SectionDivider />
-              <ProjectGallery />
+              <div id="projects"><ProjectGallery /></div>
               <SectionDivider />
-              <HackathonJourney />
+              <div id="hackathons"><HackathonJourney /></div>
               <SectionDivider />
               <CertificatesAwards />
               <SectionDivider />
               <Education />
               <SectionDivider />
-              <ContactForm />
+              <div id="contact"><ContactForm /></div>
               <QuickActionsDock />
               <Footer />
             </Suspense>
           </main>
         </div>
       </RecruiterModeProvider>
-    </MotionConfig>
+      </MotionConfig>
+    </>
   );
 }

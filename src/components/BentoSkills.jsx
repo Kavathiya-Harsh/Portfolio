@@ -79,7 +79,6 @@ function SkillCard({ skill, index, categoryColor }) {
             className="w-1.5 h-1.5 rounded-full animate-pulse shadow-[0_0_12px_var(--skill-color)]"
             style={{ backgroundColor: 'var(--skill-color)' }}
           />
-          <span className="text-[10px] font-mono text-slate-400 uppercase tracking-widest">{skill.level}</span>
         </div>
         <h3 className="text-lg font-bold text-white tracking-tight group-hover:translate-x-1 transition-transform">
           {skill.name}
@@ -91,7 +90,7 @@ function SkillCard({ skill, index, categoryColor }) {
         <div className="w-full h-[2px] bg-white/[0.05] rounded-full overflow-hidden mb-2">
           <motion.div
             initial={{ width: 0 }}
-            whileInView={{ width: `${skill.fill}%` }}
+            whileInView={{ width: '100%' }}
             viewport={{ once: true }}
             transition={{ duration: 1.5, ease: "easeOut", delay: index * 0.05 }}
             className="h-full rounded-full"

@@ -1,5 +1,11 @@
 # https://www.robotstxt.org/robotstxt.html
 User-agent: *
 Allow: /
+Disallow: /api/
+Disallow: /node_modules/
 
+# Host
+Host: https://harshkavathiya.vercel.app
+
+# Sitemap
 Sitemap: https://harshkavathiya.vercel.app/sitemap.xml

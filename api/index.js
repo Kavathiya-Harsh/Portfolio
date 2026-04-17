@@ -49,10 +49,13 @@ app.get('/api', (req, res) => {
 // Export the app for Vercel Serverless Functions
 export default app;
 
-// Local Development Server (Only runs if executed directly)
-if (process.env.NODE_ENV !== 'production') {
+// Local Development Server
+const isProduction = process.env.NODE_ENV === 'production';
+const isVercel = process.env.VERCEL === '1';
+
+if (!isProduction || !isVercel) {
     const PORT = process.env.PORT || 10000;
-    app.listen(PORT, '127.0.0.1', () => {
-        console.log(`Development server running on http://127.0.0.1:${PORT}`);
+    app.listen(PORT, () => {
+        console.log(`Backend server active on port ${PORT}`);
     });
 }

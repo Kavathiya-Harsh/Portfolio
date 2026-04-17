@@ -39,7 +39,7 @@ function AnimatedName({ firstName, lastName, isReady }) {
       style={{ fontSize: 'clamp(1.7rem, 5.5vw, 5.25rem)' }}
       initial="hidden"
       animate={isReady ? 'visible' : 'hidden'}
-      aria-label={`${firstName} ${lastName}`}
+      aria-label={`Harsh Kavathiya — Full Stack Developer & 5x Hackathon Winner`}
       variants={{
         hidden: {},
         visible: { transition: { staggerChildren: 0.042, delayChildren: 0.05 } },
@@ -281,7 +281,7 @@ function PhotoSection({ isLowPower, isReady, isMobile }) {
               />
               <img
                 src="https://res.cloudinary.com/dvv5mtpli/image/upload/q_auto,f_auto,w_800/v1776351778/Harsh_Kavathiya_Profile_duaqrs.jpg"
-                alt={profile.name}
+                alt="Harsh Kavathiya - Full Stack Developer & Hackathon Winner"
                 width="352"
                 height="352"
                 fetchpriority="high"

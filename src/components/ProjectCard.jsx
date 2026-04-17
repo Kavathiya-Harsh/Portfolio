@@ -113,7 +113,7 @@ export default function ProjectCard({ project, index = 0 }) {
               width="600"
               height="400"
               src={project.image || 'https://placehold.co/600x400/111827/3b82f6?text=Project'}
-              alt={project.title}
+              alt={`${project.title} - ${project.category} Portfolio Project`}
               className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-[#111827] via-[#111827]/30 to-transparent" />
@@ -127,7 +127,7 @@ export default function ProjectCard({ project, index = 0 }) {
                   whileTap={{ scale: 0.9 }}
                   className="p-3.5 bg-slate-800/90 backdrop-blur-sm rounded-xl text-cyan-400 hover:text-cyan-300 hover:bg-slate-700 transition-all border border-slate-600/50 hover:border-cyan-500/50"
                   title="View Logic"
-                  aria-label={`View code logic for ${project.title}`}
+                  aria-label={`View code logic and snippet for project: ${project.title}`}
                 >
                   <Code2 className="w-4 h-4" />
                 </motion.button>
@@ -139,7 +139,7 @@ export default function ProjectCard({ project, index = 0 }) {
                 whileHover={{ scale: 1.1, y: -2 }}
                 whileTap={{ scale: 0.9 }}
                 className="p-3.5 bg-slate-800/90 backdrop-blur-sm rounded-xl text-slate-300 hover:text-white hover:bg-slate-700 transition-all border border-slate-600/50 hover:border-white/20"
-                aria-label={`View ${project.title} source code on GitHub`}
+                aria-label={`View ${project.title} source code on GitHub (opens in new tab)`}
                 title="View GitHub Repository"
               >
                 <Github className="w-4 h-4" />
@@ -151,7 +151,7 @@ export default function ProjectCard({ project, index = 0 }) {
                 whileHover={{ scale: 1.1, y: -2, boxShadow: "0 10px 20px -5px rgba(59,130,246,0.5)" }}
                 whileTap={{ scale: 0.9 }}
                 className="p-3.5 bg-blue-500 text-white rounded-xl hover:bg-blue-400 transition-all shadow-lg shadow-blue-500/30"
-                aria-label={`Visit ${project.title} live website`}
+                aria-label={`Visit ${project.title} live website (opens in new tab)`}
                 title="Visit Live Site"
               >
                 <ArrowUpRight className="w-4 h-4" />

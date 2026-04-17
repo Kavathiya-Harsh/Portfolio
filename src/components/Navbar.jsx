@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useCallback, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { Link, useLocation } from 'react-router-dom';
 import { Menu, X, FileDown } from 'lucide-react';
 import { useBreakpoint } from '../utils/useBreakpoint';
 import { profile } from '../data/profile';
@@ -42,9 +43,9 @@ function NavItem({ link, isActive, isHovered, onHoverEnter, onHoverLeave, onClic
         )}
       </AnimatePresence>
 
-      <a
-        href={link.href}
-        onClick={(e) => onClick(e, link.href)}
+      <Link
+        to={`/${link.href}`}
+        onClick={onClick}
         className="relative flex flex-col items-center px-4 py-3.5 rounded-xl select-none cursor-pointer outline-none"
       >
         {/* Glowing dot — slides between active items */}
@@ -102,7 +103,7 @@ function NavItem({ link, isActive, isHovered, onHoverEnter, onHoverLeave, onClic
             transition={{ type: 'spring', stiffness: 420, damping: 36 }}
           />
         </span>
-      </a>
+      </Link>
     </li>
   );
 }
@@ -135,6 +136,8 @@ export default function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [activeId,   setActiveId]   = useState('hero');
   const [hoveredId,  setHoveredId]  = useState(null);
+  const location = useLocation();
+  const currentHash = location.hash || '#hero';
 
   /* scroll glass */
   useEffect(() => {
@@ -143,7 +146,7 @@ export default function Navbar() {
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
-  /* active section */
+  /* active section observer */
   useEffect(() => {
     const ids = navLinks.map((l) => l.href.slice(1));
     const obs = [];
@@ -151,7 +154,12 @@ export default function Navbar() {
       const el = document.getElementById(id);
       if (!el) return;
       const o = new IntersectionObserver(
-        ([e]) => { if (e.isIntersecting) setActiveId(id); },
+        ([e]) => { 
+          if (e.isIntersecting) {
+            // Update active state based on scroll
+            setActiveId(id);
+          } 
+        },
         { rootMargin: '-30% 0px -40% 0px', threshold: 0 }
       );
       o.observe(el);
@@ -160,12 +168,28 @@ export default function Navbar() {
     return () => obs.forEach((o) => o.disconnect());
   }, []);
 
-  /* smooth scroll */
-  const handleNavClick = useCallback((e, href) => {
-    e.preventDefault();
+  const handleLinkClick = useCallback(() => {
     setMobileOpen(false);
-    document.getElementById(href.slice(1))?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }, []);
+
+  const handleNavClick = (e, href) => {
+    e.preventDefault();
+    const targetId = href.replace('#', '');
+    const element = document.getElementById(targetId);
+    if (element) {
+      const offset = 80;
+      const bodyRect = document.body.getBoundingClientRect().top;
+      const elementRect = element.getBoundingClientRect().top;
+      const elementPosition = elementRect - bodyRect;
+      const offsetPosition = elementPosition - offset;
+
+      window.scrollTo({
+        top: offsetPosition,
+        behavior: 'smooth',
+      });
+    }
+    setMobileOpen(false);
+  };
 
   return (
     <motion.header
@@ -226,7 +250,7 @@ export default function Navbar() {
               isHovered={hoveredId === link.href.slice(1)}
               onHoverEnter={setHoveredId}
               onHoverLeave={() => setHoveredId(null)}
-              onClick={handleNavClick}
+              onClick={handleLinkClick}
             />
           ))}
           <li><ResumeBtn /></li>
@@ -280,9 +304,9 @@ export default function Navbar() {
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: i * 0.045, type: 'spring', stiffness: 320, damping: 28 }}
                   >
-                    <a
-                      href={link.href}
-                      onClick={(e) => handleNavClick(e, link.href)}
+                    <Link
+                      to={`/${link.href}`}
+                      onClick={handleLinkClick}
                       className={`flex items-center gap-3 px-4 py-3.5 rounded-xl font-medium text-sm transition-all duration-200 ${
                         isActive
                           ? 'text-[#d4af37] border border-[#d4af37]/20'
@@ -300,7 +324,7 @@ export default function Navbar() {
                         }}
                       />
                       {link.label}
-                    </a>
+                    </Link>
                   </motion.li>
                 );
               })}

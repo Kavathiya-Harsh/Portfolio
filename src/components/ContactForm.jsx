@@ -84,27 +84,34 @@ function ContactCard({ item, index }) {
       target={item.link.startsWith('http') ? "_blank" : "_self"}
       rel="noopener noreferrer"
       variants={slideInLeft}
-      whileHover={{ y: -5, scale: 1.02 }}
-      className="group relative flex items-center gap-4 p-4 rounded-2xl bg-white/5 border border-white/10 hover:border-[#d4af37]/30 hover:bg-white/10 transition-all duration-300 backdrop-blur-md overflow-hidden"
+      whileHover={{ y: -5, scale: 1.01 }}
+      className="group relative flex items-center gap-3 sm:gap-4 p-3.5 sm:p-4 rounded-2xl bg-white/5 border border-white/10 hover:border-[#d4af37]/30 hover:bg-white/10 transition-all duration-300 backdrop-blur-md overflow-hidden w-full"
       aria-label={`Contact me via ${item.label}: ${item.value}`}
     >
       {/* Dynamic Background Glow */}
       <div className={`absolute inset-0 ${item.bg} opacity-0 group-hover:opacity-100 transition-opacity blur-2xl -z-10`} />
       
-      <div className={`shrink-0 w-12 h-12 rounded-xl ${item.bg} border border-white/5 flex items-center justify-center transition-transform group-hover:scale-110`}>
-        <item.icon className={`w-6 h-6 ${item.color}`} />
+      {/* Left: Icon */}
+      <div className={`shrink-0 w-11 h-11 sm:w-12 sm:h-12 rounded-xl ${item.bg} border border-white/5 flex items-center justify-center transition-transform group-hover:scale-110`}>
+        <item.icon className={`w-5 h-5 sm:w-6 sm:h-6 ${item.color}`} />
       </div>
 
+      {/* Middle: Text Content (Icon-Left, Label-Top, Value-Bottom) */}
       <div className="flex-1 min-w-0">
-        <p className="text-[10px] font-mono uppercase tracking-widest text-slate-400 mb-0.5">{item.label}</p>
-        <p className="text-white font-medium truncate text-sm md:text-base">{item.value}</p>
+        <p className="text-[10px] font-mono uppercase tracking-[0.2em] text-slate-400 mb-0.5" style={{ fontSize: 'clamp(8px, 2vw, 10px)' }}>
+          {item.label}
+        </p>
+        <p className="text-white font-medium truncate text-sm sm:text-base leading-tight">
+          {item.value}
+        </p>
       </div>
 
+      {/* Right: Copy Button */}
       <motion.button
         onClick={copyToClipboard}
         whileHover={{ scale: 1.1, rotate: 5 }}
         whileTap={{ scale: 0.9 }}
-        className="shrink-0 p-3.5 rounded-lg hover:bg-white/10 text-slate-400 hover:text-white transition-colors relative"
+        className="shrink-0 p-2.5 sm:p-3.5 rounded-lg hover:bg-white/10 text-slate-400 hover:text-white transition-colors relative min-h-[44px] min-w-[44px] flex items-center justify-center"
         title="Copy"
         aria-label={`Copy ${item.label} to clipboard`}
       >
@@ -244,7 +251,8 @@ export default function ContactForm() {
           </motion.div>
           <motion.h2
             variants={textRevealUp}
-            className="text-3xl sm:text-5xl md:text-7xl font-bold text-white tracking-tight mb-8 leading-[1.1]"
+            className="font-bold text-white tracking-tight mb-8 leading-[1.1]"
+            style={{ fontSize: 'clamp(2rem, 10vw, 4.5rem)' }}
           >
             Get in <span className="bg-gradient-to-r from-blue-400 via-cyan-400 to-blue-500 bg-clip-text text-transparent">Touch</span>
           </motion.h2>
@@ -276,7 +284,7 @@ export default function ContactForm() {
             initial="hidden"
             whileInView="visible"
             viewport={viewportOnce}
-            className="relative p-6 sm:p-8 md:p-10 rounded-[2.5rem] bg-white/[0.03] border border-white/10 backdrop-blur-2xl shadow-2xl overflow-hidden h-full flex flex-col will-change-transform"
+            className="relative p-5 sm:p-8 md:p-10 rounded-[2.5rem] bg-white/[0.03] border border-white/10 backdrop-blur-2xl shadow-2xl overflow-hidden h-full flex flex-col will-change-transform"
           >
             <div className="absolute -top-24 -right-24 w-64 h-64 bg-blue-500/10 blur-[80px] rounded-full pointer-events-none will-change-transform" />
             
