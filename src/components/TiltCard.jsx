@@ -10,11 +10,14 @@ export default function TiltCard({ children, className = '', ...props }) {
 
   const rectRef = useRef(null);
 
-  const handleMouseMove = (e) => {
-    if (!ref.current) return;
-    if (!rectRef.current) {
+  const handleMouseEnter = () => {
+    if (ref.current) {
       rectRef.current = ref.current.getBoundingClientRect();
     }
+  };
+
+  const handleMouseMove = (e) => {
+    if (!ref.current || !rectRef.current) return;
     const rect = rectRef.current;
     const centerX = rect.left + rect.width / 2;
     const centerY = rect.top + rect.height / 2;
@@ -43,6 +46,7 @@ export default function TiltCard({ children, className = '', ...props }) {
   return (
     <motion.div
       ref={ref}
+      onMouseEnter={handleMouseEnter}
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
       style={{ transform: rotateX }}

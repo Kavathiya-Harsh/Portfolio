@@ -8,19 +8,63 @@
     <!-- Preload Critical Assets (LCP & Branding) -->
     <link rel="preconnect" href="https://res.cloudinary.com" crossorigin />
     <link rel="dns-prefetch" href="https://res.cloudinary.com" />
-    <link rel="preload" as="image" href="https://res.cloudinary.com/dvv5mtpli/image/upload/q_auto,f_auto,w_600,c_fill,g_face/v1776351778/Harsh_Kavathiya_Profile_duaqrs.jpg" fetchpriority="high" />
-    <link rel="preload" as="image" href="https://res.cloudinary.com/dvv5mtpli/image/upload/q_auto,f_auto,w_100/v1776355358/hk_logo_pb2u8w.jpg" fetchpriority="high" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="dns-prefetch" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="dns-prefetch" href="https://fonts.gstatic.com" />
+    <link rel="preconnect" href="https://api.github.com" />
+    <link rel="dns-prefetch" href="https://api.github.com" />
+
+    <link rel="preload" as="image" 
+          imagesrcset="https://res.cloudinary.com/dvv5mtpli/image/upload/q_auto,f_auto,w_400/v1776351778/Harsh_Kavathiya_Profile_duaqrs.jpg 400w, https://res.cloudinary.com/dvv5mtpli/image/upload/q_auto,f_auto,w_800/v1776351778/Harsh_Kavathiya_Profile_duaqrs.jpg 800w"
+          imagesizes="(max-width: 1024px) 400px, 800px"
+          fetchpriority="high" />
+    <link rel="preload" as="image" href="https://res.cloudinary.com/dvv5mtpli/image/upload/q_auto,f_auto,w_100/v1776355358/hk_logo_pb2u8w.jpg" fetchpriority="high" />
+
+    <style>
+      :root {
+        --base: #080d1a;
+        --text: #f8fafc;
+        color-scheme: dark;
+      }
+      body {
+        margin: 0;
+        background-color: var(--base);
+        color: var(--text);
+        font-family: system-ui, -apple-system, sans-serif;
+      }
+      /* Critical Skeleton Styles */
+      #loading-screen-pre {
+        position: fixed;
+        inset: 0;
+        background: radial-gradient(150deg, #060c1a 0%, #0b1628 55%, #07101f 100%);
+        z-index: 9999;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        will-change: opacity;
+      }
+      .loading-logo-init {
+        width: 120px;
+        height: 120px;
+        opacity: 0.1;
+        animation: pulse-slow 2s infinite;
+      }
+      @keyframes pulse-slow {
+        0%, 100% { opacity: 0.1; transform: scale(0.98); }
+        50% { opacity: 0.2; transform: scale(1.02); }
+      }
+    </style>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <meta name="theme-color" content="#080d1a" />
     
     <!-- Primary Meta Tags -->
-    <title>Harsh Kavathiya | Full Stack Developer & Hackathon Winner</title>
-    <meta name="title" content="Harsh Kavathiya | Full Stack Developer & Hackathon Winner" />
-    <meta name="description" content="Portfolio of Harsh Kavathiya — A Full Stack Developer and 5x Hackathon Winner. Specializing in MERN stack, high-performance UI, and scalable web solutions." />
-    <meta name="keywords" content="Harsh Kavathiya, Full Stack Developer, MERN Stack, React Developer, Hackathon Winner, Software Engineer, Portfolio, CodingGita" />
+    <title>Harsh Kavathiya | Full Stack Developer & 5x Hackathon Winner</title>
+    <meta name="title" content="Harsh Kavathiya | Full Stack Developer & 5x Hackathon Winner" />
+    <meta name="description" content="Portfolio of Harsh Kavathiya — A Full Stack Developer and 5x Hackathon Winner from Gujarat, India. Specializing in MERN stack (React, Node.js), high-performance UI/UX, and scalable web solutions. Discover projects like Trading Bot Pro, AI Dashboards, and more." />
+    <meta name="keywords" content="Harsh Kavathiya, Full Stack Developer, MERN Stack, React Developer, Hackathon Winner, Software Engineer, Portfolio, CodingGita, Shree Swaminarayan University, Web Development Gujarat, Innovative UI/UX, Trading Bot Pro, AI Analytics Dashboard, Open Source Contributor" />
     <meta name="author" content="Harsh Kavathiya" />
+    <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
     <link rel="canonical" href="https://harshkavathiya.vercel.app" />
 
     <!-- Open Graph / Facebook -->
@@ -44,15 +88,38 @@
       "@type": "Person",
       "name": "Harsh Kavathiya",
       "url": "https://harshkavathiya.vercel.app",
-      "image": "https://harshkavathiya.vercel.app/photo.jpg",
+      "image": "https://res.cloudinary.com/dvv5mtpli/image/upload/v1776351778/Harsh_Kavathiya_Profile_duaqrs.jpg",
       "sameAs": [
         "https://github.com/Kavathiya-Harsh",
         "https://www.linkedin.com/in/harshkavathiya",
         "https://x.com/HarshK62610"
       ],
       "jobTitle": "Full Stack Developer",
+      "alumniOf": {
+        "@type": "CollegeOrUniversity",
+        "name": "Shree Swaminarayan University"
+      },
+      "address": {
+        "@type": "PostalAddress",
+        "addressLocality": "Ahmedabad",
+        "addressRegion": "Gujarat",
+        "addressCountry": "India"
+      },
       "description": "Full Stack Developer specializing in React, Node.js, and modern web architectures. 5x Hackathon winner from Ahmedabad, India.",
-      "knowsAbout": ["Web Development", "React", "Node.js", "MongoDB", "UI/UX Design", "Hackathons"]
+      "knowsAbout": ["Web Development", "React", "Node.js", "MongoDB", "UI/UX Design", "Hackathons", "FinTech", "AI Analytics"]
+    }
+    </script>
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "name": "Harsh Kavathiya Portfolio",
+      "url": "https://harshkavathiya.vercel.app",
+      "potentialAction": {
+        "@type": "SearchAction",
+        "target": "https://harshkavathiya.vercel.app/#projects",
+        "query-input": "required name=search_term_string"
+      }
     }
     </script>
 
@@ -60,11 +127,11 @@
     <noscript>
       <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700;800&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet" />
     </noscript>
-    <script type="module" crossorigin src="/assets/index-DDWd40HX.js"></script>
-    <link rel="modulepreload" crossorigin href="/assets/router-B_c80C0R.js">
-    <link rel="modulepreload" crossorigin href="/assets/animation-KuOQSbEN.js">
-    <link rel="modulepreload" crossorigin href="/assets/icons-7S-X5Rpx.js">
-    <link rel="stylesheet" crossorigin href="/assets/index-C552PmIr.css">
+    <script type="module" crossorigin src="/assets/index-CGnPMXpA.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/router-Dia-6GUi.js">
+    <link rel="modulepreload" crossorigin href="/assets/animation-B7i5DSt9.js">
+    <link rel="modulepreload" crossorigin href="/assets/icons-DQ_HixIR.js">
+    <link rel="stylesheet" crossorigin href="/assets/index-BrD_v98O.css">
   </head>
   <body>
     <div id="root"></div>

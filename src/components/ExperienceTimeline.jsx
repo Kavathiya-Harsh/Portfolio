@@ -16,15 +16,20 @@ function TimelineCard({ item, index }) {
   const rectRef = useRef(null);
 
   const onMouseMove = (e) => {
-    if (!rectRef.current && cardRef.current) {
-      rectRef.current = cardRef.current.getBoundingClientRect();
-    }
+    if (!rectRef.current) return;
     const rect = rectRef.current;
-    if (!rect) return;
     const x = ((e.clientX - rect.left) / rect.width) * 100;
     const y = ((e.clientY - rect.top) / rect.height) * 100;
-    cardRef.current.style.setProperty('--mx', `${x}%`);
-    cardRef.current.style.setProperty('--my', `${y}%`);
+    if (cardRef.current) {
+      cardRef.current.style.setProperty('--mx', `${x}%`);
+      cardRef.current.style.setProperty('--my', `${y}%`);
+    }
+  };
+
+  const onMouseEnter = () => {
+    if (cardRef.current) {
+      rectRef.current = cardRef.current.getBoundingClientRect();
+    }
   };
 
   const onMouseLeave = () => {
@@ -66,9 +71,9 @@ function TimelineCard({ item, index }) {
         />
       </motion.div>
 
-      {/* Card */}
       <motion.div
         ref={cardRef}
+        onMouseEnter={onMouseEnter}
         onMouseMove={onMouseMove}
         onMouseLeave={onMouseLeave}
         className="relative group overflow-hidden rounded-xl border border-white/12 bg-slate-800/50 backdrop-blur-md p-5 hover:border-blue-500/20 transition-colors"

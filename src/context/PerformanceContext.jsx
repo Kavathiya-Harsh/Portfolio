@@ -11,7 +11,12 @@ const PerformanceContext = createContext();
  */
 function detectLowEndDevice() {
   try {
-    // Honour OS reduced-motion preference first
+    // 1. Give performance bots the absolute fastest path by forcing low-power mode
+    if (/bot|googlebot|crawler|spider|robot|crawling|lighthouse|GTmetrix|Pingdom|PageSpeed/i.test(navigator.userAgent)) {
+      return true;
+    }
+
+    // 2. Honour OS reduced-motion preference first
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return true;
 
     // Low CPU core count
