@@ -10,6 +10,7 @@ export default function MagneticButton({ children, className = '', href, ...prop
   const rectRef = useRef(null);
 
   const handleMouseMove = (e) => {
+    if (typeof window !== 'undefined' && window.matchMedia('(hover: none)').matches) return;
     if (!ref.current || !rectRef.current) return;
     const rect = rectRef.current;
     const centerX = rect.left + rect.width / 2;
@@ -29,6 +30,7 @@ export default function MagneticButton({ children, className = '', href, ...prop
   };
 
   const handleMouseEnter = () => {
+    if (typeof window !== 'undefined' && window.matchMedia('(hover: none)').matches) return;
     if (ref.current) {
       rectRef.current = ref.current.getBoundingClientRect();
       setIsHovered(true);

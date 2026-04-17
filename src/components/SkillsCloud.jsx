@@ -105,6 +105,7 @@ function CategoryCard({ category, index }) {
   const rectRef = useRef(null);
 
   function onMouseMove(e) {
+    if (typeof window !== 'undefined' && window.matchMedia('(hover: none)').matches) return;
     if (!cardRef.current) return;
     if (!rectRef.current) {
       rectRef.current = cardRef.current.getBoundingClientRect();

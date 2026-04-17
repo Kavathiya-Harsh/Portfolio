@@ -16,6 +16,7 @@ function TimelineCard({ item, index }) {
   const rectRef = useRef(null);
 
   const onMouseMove = (e) => {
+    if (typeof window !== 'undefined' && window.matchMedia('(hover: none)').matches) return;
     if (!rectRef.current) return;
     const rect = rectRef.current;
     const x = ((e.clientX - rect.left) / rect.width) * 100;
@@ -27,6 +28,7 @@ function TimelineCard({ item, index }) {
   };
 
   const onMouseEnter = () => {
+    if (typeof window !== 'undefined' && window.matchMedia('(hover: none)').matches) return;
     if (cardRef.current) {
       rectRef.current = cardRef.current.getBoundingClientRect();
     }

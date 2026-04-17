@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Quote, ChevronLeft, ChevronRight } from 'lucide-react';
 import { testimonials } from '../data/testimonials';
@@ -12,6 +12,7 @@ import {
 export default function TestimonialCarousel() {
   const [index, setIndex] = useState(0);
   const total = testimonials.length;
+  const rectRef = useRef(null);
 
   useEffect(() => {
     const t = setInterval(() => setIndex((i) => (i + 1) % total), 5000);
@@ -52,6 +53,7 @@ export default function TestimonialCarousel() {
           whileInView="visible"
           viewport={viewportOnce}
           onMouseMove={(e) => {
+            if (typeof window !== 'undefined' && window.matchMedia('(hover: none)').matches) return;
             if (!rectRef.current) {
               rectRef.current = e.currentTarget.getBoundingClientRect();
             }

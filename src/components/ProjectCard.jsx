@@ -52,6 +52,7 @@ export default function ProjectCard({ project, index = 0 }) {
   }
 
   function onMouseMove(e) {
+    if (typeof window !== 'undefined' && window.matchMedia('(hover: none)').matches) return;
     if (!rectRef.current) return;
     const { left, top, width, height } = rectRef.current;
     
