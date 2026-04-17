@@ -10,21 +10,14 @@
     <link rel="preconnect" href="https://res.cloudinary.com" crossorigin />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <!-- GitHub API — preconnect to eliminate 530ms TCP handshake from LCP critical path -->
-    <link rel="preconnect" href="https://api.github.com" crossorigin />
+    <!-- GitHub API is lazy-loaded — use dns-prefetch only, not preconnect -->
+    <link rel="dns-prefetch" href="https://api.github.com" />
 
-    <!-- Mobile: preload 300px image specifically for phones (< 768px) -->
-    <link rel="preload" as="image"
-          href="https://res.cloudinary.com/dvv5mtpli/image/upload/q_auto,f_auto,w_300,dpr_auto/v1776351778/Harsh_Kavathiya_Profile_duaqrs.jpg"
-          media="(max-width: 767px)"
+    <link rel="preload" as="image" 
+          imagesrcset="https://res.cloudinary.com/dvv5mtpli/image/upload/q_auto,f_auto,w_400/v1776351778/Harsh_Kavathiya_Profile_duaqrs.jpg 400w, https://res.cloudinary.com/dvv5mtpli/image/upload/q_auto,f_auto,w_800/v1776351778/Harsh_Kavathiya_Profile_duaqrs.jpg 800w"
+          imagesizes="(max-width: 1024px) 400px, 800px"
           fetchpriority="high" />
-    <!-- Tablet/Desktop: preload 400px image -->
-    <link rel="preload" as="image"
-          href="https://res.cloudinary.com/dvv5mtpli/image/upload/q_auto,f_auto,w_400/v1776351778/Harsh_Kavathiya_Profile_duaqrs.jpg"
-          media="(min-width: 768px) and (max-width: 1024px)"
-          fetchpriority="high" />
-    <!-- Preload brand logo (used in navbar, small asset) -->
-    <link rel="preload" as="image" href="https://res.cloudinary.com/dvv5mtpli/image/upload/q_auto,f_auto,w_80/v1776355358/hk_logo_pb2u8w.jpg" fetchpriority="low" />
+    <link rel="preload" as="image" href="https://res.cloudinary.com/dvv5mtpli/image/upload/q_auto,f_auto,w_100/v1776355358/hk_logo_pb2u8w.jpg" fetchpriority="high" />
 
     <style>
       *,*::before,*::after{box-sizing:border-box}

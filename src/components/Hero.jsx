@@ -25,33 +25,13 @@ const fadeUp = {
 /* ─────────────────────────────────────────────────────── */
 /* Animated Name — char-by-char, only once isReady fires  */
 /* ─────────────────────────────────────────────────────── */
-function AnimatedName({ firstName, lastName, isReady, isMobile }) {
+function AnimatedName({ firstName, lastName, isReady }) {
   const chars = [];
   firstName.split('').forEach((c, i) => chars.push({ c, gradient: false, idx: i }));
   chars.push({ c: ' ', gradient: false, idx: firstName.length });
   lastName.split('').forEach((c, i) =>
     chars.push({ c, gradient: true, idx: firstName.length + 1 + i })
   );
-
-  // On mobile: use a simpler single-block fade-up instead of per-char stagger
-  // This eliminates dozens of JS-driven transforms on a small screen
-  if (isMobile) {
-    return (
-      <motion.h1
-        className="font-bold tracking-tighter leading-[1.05] mb-4"
-        style={{ fontSize: 'clamp(1.7rem, 5.5vw, 5.25rem)' }}
-        initial={{ opacity: 0, y: 24 }}
-        animate={isReady ? { opacity: 1, y: 0 } : { opacity: 0, y: 24 }}
-        transition={{ duration: 0.6, ease: EXPO }}
-        aria-label={`Harsh Kavathiya — Full Stack Developer & 5x Hackathon Winner`}
-      >
-        <span className="text-white">{firstName}</span>{' '}
-        <span className="bg-gradient-to-r from-blue-400 via-cyan-300 to-blue-500 bg-clip-text text-transparent">
-          {lastName}
-        </span>
-      </motion.h1>
-    );
-  }
 
   return (
     <motion.h1
@@ -229,7 +209,6 @@ function InfoCard({ isLowPower }) {
 /* ─────────────────────────────────────────────────────── */
 function PhotoSection({ isLowPower, isReady, isMobile }) {
   const [photoError, setPhotoError] = React.useState(false);
-  const skipAnimations = isMobile || isLowPower;
 
   return (
     <motion.div
@@ -239,67 +218,42 @@ function PhotoSection({ isLowPower, isReady, isMobile }) {
       className="flex justify-center items-center order-1 lg:order-2 will-change-transform"
     >
       <div className="relative group">
-        {/* Outer glow pulse — desktop only, JS animation costs TBT on mobile */}
-        {!skipAnimations && (
-          <motion.div
-            className="absolute -inset-16 rounded-full pointer-events-none"
-            style={{ background: 'radial-gradient(circle, rgba(59,130,246,0.12) 0%, transparent 70%)' }}
-            animate={{ opacity: [0.5, 1, 0.5] }}
-            transition={{ duration: 5, repeat: Infinity, ease: 'easeInOut' }}
-          />
-        )}
-        {/* Static glow on mobile — no JS, no repaints */}
-        {skipAnimations && (
-          <div
-            className="absolute -inset-16 rounded-full pointer-events-none"
-            style={{ background: 'radial-gradient(circle, rgba(59,130,246,0.10) 0%, transparent 70%)', opacity: 0.7 }}
-          />
-        )}
+        {/* Outer glow pulse */}
+        <motion.div
+          className="absolute -inset-16 rounded-full pointer-events-none"
+          style={{ background: 'radial-gradient(circle, rgba(59,130,246,0.12) 0%, transparent 70%)' }}
+          animate={{ opacity: [0.5, 1, 0.5] }}
+          transition={{ duration: 5, repeat: Infinity, ease: 'easeInOut' }}
+        />
 
-        {/* Orbiting dashed ring — desktop only */}
-        {!skipAnimations && (
-          <motion.div
-            className="absolute -inset-5 rounded-full border-2 border-dashed border-blue-500/20"
-            animate={{ rotate: 360 }}
-            transition={{ duration: 22, repeat: Infinity, ease: 'linear' }}
-          />
-        )}
-        {/* Outer static ring — desktop only */}
-        {!skipAnimations && (
-          <motion.div
-            className="absolute -inset-9 rounded-full border border-cyan-400/8"
-            animate={{ rotate: -360 }}
-            transition={{ duration: 32, repeat: Infinity, ease: 'linear' }}
-          />
-        )}
+        {/* Orbiting dashed ring */}
+        <motion.div
+          className="absolute -inset-5 rounded-full border-2 border-dashed border-blue-500/20"
+          animate={!isLowPower ? { rotate: 360 } : {}}
+          transition={{ duration: 22, repeat: Infinity, ease: 'linear' }}
+        />
+        {/* Outer static ring */}
+        <motion.div
+          className="absolute -inset-9 rounded-full border border-cyan-400/8"
+          animate={!isLowPower ? { rotate: -360 } : {}}
+          transition={{ duration: 32, repeat: Infinity, ease: 'linear' }}
+        />
 
-        {/* Spinning gradient border — static on mobile */}
-        {!skipAnimations ? (
-          <motion.div
-            className="absolute -inset-1 rounded-full p-[3px]"
-            style={{
-              background: 'linear-gradient(135deg, #3b82f6, #06b6d4, #8b5cf6, #3b82f6)',
-              boxShadow: '0 0 70px -18px rgba(37,99,235,0.65)',
-            }}
-            animate={{ rotate: 360 }}
-            transition={{ duration: 14, repeat: Infinity, ease: 'linear' }}
-          >
-            <div className="w-full h-full rounded-full bg-[#080d1a]" />
-          </motion.div>
-        ) : (
-          <div
-            className="absolute -inset-1 rounded-full p-[3px]"
-            style={{
-              background: 'linear-gradient(135deg, #3b82f6, #06b6d4, #8b5cf6)',
-              boxShadow: '0 0 50px -18px rgba(37,99,235,0.5)',
-            }}
-          >
-            <div className="w-full h-full rounded-full bg-[#080d1a]" />
-          </div>
-        )}
+        {/* Spinning gradient border */}
+        <motion.div
+          className="absolute -inset-1 rounded-full p-[3px]"
+          style={{
+            background: 'linear-gradient(135deg, #3b82f6, #06b6d4, #8b5cf6, #3b82f6)',
+            boxShadow: '0 0 70px -18px rgba(37,99,235,0.65)',
+          }}
+          animate={!isLowPower ? { rotate: 360 } : {}}
+          transition={{ duration: 14, repeat: Infinity, ease: 'linear' }}
+        >
+          <div className="w-full h-full rounded-full bg-[#080d1a]" />
+        </motion.div>
 
-        {/* Floating accent dots — desktop only */}
-        {!skipAnimations && [
+        {/* Floating accent dots */}
+        {[
           { top: '16%', right: '-10px', delay: 0 },
           { top: '50%', left: '-10px', delay: 0.9 },
           { top: '80%', right: '-10px', delay: 1.8 },
@@ -317,32 +271,23 @@ function PhotoSection({ isLowPower, isReady, isMobile }) {
         <div className="relative w-56 h-56 sm:w-72 sm:h-72 md:w-80 md:h-80 lg:w-[22rem] lg:h-[22rem] rounded-full overflow-hidden border-[5px] border-[#080d1a] bg-slate-800 z-10 shadow-2xl">
           {!photoError ? (
             <picture>
-              {/* Mobile: 300px — faster LCP, matches preload in index.html */}
-              <source
-                media="(max-width: 767px)"
-                srcSet="https://res.cloudinary.com/dvv5mtpli/image/upload/q_auto,f_auto,w_300,dpr_auto/v1776351778/Harsh_Kavathiya_Profile_duaqrs.jpg"
+              <source 
+                media="(max-width: 1024px)" 
+                srcSet="https://res.cloudinary.com/dvv5mtpli/image/upload/q_auto,f_auto,w_400/v1776351778/Harsh_Kavathiya_Profile_duaqrs.jpg" 
               />
-              <source
-                media="(max-width: 1024px)"
-                srcSet="https://res.cloudinary.com/dvv5mtpli/image/upload/q_auto,f_auto,w_400/v1776351778/Harsh_Kavathiya_Profile_duaqrs.jpg"
-              />
-              <source
-                media="(min-width: 1025px)"
-                srcSet="https://res.cloudinary.com/dvv5mtpli/image/upload/q_auto,f_auto,w_800/v1776351778/Harsh_Kavathiya_Profile_duaqrs.jpg"
+              <source 
+                media="(min-width: 1025px)" 
+                srcSet="https://res.cloudinary.com/dvv5mtpli/image/upload/q_auto,f_auto,w_800/v1776351778/Harsh_Kavathiya_Profile_duaqrs.jpg" 
               />
               <img
-                src="https://res.cloudinary.com/dvv5mtpli/image/upload/q_auto,f_auto,w_400/v1776351778/Harsh_Kavathiya_Profile_duaqrs.jpg"
+                src="https://res.cloudinary.com/dvv5mtpli/image/upload/q_auto,f_auto,w_800/v1776351778/Harsh_Kavathiya_Profile_duaqrs.jpg"
                 alt="Harsh Kavathiya - Full Stack Developer & Hackathon Winner"
                 width="352"
                 height="352"
                 fetchpriority="high"
                 loading="eager"
                 decoding="async"
-                className={`w-full h-full object-cover object-top ${
-                  skipAnimations
-                    ? ''
-                    : 'scale-105 group-hover:scale-110 transition-transform duration-[1.2s] will-change-transform'
-                }`}
+                className="w-full h-full object-cover object-top scale-105 group-hover:scale-110 transition-transform duration-[1.2s] will-change-transform"
                 onError={() => setPhotoError(true)}
               />
             </picture>
@@ -387,30 +332,15 @@ export default function Hero({ isReady = false }) {
       ref={sectionRef}
       className="relative min-h-screen flex flex-col justify-center pt-20 sm:pt-24 pb-16 px-4 sm:px-6 overflow-hidden"
     >
-      {/* Background orbs — skip motion animation on mobile to free main thread */}
-      {!noParallax ? (
-        <>
-          <motion.div
-            className="absolute top-24 right-[8%] w-[280px] sm:w-[480px] h-[280px] sm:h-[480px] rounded-full pointer-events-none will-change-transform"
-            style={{ y: bgOrb1Y, background: 'radial-gradient(circle, rgba(59,130,246,0.1) 0%, transparent 70%)', filter: 'blur(60px)' }}
-          />
-          <motion.div
-            className="absolute bottom-20 left-[3%] w-[240px] sm:w-[380px] h-[240px] sm:h-[380px] rounded-full pointer-events-none will-change-transform"
-            style={{ y: bgOrb2Y, background: 'radial-gradient(circle, rgba(6,182,212,0.07) 0%, transparent 70%)', filter: 'blur(60px)' }}
-          />
-        </>
-      ) : (
-        <>
-          <div
-            className="absolute top-24 right-[8%] w-[200px] h-[200px] rounded-full pointer-events-none"
-            style={{ background: 'radial-gradient(circle, rgba(59,130,246,0.08) 0%, transparent 70%)', filter: 'blur(40px)' }}
-          />
-          <div
-            className="absolute bottom-20 left-[3%] w-[160px] h-[160px] rounded-full pointer-events-none"
-            style={{ background: 'radial-gradient(circle, rgba(6,182,212,0.05) 0%, transparent 70%)', filter: 'blur(40px)' }}
-          />
-        </>
-      )}
+      {/* Background orbs */}
+      <motion.div
+        className="absolute top-24 right-[8%] w-[280px] sm:w-[480px] h-[280px] sm:h-[480px] rounded-full pointer-events-none will-change-transform"
+        style={{ y: bgOrb1Y, background: 'radial-gradient(circle, rgba(59,130,246,0.1) 0%, transparent 70%)', filter: 'blur(60px)' }}
+      />
+      <motion.div
+        className="absolute bottom-20 left-[3%] w-[240px] sm:w-[380px] h-[240px] sm:h-[380px] rounded-full pointer-events-none will-change-transform"
+        style={{ y: bgOrb2Y, background: 'radial-gradient(circle, rgba(6,182,212,0.07) 0%, transparent 70%)', filter: 'blur(60px)' }}
+      />
 
       <div className="max-w-7xl mx-auto w-full relative z-10">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 xl:gap-28 items-center">
@@ -440,7 +370,7 @@ export default function Hero({ isReady = false }) {
             </motion.div>
 
             {/* Animated name */}
-            <AnimatedName firstName={firstName} lastName={lastName} isReady={isReady} isMobile={isMobile} />
+            <AnimatedName firstName={firstName} lastName={lastName} isReady={isReady} />
 
             {/* Typewriter role */}
             <motion.div

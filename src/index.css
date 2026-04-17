@@ -1,30 +1,5 @@
 @import "tailwindcss";
 
-/* ── Mobile Performance: Skip rendering for off-screen sections ──
-   content-visibility:auto cuts layout/paint time by up to 70% for below-fold content.
-   contain-intrinsic-size hints prevent CLS when sections scroll into view. */
-@media (max-width: 1023px) {
-  /* Apply to all major sections except hero which is above-fold */
-  #about, #skills, #projects, #hackathons,
-  [id="github-activity"], [id="certificates"], [id="education"], [id="contact"] {
-    content-visibility: auto;
-    contain-intrinsic-size: 0 600px;
-  }
-}
-
-/* Disable all CSS transitions & animations on mobile for elements that cause reflows */
-@media (max-width: 1023px) {
-  /* Limit expensive blur to only essential elements */
-  .blur-\[120px\], .blur-\[100px\], .blur-\[60px\] {
-    filter: blur(40px) !important;
-  }
-  /* Disable 3D transforms on mobile — browser falls back to CPU renderer */
-  [style*="preserve-3d"], .perspective-1000 {
-    transform-style: flat !important;
-    perspective: none !important;
-  }
-}
-
 :root {
   color-scheme: dark;
 
