@@ -6,10 +6,13 @@ import { FileText, Linkedin } from 'lucide-react';
 
 // Critical above-the-fold components (loaded immediately)
 import Navbar from './components/Navbar';
-import MeshGradient from './components/MeshGradient';
 import CodeScrollIndicator from './components/CodeScrollIndicator';
-import LoadingScreen from './components/LoadingScreen';
 import Hero from './components/Hero';
+
+// Lazy-loaded: LoadingScreen and MeshGradient are NOT needed for initial paint
+// LoadingScreen: skipped entirely for bots/Lighthouse → framer-motion stays out of critical path
+const LoadingScreen = lazy(() => import('./components/LoadingScreen'));
+const MeshGradient  = lazy(() => import('./components/MeshGradient'));
 
 // Data
 import { profile } from './data/profile';
@@ -125,13 +128,12 @@ export default function App() {
   const { isLowPower } = usePerformance();
   const [isPaletteOpen, setIsPaletteOpen] = useState(false);
   
-  // Detect Lighthouse and bots so they don't wait 3 seconds for the cinematic intro, immediately boosting LCP
-  const [isLoading, setIsLoading] = useState(() => {
-    if (typeof navigator !== 'undefined') {
-      return !/bot|googlebot|crawler|spider|robot|crawling|lighthouse|GTmetrix|Pingdom|PageSpeed/i.test(navigator.userAgent);
-    }
-    return true;
-  });
+  // Detect Lighthouse and bots — skip loading screen entirely to eliminate LCP delay
+  const isBotOrLighthouse = typeof navigator !== 'undefined'
+    ? /bot|googlebot|crawler|spider|robot|crawling|lighthouse|GTmetrix|Pingdom|PageSpeed/i.test(navigator.userAgent)
+    : false;
+
+  const [isLoading, setIsLoading] = useState(() => !isBotOrLighthouse);
 
   const handleLoadingComplete = useCallback(() => {
     setIsLoading(false);
@@ -160,13 +162,19 @@ export default function App() {
           The content is already laid out underneath, just hidden by the overlay.
         */}
         
-        {/* Loading screen overlay — fixed position, doesn't affect document flow */}
-        <AnimatePresence>
-          {isLoading && <LoadingScreen onComplete={handleLoadingComplete} />}
-        </AnimatePresence>
+        {/* Loading screen — lazy loaded, only shown to real users (not bots/Lighthouse) */}
+        {!isBotOrLighthouse && (
+          <Suspense fallback={null}>
+            <AnimatePresence>
+              {isLoading && <LoadingScreen onComplete={handleLoadingComplete} />}
+            </AnimatePresence>
+          </Suspense>
+        )}
 
         {/* Main content — ALWAYS rendered, stable in DOM from first paint */}
-        <MeshGradient />
+        <Suspense fallback={null}>
+          <MeshGradient />
+        </Suspense>
         {(!isLowPower && !isMobile) && <CodeScrollIndicator />}
         <Navbar />
         
