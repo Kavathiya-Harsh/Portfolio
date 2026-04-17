@@ -271,16 +271,25 @@ function PhotoSection({ isLowPower, isReady, isMobile }) {
         <div className="relative w-56 h-56 sm:w-72 sm:h-72 md:w-80 md:h-80 lg:w-[22rem] lg:h-[22rem] rounded-full overflow-hidden border-[5px] border-[#080d1a] bg-slate-800 z-10 shadow-2xl">
           {!photoError ? (
             <picture>
+              {/* WebP for modern browsers — explicit format, optimized sizes */}
               <source 
+                type="image/webp"
+                media="(max-width: 640px)" 
+                srcSet="https://res.cloudinary.com/dvv5mtpli/image/upload/q_auto,f_webp,w_224,c_fill,g_face/v1776351778/Harsh_Kavathiya_Profile_duaqrs.jpg" 
+              />
+              <source 
+                type="image/webp"
                 media="(max-width: 1024px)" 
-                srcSet="https://res.cloudinary.com/dvv5mtpli/image/upload/q_auto,f_auto,w_400/v1776351778/Harsh_Kavathiya_Profile_duaqrs.jpg" 
+                srcSet="https://res.cloudinary.com/dvv5mtpli/image/upload/q_auto,f_webp,w_288,c_fill,g_face/v1776351778/Harsh_Kavathiya_Profile_duaqrs.jpg" 
               />
               <source 
+                type="image/webp"
                 media="(min-width: 1025px)" 
-                srcSet="https://res.cloudinary.com/dvv5mtpli/image/upload/q_auto,f_auto,w_800/v1776351778/Harsh_Kavathiya_Profile_duaqrs.jpg" 
+                srcSet="https://res.cloudinary.com/dvv5mtpli/image/upload/q_auto,f_webp,w_352,c_fill,g_face/v1776351778/Harsh_Kavathiya_Profile_duaqrs.jpg" 
               />
+              {/* JPEG fallback for browsers without WebP */}
               <img
-                src="https://res.cloudinary.com/dvv5mtpli/image/upload/q_auto,f_auto,w_800/v1776351778/Harsh_Kavathiya_Profile_duaqrs.jpg"
+                src="https://res.cloudinary.com/dvv5mtpli/image/upload/q_auto,f_auto,w_352,c_fill,g_face/v1776351778/Harsh_Kavathiya_Profile_duaqrs.jpg"
                 alt="Harsh Kavathiya - Full Stack Developer & Hackathon Winner"
                 width="352"
                 height="352"
