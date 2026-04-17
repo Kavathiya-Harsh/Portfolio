@@ -4,14 +4,13 @@ import { useLocation } from 'react-router-dom';
 import { useBreakpoint } from './utils/useBreakpoint';
 import { FileText, Linkedin } from 'lucide-react';
 
-// Critical above-the-fold components (loaded immediately)
+// Critical components (loaded immediately)
 import Navbar from './components/Navbar';
 import CodeScrollIndicator from './components/CodeScrollIndicator';
 import Hero from './components/Hero';
+import LoadingScreen from './components/LoadingScreen';
 
-// Lazy-loaded: LoadingScreen and MeshGradient are NOT needed for initial paint
-// LoadingScreen: skipped entirely for bots/Lighthouse → framer-motion stays out of critical path
-const LoadingScreen = lazy(() => import('./components/LoadingScreen'));
+// Lazy-loaded: MeshGradient is complex but not part of the initial intro frame
 const MeshGradient  = lazy(() => import('./components/MeshGradient'));
 
 // Data
@@ -166,21 +165,31 @@ export default function App() {
           The content is already laid out underneath, just hidden by the overlay.
         */}
         
-        {/* Loading screen — lazy loaded, only shown to real users (not bots/Lighthouse) */}
+        {/* Loading screen — imported directly for zero-delay first paint */}
         {!isBotOrLighthouse && (
-          <Suspense fallback={null}>
-            <AnimatePresence>
-              {isLoading && <LoadingScreen onComplete={handleLoadingComplete} />}
-            </AnimatePresence>
-          </Suspense>
+          <AnimatePresence>
+            {isLoading && <LoadingScreen onComplete={handleLoadingComplete} />}
+          </AnimatePresence>
         )}
 
         {/* Main content — ALWAYS rendered, stable in DOM from first paint */}
         <Suspense fallback={null}>
           <MeshGradient />
         </Suspense>
-        {(!isLowPower && !isMobile) && <CodeScrollIndicator />}
-        <Navbar />
+        
+        {/* Only show persistent UI once loading is complete to prevent "leakage" */}
+        <AnimatePresence>
+          {!isLoading && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 1, ease: 'easeOut' }}
+            >
+              {(!isLowPower && !isMobile) && <CodeScrollIndicator />}
+              <Navbar />
+            </motion.div>
+          )}
+        </AnimatePresence>
         
         <Suspense fallback={null}>
           <CommandPalette 

@@ -31,10 +31,10 @@ const EASE_OUT_EXPO = [0.16, 1, 0.3, 1];
 
 /* ─── CHAR ANIMATION VARIANTS ───────────────────────── */
 const charVariants = {
-  hidden: { opacity: 0, y: 56, rotateX: -80, scale: 0.55 },
+  hidden: { opacity: 0, clipPath: 'inset(100% 0 0 0)', y: 20, filter: 'blur(10px)' },
   visible: (delay) => ({
-    opacity: 1, y: 0, rotateX: 0, scale: 1,
-    transition: { delay, duration: 0.65, ease: EASE_OUT_EXPO },
+    opacity: 1, clipPath: 'inset(0% 0 0 0)', y: 0, filter: 'blur(0px)',
+    transition: { delay, duration: 0.8, ease: [0.16, 1, 0.3, 1] },
   }),
 };
 
@@ -90,10 +90,10 @@ export default function LoadingScreen({ onComplete }) {
         initial={{ opacity: 1 }}
         animate={
           phase === 'exit'
-            ? { opacity: 0, scale: 1.04 }
-            : { opacity: 1, scale: 1   }
+            ? { opacity: 0, scale: 1.05, filter: 'blur(10px)' }
+            : { opacity: 1, scale: 1, filter: 'blur(0px)' }
         }
-        transition={{ duration: 0.65, ease: EASE_OUT_EXPO }}
+        transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
         className="fixed inset-0 z-[9999] flex items-center justify-center overflow-hidden"
         style={{
           background: 'linear-gradient(150deg, #060c1a 0%, #0b1628 55%, #07101f 100%)',
@@ -101,6 +101,8 @@ export default function LoadingScreen({ onComplete }) {
         }}
         aria-hidden="true"
       >
+        {/* Subtle Cinematic Grain */}
+        <div className="absolute inset-0 z-50 pointer-events-none bg-noise opacity-[0.022]" />
 
         {/* ── SUBTLE GRID ────────────────────────────── */}
         <div
@@ -265,12 +267,12 @@ export default function LoadingScreen({ onComplete }) {
           className="absolute inset-0 pointer-events-none"
           style={{ padding: 40, opacity: 0.055 }}
         >
-          <div style={{ width: '100%', height: '100%', border: '1px solid rgba(255,255,255,0.28)', borderRadius: 48, position: 'relative' }}>
-            <span style={{ position: 'absolute', top: 20, left: 28, fontSize: 7, fontFamily: 'monospace', color: '#fff', letterSpacing: '0.2em', textTransform: 'uppercase' }}>
-              Portfolio v2.0
+          <div style={{ width: '100%', height: '100%', border: '1px solid rgba(255,255,255,0.15)', borderRadius: 48, position: 'relative' }}>
+            <span style={{ position: 'absolute', top: 24, left: 32, fontSize: 8, fontFamily: '"SF Mono", "Fira Code", monospace', color: '#fff', letterSpacing: '0.25em', textTransform: 'uppercase', opacity: 0.3 }}>
+              Portfolio v2.0 // Alpha
             </span>
-            <span style={{ position: 'absolute', bottom: 20, right: 28, fontSize: 7, fontFamily: 'monospace', color: '#fff', letterSpacing: '0.2em', textTransform: 'uppercase' }}>
-              Initializing...
+            <span style={{ position: 'absolute', bottom: 24, right: 32, fontSize: 8, fontFamily: '"SF Mono", "Fira Code", monospace', color: '#fff', letterSpacing: '0.25em', textTransform: 'uppercase', opacity: 0.3 }}>
+              Initializing System Diagnostics...
             </span>
           </div>
         </div>

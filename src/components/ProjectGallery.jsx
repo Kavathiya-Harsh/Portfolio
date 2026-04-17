@@ -1,6 +1,6 @@
 import React, { useRef, useState } from 'react';
 import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion';
-import { Search, FolderOpen, Zap, X as CloseIcon } from 'lucide-react';
+import { Search, FolderOpen, Zap, X as CloseIcon, Figma, ExternalLink } from 'lucide-react';
 import ProjectCard from './ProjectCard';
 import { projects } from '../data/projects';
 import {
@@ -88,6 +88,41 @@ export default function ProjectGallery({ typeFilter = 'all' }) {
               />
             ))}
           </AnimatePresence>
+        </motion.div>
+        
+        {/* Figma CTA Button */}
+        <motion.div
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: '-100px' }}
+          variants={blurScaleIn}
+          className="mt-20 flex justify-center"
+        >
+          <motion.a
+            href="https://www.figma.com/design/STdKa6aBHN0NWjLAmTrDJ0/Untitled?node-id=0-1&p=f"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="group relative flex items-center gap-3 px-8 py-5 rounded-2xl bg-[#030712] border border-blue-500/30 overflow-hidden"
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+          >
+            {/* Glossy gradient overlay */}
+            <div className="absolute inset-0 bg-gradient-to-tr from-blue-600/10 via-cyan-400/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+            
+            {/* Glow effect */}
+            <div className="absolute -inset-1 blur-2xl bg-blue-500/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 -z-10" />
+
+            <div className="relative flex items-center gap-4">
+              <div className="p-2.5 rounded-xl bg-[#0b1120] border border-blue-500/20 group-hover:border-blue-400/40 transition-colors">
+                <Figma className="w-6 h-6 text-blue-400 group-hover:text-cyan-400 transition-colors" />
+              </div>
+              <div className="flex flex-col items-start pr-4">
+                <span className="text-[10px] font-bold text-blue-400/60 uppercase tracking-[0.2em]">Explore Design</span>
+                <span className="text-xl font-bold text-white group-hover:text-cyan-300 transition-colors">View More on Figma</span>
+              </div>
+              <ExternalLink className="w-5 h-5 text-slate-500 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
+            </div>
+          </motion.a>
         </motion.div>
 
         {/* Empty State */}
