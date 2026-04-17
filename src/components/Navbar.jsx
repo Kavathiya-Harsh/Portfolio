@@ -6,12 +6,12 @@ import { useBreakpoint } from '../utils/useBreakpoint';
 import { profile } from '../data/profile';
 
 const navLinks = [
-  { href: '#hero',       label: 'Home' },
-  { href: '#about',      label: 'About' },
-  { href: '#skills',     label: 'Skills' },
-  { href: '#projects',   label: 'Projects' },
-  { href: '#hackathons', label: 'Hackathons' },
-  { href: '#contact',    label: 'Contact' },
+  { href: 'hero',       label: 'Home' },
+  { href: 'about',      label: 'About' },
+  { href: 'skills',     label: 'Skills' },
+  { href: 'projects',   label: 'Projects' },
+  { href: 'hackathons', label: 'Hackathons' },
+  { href: 'contact',    label: 'Contact' },
 ];
 
 const RESUME_URL = profile.resumeUrl;
@@ -21,7 +21,7 @@ function NavItem({ link, isActive, isHovered, onHoverEnter, onHoverLeave, onClic
   return (
     <li
       className="relative"
-      onMouseEnter={() => onHoverEnter(link.href.slice(1))}
+      onMouseEnter={() => onHoverEnter(link.href)}
       onMouseLeave={onHoverLeave}
     >
       {/* Sliding pill — only visible on hover; layoutId lets it glide between items */}
@@ -148,7 +148,7 @@ export default function Navbar() {
 
   /* active section observer */
   useEffect(() => {
-    const ids = navLinks.map((l) => l.href.slice(1));
+    const ids = navLinks.map((l) => l.href);
     const obs = [];
     ids.forEach((id) => {
       const el = document.getElementById(id);
@@ -172,9 +172,8 @@ export default function Navbar() {
     setMobileOpen(false);
   }, []);
 
-  const handleNavClick = (e, href) => {
+  const handleNavClick = (e, targetId) => {
     e.preventDefault();
-    const targetId = href.replace('#', '');
     const element = document.getElementById(targetId);
     if (element) {
       const offset = 80;
@@ -213,9 +212,9 @@ export default function Navbar() {
       <nav className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
 
         {/* Brand */}
-        <motion.a
-          href="#hero"
-          onClick={(e) => handleNavClick(e, '#hero')}
+        <Link
+          to="/"
+          onClick={(e) => handleNavClick(e, 'hero')}
           className="flex items-center group relative"
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
@@ -238,7 +237,7 @@ export default function Navbar() {
             className="absolute inset-0 blur-xl rounded-full -z-10"
             style={{ background: 'radial-gradient(circle, rgba(212,175,55,0.28) 0%, transparent 70%)' }}
           />
-        </motion.a>
+        </Link>
 
         {/* Desktop links */}
         <ul className="hidden md:flex items-center gap-1">
@@ -246,8 +245,8 @@ export default function Navbar() {
             <NavItem
               key={link.href}
               link={link}
-              isActive={activeId === link.href.slice(1)}
-              isHovered={hoveredId === link.href.slice(1)}
+              isActive={activeId === link.href}
+              isHovered={hoveredId === link.href}
               onHoverEnter={setHoveredId}
               onHoverLeave={() => setHoveredId(null)}
               onClick={handleLinkClick}
@@ -296,7 +295,7 @@ export default function Navbar() {
           >
             <ul className="px-6 py-5 flex flex-col gap-1">
               {navLinks.map((link, i) => {
-                const isActive = activeId === link.href.slice(1);
+                const isActive = activeId === link.href;
                 return (
                   <motion.li
                     key={link.href}

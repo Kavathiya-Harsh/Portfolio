@@ -38,14 +38,16 @@ const LINKEDIN_URL = 'https://www.linkedin.com/in/harshkavathiya';
 
 /**
  * Helper component that manages smooth scrolling to sections when 
- * the URL hash changes (e.g., /#about). Handles fixed navbar offset.
+ * the URL path changes (e.g., /about). Handles fixed navbar offset.
  */
-function ScrollToHashElement() {
-  const { hash } = useLocation();
+function ScrollToPathElement() {
+  const { pathname } = useLocation();
 
   useEffect(() => {
-    if (hash) {
-      const id = hash.replace('#', '');
+    // Extract ID from pathname (e.g., "/about" -> "about")
+    const id = pathname.replace('/', '');
+    
+    if (id) {
       const element = document.getElementById(id);
       if (element) {
         // Offset for the fixed navbar (approx 80px)
@@ -56,11 +58,13 @@ function ScrollToHashElement() {
           top: offsetPosition,
           behavior: 'smooth',
         });
+        return;
       }
-    } else {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
-  }, [hash]);
+    
+    // Fallback: Scroll to top if no ID or at root
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, [pathname]);
 
   return null;
 }
@@ -152,7 +156,7 @@ export default function App() {
 
   return (
     <>
-      <ScrollToHashElement />
+      <ScrollToPathElement />
       <MotionConfig reducedMotion={isLowPower ? 'always' : 'user'}>
       <RecruiterModeProvider>
         {/* 
