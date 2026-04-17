@@ -9,8 +9,21 @@ export default function MagneticButton({ children, className = '', href, ...prop
 
   const rectRef = useRef(null);
 
+  // On touch/mobile: skip ALL motion overhead — there's no cursor to react to
+  const isTouch = typeof window !== 'undefined' && window.matchMedia('(hover: none)').matches;
+  if (isTouch) {
+    return (
+      <a
+        href={href || '#contact'}
+        className={`inline-flex items-center gap-2 px-8 py-4 rounded-xl font-semibold text-white bg-[#3b82f6] hover:bg-blue-500 shadow-lg shadow-blue-500/25 transition-shadow ${className}`}
+        {...props}
+      >
+        {children}
+      </a>
+    );
+  }
+
   const handleMouseMove = (e) => {
-    if (typeof window !== 'undefined' && window.matchMedia('(hover: none)').matches) return;
     if (!ref.current || !rectRef.current) return;
     const rect = rectRef.current;
     const centerX = rect.left + rect.width / 2;
@@ -30,7 +43,6 @@ export default function MagneticButton({ children, className = '', href, ...prop
   };
 
   const handleMouseEnter = () => {
-    if (typeof window !== 'undefined' && window.matchMedia('(hover: none)').matches) return;
     if (ref.current) {
       rectRef.current = ref.current.getBoundingClientRect();
       setIsHovered(true);
@@ -60,3 +72,4 @@ export default function MagneticButton({ children, className = '', href, ...prop
     </motion.a>
   );
 }
+

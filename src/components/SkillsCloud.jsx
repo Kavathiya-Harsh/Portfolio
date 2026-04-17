@@ -103,9 +103,12 @@ function CategoryCard({ category, index }) {
   });
 
   const rectRef = useRef(null);
+  
+  // Detect touch/mobile — skip ALL tilt + spotlight effects (they cause forced reflows)
+  const isTouch = typeof window !== 'undefined' && window.matchMedia('(hover: none)').matches;
 
   function onMouseMove(e) {
-    if (typeof window !== 'undefined' && window.matchMedia('(hover: none)').matches) return;
+    if (isTouch) return;
     if (!cardRef.current) return;
     if (!rectRef.current) {
       rectRef.current = cardRef.current.getBoundingClientRect();
@@ -121,6 +124,45 @@ function CategoryCard({ category, index }) {
     mouseX.set(0);
     mouseY.set(0);
     rectRef.current = null;
+  }
+
+  // Mobile / touch: render a flat static card to avoid all JS tilt overhead
+  if (isTouch) {
+    return (
+      <motion.div
+        variants={staggerItem}
+        className="group relative perspective-1000"
+      >
+        <div className="relative h-full p-6 rounded-3xl border border-white/12 bg-gradient-to-br from-white/10 to-white/[0.02] overflow-hidden transition-all duration-500">
+          {/* Animated Background Gradient */}
+          <div className="absolute inset-0 bg-gradient-to-br from-blue-500/10 via-transparent to-cyan-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+
+          <div className="relative z-20 flex flex-col h-full">
+            <div className="flex items-start justify-between mb-6">
+              <div className="p-3 rounded-2xl bg-blue-500/15 border border-blue-500/20 text-blue-400">
+                <Icon className="w-6 h-6" />
+              </div>
+              <div className="text-[10px] font-mono text-white/20 uppercase tracking-widest">
+                0{index + 1}
+              </div>
+            </div>
+
+            <h3 className="text-xl font-bold text-white mb-2">
+              {category.title}
+            </h3>
+            <p className="text-sm text-slate-400 mb-8 line-clamp-2">
+              {category.description}
+            </p>
+
+            <div className="grid grid-cols-1 gap-3 mt-auto">
+              {category.skills.map((skill, i) => (
+                <SkillPill key={skill.name} skill={skill} index={i} />
+              ))}
+            </div>
+          </div>
+        </div>
+      </motion.div>
+    );
   }
 
   return (
