@@ -1,7 +1,9 @@
 /**
- * LoadingScreen — cinematic intro (desktop/tablet).
+ * LoadingScreen — cinematic intro.
+ * Mobile: faster timings (~1.8s total) to keep TBT low.
+ * Desktop: full cinematic experience (~2.8s total).
  * Perf: Avoid clip-path + filter blur on text (forced layout with Framer).
- * Slogan/subcopy is visible immediately so Lighthouse LCP is not delayed ~3s.
+ * Slogan/subcopy is visible immediately so Lighthouse LCP is not delayed.
  */
 import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -13,27 +15,31 @@ const LAST_NAME  = 'Kavathiya';
 const SLOGAN     = 'Engineering with Passion \u2022 Designing with Purpose';
 const ROLE       = 'Full Stack Developer';
 
-const F_DELAY = 0.18;
-const F_STEP  = 0.045;
-const L_DELAY = 0.42;
-const L_STEP  = 0.038;
+/* Detect mobile early for timing calculations */
+const IS_MOBILE = typeof window !== 'undefined' && window.innerWidth < 768;
+
+/* Mobile: faster char reveal, shorter hold. Desktop: full cinematic */
+const F_DELAY = IS_MOBILE ? 0.08 : 0.18;
+const F_STEP  = IS_MOBILE ? 0.03 : 0.045;
+const L_DELAY = IS_MOBILE ? 0.25 : 0.42;
+const L_STEP  = IS_MOBILE ? 0.025 : 0.038;
 
 /** Last name line roughly settled — used only for exit timing */
-const NAME_DONE = L_DELAY + LAST_NAME.length * L_STEP + 0.45;
+const NAME_DONE = L_DELAY + LAST_NAME.length * L_STEP + (IS_MOBILE ? 0.25 : 0.45);
 
-const EXIT_DURATION_SEC = 0.72;
+const EXIT_DURATION_SEC = IS_MOBILE ? 0.45 : 0.72;
 const EXIT_DURATION_MS = EXIT_DURATION_SEC * 1000;
-const HOLD_AFTER_NAME_MS = 680;
+const HOLD_AFTER_NAME_MS = IS_MOBILE ? 350 : 680;
 const T_EXIT           = NAME_DONE * 1000 + HOLD_AFTER_NAME_MS;
-const T_COMPLETE       = T_EXIT + EXIT_DURATION_MS + 100;
+const T_COMPLETE       = T_EXIT + EXIT_DURATION_MS + 80;
 
 /** GPU-friendly: opacity + translateY only (no clip-path / blur per char) */
 const charVariants = {
-  hidden: { opacity: 0, y: 18 },
+  hidden: { opacity: 0, y: IS_MOBILE ? 12 : 18 },
   visible: (delay) => ({
     opacity: 1,
     y: 0,
-    transition: { delay, duration: 0.52, ease: [0.16, 1, 0.3, 1] },
+    transition: { delay, duration: IS_MOBILE ? 0.35 : 0.52, ease: [0.16, 1, 0.3, 1] },
   }),
 };
 
@@ -57,14 +63,15 @@ export default function LoadingScreen({ onComplete }) {
 
   const particles = useMemo(() => {
     if (!showEffects) return [];
-    let count = isMobile ? 8 : 18;
-    if (isLowPower) count = Math.max(4, Math.floor(count * 0.45));
+    // Mobile: minimal particles to reduce paint cost
+    let count = isMobile ? 5 : 18;
+    if (isLowPower) count = Math.max(3, Math.floor(count * 0.4));
     return Array.from({ length: count }, (_, i) => {
       const t = i / count;
       return {
         id:       i,
         left:     `${3 + t * 94}%`,
-        duration: 4.5 + (i % 6) * 0.8,
+        duration: isMobile ? 3.5 + (i % 4) * 0.6 : 4.5 + (i % 6) * 0.8,
         delay:    (i * 0.28) % 3.5,
         color:    ['#60a5fa', '#22d3ee', '#818cf8'][i % 3],
         size:     i % 4 === 0 ? 2.5 : 1.8,
@@ -111,7 +118,9 @@ export default function LoadingScreen({ onComplete }) {
         initial={{ opacity: 1 }}
         animate={
           phase === 'exit'
-            ? { opacity: 0, scale: 1.03 }
+            ? isMobile
+              ? { opacity: 0 }              // mobile: simple fade only
+              : { opacity: 0, scale: 1.03 } // desktop: cinematic scale+fade
             : { opacity: 1, scale: 1 }
         }
         transition={{ duration: EXIT_DURATION_SEC, ease: [0.16, 1, 0.3, 1] }}
@@ -122,54 +131,71 @@ export default function LoadingScreen({ onComplete }) {
         }}
         aria-hidden="true"
       >
-        <div className="absolute inset-0 z-50 pointer-events-none bg-noise opacity-[0.022]" />
+        {/* Noise grain — skip on mobile (costly paint) */}
+        {!isMobile && <div className="absolute inset-0 z-50 pointer-events-none bg-noise opacity-[0.022]" />}
 
+        {/* Grid lines */}
         <div
           aria-hidden="true"
           className="absolute inset-0 pointer-events-none"
           style={{
-            opacity: 0.022,
+            opacity: isMobile ? 0.01 : 0.022,
             backgroundImage:
               'linear-gradient(rgba(255,255,255,.15) 1px,transparent 1px),' +
               'linear-gradient(90deg,rgba(255,255,255,.15) 1px,transparent 1px)',
-            backgroundSize: '80px 80px',
+            backgroundSize: isMobile ? '60px 60px' : '80px 80px',
           }}
         />
 
-        <motion.div
-          aria-hidden="true"
-          className="absolute pointer-events-none rounded-full"
-          style={{ width: 520, height: 520, top: '-5%', left: '-8%', willChange: 'transform, opacity' }}
-          animate={
-            isLowPower
-              ? { scale: 1, opacity: 0.12 }
-              : { scale: [1, 1.28, 1], opacity: [0.09, 0.2, 0.09] }
-          }
-          transition={
-            isLowPower
-              ? { duration: 0 }
-              : { duration: 7, repeat: Infinity, ease: 'easeInOut' }
-          }
-        >
-          <div style={{ width: '100%', height: '100%', borderRadius: '50%', background: 'rgba(59,130,246,0.18)', filter: isLowPower ? 'blur(64px)' : 'blur(110px)' }} />
-        </motion.div>
-        <motion.div
-          aria-hidden="true"
-          className="absolute pointer-events-none rounded-full"
-          style={{ width: 440, height: 440, bottom: '-5%', right: '-8%', willChange: 'transform, opacity' }}
-          animate={
-            isLowPower
-              ? { scale: 1, opacity: 0.08 }
-              : { scale: [1, 1.22, 1], opacity: [0.06, 0.14, 0.06] }
-          }
-          transition={
-            isLowPower
-              ? { duration: 0 }
-              : { duration: 9, repeat: Infinity, ease: 'easeInOut', delay: 1.5 }
-          }
-        >
-          <div style={{ width: '100%', height: '100%', borderRadius: '50%', background: 'rgba(6,182,212,0.14)', filter: isLowPower ? 'blur(64px)' : 'blur(110px)' }} />
-        </motion.div>
+        {/* Ambient orbs — skip on mobile: blur(110px) is very expensive on mobile GPU */}
+        {!isMobile && (
+          <>
+            <motion.div
+              aria-hidden="true"
+              className="absolute pointer-events-none rounded-full"
+              style={{ width: 520, height: 520, top: '-5%', left: '-8%', willChange: 'transform, opacity' }}
+              animate={
+                isLowPower
+                  ? { scale: 1, opacity: 0.12 }
+                  : { scale: [1, 1.28, 1], opacity: [0.09, 0.2, 0.09] }
+              }
+              transition={
+                isLowPower
+                  ? { duration: 0 }
+                  : { duration: 7, repeat: Infinity, ease: 'easeInOut' }
+              }
+            >
+              <div style={{ width: '100%', height: '100%', borderRadius: '50%', background: 'rgba(59,130,246,0.18)', filter: isLowPower ? 'blur(64px)' : 'blur(110px)' }} />
+            </motion.div>
+            <motion.div
+              aria-hidden="true"
+              className="absolute pointer-events-none rounded-full"
+              style={{ width: 440, height: 440, bottom: '-5%', right: '-8%', willChange: 'transform, opacity' }}
+              animate={
+                isLowPower
+                  ? { scale: 1, opacity: 0.08 }
+                  : { scale: [1, 1.22, 1], opacity: [0.06, 0.14, 0.06] }
+              }
+              transition={
+                isLowPower
+                  ? { duration: 0 }
+                  : { duration: 9, repeat: Infinity, ease: 'easeInOut', delay: 1.5 }
+              }
+            >
+              <div style={{ width: '100%', height: '100%', borderRadius: '50%', background: 'rgba(6,182,212,0.14)', filter: isLowPower ? 'blur(64px)' : 'blur(110px)' }} />
+            </motion.div>
+          </>
+        )}
+        {/* Mobile: static lightweight gradient instead of animated orbs */}
+        {isMobile && (
+          <div
+            aria-hidden="true"
+            className="absolute inset-0 pointer-events-none"
+            style={{
+              background: 'radial-gradient(ellipse 80% 60% at 20% 20%, rgba(59,130,246,0.12) 0%, transparent 60%), radial-gradient(ellipse 70% 50% at 80% 80%, rgba(6,182,212,0.08) 0%, transparent 60%)',
+            }}
+          />
+        )}
 
         {particles.map(p => (
           <motion.div
@@ -196,12 +222,12 @@ export default function LoadingScreen({ onComplete }) {
                 animate="visible"
                 className="inline-block font-black font-heading"
                 style={{
-                  fontSize: 'clamp(4.5rem, 13vw, 9rem)',
+                  fontSize: isMobile ? 'clamp(3rem, 17vw, 5rem)' : 'clamp(4.5rem, 13vw, 9rem)',
                   color: '#ede9df',
                   letterSpacing: '-0.03em',
                   transformOrigin: 'center bottom',
                   willChange: 'transform, opacity',
-                  textShadow: '0 18px 45px rgba(0,0,0,0.55)',
+                  textShadow: isMobile ? 'none' : '0 18px 45px rgba(0,0,0,0.55)',
                 }}
               >
                 {char}
@@ -219,7 +245,7 @@ export default function LoadingScreen({ onComplete }) {
                 animate="visible"
                 className="inline-block font-black font-heading"
                 style={{
-                  fontSize: 'clamp(4.5rem, 13vw, 9rem)',
+                  fontSize: isMobile ? 'clamp(3rem, 17vw, 5rem)' : 'clamp(4.5rem, 13vw, 9rem)',
                   letterSpacing: '-0.03em',
                   background: 'linear-gradient(135deg, #67e8f9 0%, #38bdf8 28%, #3b82f6 65%, #6366f1 100%)',
                   WebkitBackgroundClip: 'text',
@@ -269,20 +295,23 @@ export default function LoadingScreen({ onComplete }) {
           </div>
         </div>
 
-        <div
-          aria-hidden="true"
-          className="absolute inset-0 pointer-events-none"
-          style={{ padding: 40, opacity: 0.055 }}
-        >
-          <div style={{ width: '100%', height: '100%', border: '1px solid rgba(255,255,255,0.15)', borderRadius: 48, position: 'relative' }}>
-            <span style={{ position: 'absolute', top: 24, left: 32, fontSize: 8, fontFamily: '"SF Mono", "Fira Code", monospace', color: '#fff', letterSpacing: '0.25em', textTransform: 'uppercase', opacity: 0.3 }}>
-              Portfolio v2.0 // Alpha
-            </span>
-            <span style={{ position: 'absolute', bottom: 24, right: 32, fontSize: 8, fontFamily: '"SF Mono", "Fira Code", monospace', color: '#fff', letterSpacing: '0.25em', textTransform: 'uppercase', opacity: 0.3 }}>
-              Initializing System Diagnostics...
-            </span>
+        {/* Corner decoration — desktop only (adds layout cost on mobile) */}
+        {!isMobile && (
+          <div
+            aria-hidden="true"
+            className="absolute inset-0 pointer-events-none"
+            style={{ padding: 40, opacity: 0.055 }}
+          >
+            <div style={{ width: '100%', height: '100%', border: '1px solid rgba(255,255,255,0.15)', borderRadius: 48, position: 'relative' }}>
+              <span style={{ position: 'absolute', top: 24, left: 32, fontSize: 8, fontFamily: '"SF Mono", "Fira Code", monospace', color: '#fff', letterSpacing: '0.25em', textTransform: 'uppercase', opacity: 0.3 }}>
+                Portfolio v2.0 // Alpha
+              </span>
+              <span style={{ position: 'absolute', bottom: 24, right: 32, fontSize: 8, fontFamily: '"SF Mono", "Fira Code", monospace', color: '#fff', letterSpacing: '0.25em', textTransform: 'uppercase', opacity: 0.3 }}>
+                Initializing System Diagnostics...
+              </span>
+            </div>
           </div>
-        </div>
+        )}
 
       </motion.div>
     </AnimatePresence>

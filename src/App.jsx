@@ -43,11 +43,9 @@ const LINKEDIN_URL = 'https://www.linkedin.com/in/harshkavathiya';
  */
 const SHOULD_SKIP_INTRO = (() => {
   if (typeof window === 'undefined') return true;
-  // Always skip for performance auditors
+  // Always skip for performance auditors (Lighthouse, bots)
   if (/bot|googlebot|crawler|spider|robot|crawling|lighthouse|GTmetrix|Pingdom|PageSpeed/i.test(navigator.userAgent))
     return true;
-  // Skip on mobile/tablet — loading screen adds ~3s of TBT
-  if (window.innerWidth < 768) return true;
   // Skip if session already saw loading screen
   if (sessionStorage.getItem('portfolio-loaded')) return true;
   return false;
