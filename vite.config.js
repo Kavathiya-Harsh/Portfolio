@@ -8,7 +8,8 @@ export default defineConfig({
     target: 'esnext',
     minify: 'esbuild',
     chunkSizeWarningLimit: 500,
-    cssCodeSplit: true,
+    /* Single CSS file: one round-trip, matches <link href="/src/index.css"> in index.html */
+    cssCodeSplit: false,
     cssMinify: true,
     reportCompressedSize: false,
     rollupOptions: {

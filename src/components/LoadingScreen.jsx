@@ -1,7 +1,7 @@
 /**
- * LoadingScreen — cinematic intro animation
- * Performance: GPU-composited (transform + opacity only), stable particles,
- *              will-change scoped, clean unmount, zero layout thrash.
+ * LoadingScreen — cinematic intro (desktop/tablet).
+ * Perf: Avoid clip-path + filter blur on text (forced layout with Framer).
+ * Slogan/subcopy is visible immediately so Lighthouse LCP is not delayed ~3s.
  */
 import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -13,53 +13,44 @@ const LAST_NAME  = 'Kavathiya';
 const SLOGAN     = 'Engineering with Passion \u2022 Designing with Purpose';
 const ROLE       = 'Full Stack Developer';
 
-// Per-character stagger
-const F_DELAY = 0.22;   // delay before first char of firstName
-const F_STEP  = 0.055;  // stagger per char — firstName
-const L_DELAY = 0.52;   // delay before firstchar of lastName
-const L_STEP  = 0.048;  // stagger per char — lastName
+const F_DELAY = 0.18;
+const F_STEP  = 0.045;
+const L_DELAY = 0.42;
+const L_STEP  = 0.038;
 
-// When last char of lastName finishes landing (~0.65s animation)
-const NAME_DONE = L_DELAY + LAST_NAME.length * L_STEP + 0.5; // ≈ 1.45s (previously 1.69s)
+/** Last name line roughly settled — used only for exit timing */
+const NAME_DONE = L_DELAY + LAST_NAME.length * L_STEP + 0.45;
 
-// Phase timestamps (ms) — exit must finish before unmount (overlay fade duration = EXIT_DURATION_SEC)
-const EXIT_DURATION_SEC = 0.85;
+const EXIT_DURATION_SEC = 0.72;
 const EXIT_DURATION_MS = EXIT_DURATION_SEC * 1000;
-const T_SLOGAN         = NAME_DONE * 1000;
-const HOLD_AFTER_NAME_MS = 1200;
+const HOLD_AFTER_NAME_MS = 680;
 const T_EXIT           = NAME_DONE * 1000 + HOLD_AFTER_NAME_MS;
-/** Unmount only after exit blur/fade completes — was too short vs Framer duration (visible snap). */
-const T_COMPLETE       = T_EXIT + EXIT_DURATION_MS + 120;
+const T_COMPLETE       = T_EXIT + EXIT_DURATION_MS + 100;
 
-/* ─── SHARED EASING ─────────────────────────────────── */
-const EASE_OUT_EXPO = [0.16, 1, 0.3, 1];
-
-/* ─── CHAR ANIMATION VARIANTS ───────────────────────── */
+/** GPU-friendly: opacity + translateY only (no clip-path / blur per char) */
 const charVariants = {
-  hidden: { opacity: 0, clipPath: 'inset(100% 0 0 0)', y: 20, filter: 'blur(10px)' },
+  hidden: { opacity: 0, y: 18 },
   visible: (delay) => ({
-    opacity: 1, clipPath: 'inset(0% 0 0 0)', y: 0, filter: 'blur(0px)',
-    transition: { delay, duration: 0.8, ease: [0.16, 1, 0.3, 1] },
+    opacity: 1,
+    y: 0,
+    transition: { delay, duration: 0.52, ease: [0.16, 1, 0.3, 1] },
   }),
 };
 
-/* ─── COMPONENT ─────────────────────────────────────── */
 export default function LoadingScreen({ onComplete }) {
-  const [phase, setPhase] = useState('name'); // name → slogan → exit → done
+  const [phase, setPhase] = useState('intro'); // intro → exit → done
   const timersRef = useRef([]);
   const completedRef = useRef(false);
   const { isLowPower } = usePerformance();
 
-  /* detect mobile once */
   const isMobile = useMemo(() => {
     if (typeof window === 'undefined') return false;
     return window.innerWidth < 768;
   }, []);
 
-  /* stable particles — computed once, never re-randomised */
   const particles = useMemo(() => {
-    let count = isMobile ? 10 : 24;
-    if (isLowPower) count = Math.max(6, Math.floor(count * 0.5));
+    let count = isMobile ? 8 : 18;
+    if (isLowPower) count = Math.max(4, Math.floor(count * 0.45));
     return Array.from({ length: count }, (_, i) => {
       const t = i / count;
       return {
@@ -73,7 +64,6 @@ export default function LoadingScreen({ onComplete }) {
     });
   }, [isMobile, isLowPower]);
 
-  /* viewport height ref — no recalc on tick */
   const vhRef = useRef(typeof window !== 'undefined' ? window.innerHeight + 60 : 860);
 
   useEffect(() => {
@@ -89,7 +79,6 @@ export default function LoadingScreen({ onComplete }) {
       const id = setTimeout(fn, ms);
       timersRef.current.push(id);
     };
-    push(() => setPhase('slogan'), T_SLOGAN);
     push(() => setPhase('exit'), T_EXIT);
     push(() => {
       if (completedRef.current) return;
@@ -109,21 +98,19 @@ export default function LoadingScreen({ onComplete }) {
         initial={{ opacity: 1 }}
         animate={
           phase === 'exit'
-            ? { opacity: 0, scale: 1.05, filter: 'blur(10px)' }
-            : { opacity: 1, scale: 1, filter: 'blur(0px)' }
+            ? { opacity: 0, scale: 1.03 }
+            : { opacity: 1, scale: 1 }
         }
         transition={{ duration: EXIT_DURATION_SEC, ease: [0.16, 1, 0.3, 1] }}
         className="fixed inset-0 z-[9999] flex items-center justify-center overflow-hidden"
         style={{
           background: 'linear-gradient(150deg, #060c1a 0%, #0b1628 55%, #07101f 100%)',
-          contain: 'strict',
+          contain: 'layout paint',
         }}
         aria-hidden="true"
       >
-        {/* Subtle Cinematic Grain */}
         <div className="absolute inset-0 z-50 pointer-events-none bg-noise opacity-[0.022]" />
 
-        {/* ── SUBTLE GRID ────────────────────────────── */}
         <div
           aria-hidden="true"
           className="absolute inset-0 pointer-events-none"
@@ -136,7 +123,6 @@ export default function LoadingScreen({ onComplete }) {
           }}
         />
 
-        {/* ── AMBIENT ORBS (GPU blur, no layout) ─────── */}
         <motion.div
           aria-hidden="true"
           className="absolute pointer-events-none rounded-full"
@@ -172,7 +158,6 @@ export default function LoadingScreen({ onComplete }) {
           <div style={{ width: '100%', height: '100%', borderRadius: '50%', background: 'rgba(6,182,212,0.14)', filter: isLowPower ? 'blur(64px)' : 'blur(110px)' }} />
         </motion.div>
 
-        {/* ── RISING PARTICLES ────────────────────────── */}
         {particles.map(p => (
           <motion.div
             key={p.id}
@@ -184,13 +169,10 @@ export default function LoadingScreen({ onComplete }) {
           />
         ))}
 
-        {/* ── MAIN CONTENT ─────────────────────────────── */}
         <div
           className="relative z-10 flex flex-col items-center px-4"
           style={{ perspective: '1200px', userSelect: 'none' }}
         >
-
-          {/* FIRST NAME — "Harsh" — cream/off-white */}
           <div className="flex justify-center" style={{ lineHeight: 1.02, marginBottom: '-0.06em' }}>
             {FIRST_NAME.split('').map((char, i) => (
               <motion.span
@@ -202,7 +184,7 @@ export default function LoadingScreen({ onComplete }) {
                 className="inline-block font-black font-heading"
                 style={{
                   fontSize: 'clamp(4.5rem, 13vw, 9rem)',
-                  color: '#ede9df',                   /* warm cream — matches screenshot */
+                  color: '#ede9df',
                   letterSpacing: '-0.03em',
                   transformOrigin: 'center bottom',
                   willChange: 'transform, opacity',
@@ -214,7 +196,6 @@ export default function LoadingScreen({ onComplete }) {
             ))}
           </div>
 
-          {/* LAST NAME — "Kavathiya" — larger, cyan→blue gradient */}
           <div className="flex justify-center" style={{ lineHeight: 1.02 }}>
             {LAST_NAME.split('').map((char, i) => (
               <motion.span
@@ -240,63 +221,41 @@ export default function LoadingScreen({ onComplete }) {
             ))}
           </div>
 
-          {/* SLOGAN + ROLE + LINE — always in DOM, controlled by opacity for LCP */}
-          <div className="flex flex-col items-center mt-8" style={{ minHeight: 90 }}>
-            <motion.div
-              key="sub-content"
-              initial={{ opacity: 0, y: 14 }}
-              animate={(phase === 'slogan' || phase === 'exit') ? { opacity: 1, y: 0 } : { opacity: 0, y: 14 }}
-              exit={{ opacity: 0, y: -6 }}
-              transition={{ duration: 0.55, ease: 'easeOut' }}
-              className="flex flex-col items-center gap-4"
+          {/* Visible on first paint — avoids multi-second “element render delay” on LCP */}
+          <div className="flex flex-col items-center mt-8 gap-4" style={{ minHeight: 90 }}>
+            <p
+              className="text-center font-light text-slate-300"
+              style={{
+                opacity: 0.72,
+                fontSize: 'clamp(0.6rem, 1.5vw, 0.85rem)',
+                letterSpacing: '0.28em',
+                fontFamily: '"SF Mono", "Fira Code", "Consolas", monospace',
+              }}
             >
-                  {/* Slogan */}
-                  <motion.p
-                    initial={{ opacity: 0, letterSpacing: '0.55em' }}
-                    animate={{ opacity: 0.72, letterSpacing: '0.28em' }}
-                    transition={{ duration: 0.75, ease: 'easeOut' }}
-                    className="text-center font-light text-slate-300"
-                    style={{
-                      fontSize: 'clamp(0.6rem, 1.5vw, 0.85rem)',
-                      letterSpacing: '0.28em',
-                      fontFamily: '"SF Mono", "Fira Code", "Consolas", monospace',
-                    }}
-                  >
-                    {SLOGAN}
-                  </motion.p>
-
-                  {/* Role */}
-                  <motion.p
-                    initial={{ opacity: 0, y: 6 }}
-                    animate={{ opacity: 0.55, y: 0 }}
-                    transition={{ delay: 0.22, duration: 0.55, ease: 'easeOut' }}
-                    className="text-center font-mono uppercase text-cyan-400"
-                    style={{
-                      fontSize: 'clamp(0.55rem, 1.2vw, 0.7rem)',
-                      letterSpacing: '0.55em',
-                    }}
-                  >
-                    {ROLE}
-                  </motion.p>
-
-                  {/* Gradient divider */}
-                  <motion.div
-                    initial={{ scaleX: 0 }}
-                    animate={{ scaleX: 1 }}
-                    transition={{ duration: 0.85, delay: 0.12, ease: EASE_OUT_EXPO }}
-                    style={{
-                      width: 'clamp(200px, 38vw, 340px)',
-                      height: 1,
-                      background: 'linear-gradient(90deg, transparent 0%, #3b82f6 30%, #06b6d4 70%, transparent 100%)',
-                      transformOrigin: 'center',
-                      willChange: 'transform',
-                    }}
-                  />
-                </motion.div>
+              {SLOGAN}
+            </p>
+            <p
+              className="text-center font-mono uppercase text-cyan-400"
+              style={{
+                opacity: 0.55,
+                fontSize: 'clamp(0.55rem, 1.2vw, 0.7rem)',
+                letterSpacing: '0.55em',
+              }}
+            >
+              {ROLE}
+            </p>
+            <div
+              className="origin-center"
+              style={{
+                width: 'clamp(200px, 38vw, 340px)',
+                height: 1,
+                background: 'linear-gradient(90deg, transparent 0%, #3b82f6 30%, #06b6d4 70%, transparent 100%)',
+                animation: 'loading-divider-grow 0.85s cubic-bezier(0.16, 1, 0.3, 1) 120ms both',
+              }}
+            />
           </div>
         </div>
 
-        {/* ── CORNER HUD (very subtle) ─────────────────── */}
         <div
           aria-hidden="true"
           className="absolute inset-0 pointer-events-none"

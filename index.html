@@ -19,6 +19,9 @@
           fetchpriority="high" />
     <link rel="preload" as="image" href="https://res.cloudinary.com/dvv5mtpli/image/upload/q_auto,f_auto,w_100/v1776355358/hk_logo_pb2u8w.jpg" fetchpriority="high" />
 
+    <!-- Loads in parallel with JS (breaks HTML→JS→CSS critical chain when bundled) -->
+    <link rel="stylesheet" href="/src/index.css" />
+
     <style>
       *,*::before,*::after{box-sizing:border-box}
       :root {

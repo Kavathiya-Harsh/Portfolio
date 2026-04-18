@@ -223,3 +223,12 @@ p, li, span {
 .animate-cinematic-reveal {
   animation: cinematic-reveal 1.2s cubic-bezier(0.23, 1, 0.32, 1) forwards;
 }
+
+@keyframes loading-divider-grow {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}

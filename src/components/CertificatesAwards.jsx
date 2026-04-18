@@ -1,13 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Award, Medal, ChevronLeft, ChevronRight, Maximize2, ExternalLink } from 'lucide-react';
+import { Award, Medal, ChevronLeft, ChevronRight, Maximize2, X } from 'lucide-react';
 import { certificates, awards } from '../data/certificates';
 import {
   textRevealUp,
   blurScaleIn,
   staggerContainer,
   viewportOnce,
-  transitionSlow,
 } from '../utils/motion';
 
 // Merge both into one professional collection
@@ -18,8 +17,22 @@ const mergedItems = [
 
 export default function CertificatesAwards() {
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [isFullscreen, setIsFullscreen] = useState(false);
-  const [selectedImage, setSelectedImage] = useState(null);
+  /** Full item while lightbox open — drives image + caption */
+  const [expandedItem, setExpandedItem] = useState(null);
+
+  useEffect(() => {
+    if (!expandedItem) return undefined;
+    const onKey = (e) => {
+      if (e.key === 'Escape') setExpandedItem(null);
+    };
+    const prevOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    window.addEventListener('keydown', onKey);
+    return () => {
+      document.body.style.overflow = prevOverflow;
+      window.removeEventListener('keydown', onKey);
+    };
+  }, [expandedItem]);
 
   if (mergedItems.length === 0) return null;
 
@@ -143,8 +156,7 @@ export default function CertificatesAwards() {
                     className="absolute w-[300px] sm:w-[500px] lg:w-[700px] h-full perspective-1000"
                     onClick={() => {
                         if (isCenter) {
-                          setSelectedImage(item.image);
-                          setIsFullscreen(true);
+                          setExpandedItem(item);
                         } else {
                           setCurrentIndex(index);
                         }
@@ -199,40 +211,134 @@ export default function CertificatesAwards() {
         </div>
       </div>
 
-      {/* Fullscreen Modal */}
+      {/* Certificate lightbox — minimal gallery viewer (image-first, slim caption) */}
       <AnimatePresence>
-        {isFullscreen && (
+        {expandedItem && (
           <motion.div
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="certificate-lightbox-title"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[100] bg-black/95 backdrop-blur-2xl flex items-center justify-center p-4 md:p-12 cursor-zoom-out"
-            onClick={() => setIsFullscreen(false)}
+            transition={{ duration: 0.18 }}
+            className="fixed inset-0 z-[120] flex flex-col bg-[#020617] cursor-pointer"
+            onClick={() => setExpandedItem(null)}
           >
-            <motion.div
-              initial={{ scale: 0.9, y: 20, opacity: 0 }}
-              animate={{ scale: 1, y: 0, opacity: 1 }}
-              exit={{ scale: 0.9, y: 20, opacity: 0 }}
-              className="relative max-w-6xl w-full h-full flex items-center justify-center"
+            <button
+              type="button"
+              className="absolute right-4 top-4 z-10 flex h-10 w-10 items-center justify-center rounded-full bg-black/50 text-white/90 ring-1 ring-white/15 transition hover:bg-white/10 hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400 sm:right-6 sm:top-6 sm:h-11 sm:w-11"
+              aria-label="Close"
+              onClick={(e) => {
+                e.stopPropagation();
+                setExpandedItem(null);
+              }}
             >
-              <img
-                src={selectedImage}
-                alt="Certificate Fullscreen"
-                loading="lazy"
-                decoding="async"
-                className="max-h-full object-contain rounded-lg shadow-2xl"
-              />
-              <button
-                className="absolute top-0 right-0 p-4 text-white/50 hover:text-white transition-colors"
-                aria-label="Close fullscreen view"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setIsFullscreen(false);
-                }}
+              <X className="h-5 w-5" strokeWidth={2} />
+            </button>
+
+            <div className="flex min-h-0 flex-1 items-center justify-center overflow-y-auto px-4 pb-6 pt-16 sm:px-6 sm:pb-10 sm:pt-20 lg:px-10">
+              <motion.div
+                initial={{ opacity: 0, y: 14 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: 10 }}
+                transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
+                className="grid w-full max-w-6xl grid-cols-1 gap-0 overflow-hidden rounded-2xl ring-1 ring-white/[0.08] lg:grid-cols-2 lg:max-h-[min(88vh,920px)]"
+                onClick={(e) => e.stopPropagation()}
               >
-                Close (ESC)
-              </button>
-            </motion.div>
+                {/* Left — certificate image */}
+                <div className="relative flex min-h-[220px] items-center justify-center bg-[#050a14] p-4 sm:p-6 lg:p-8">
+                  <div
+                    className="pointer-events-none absolute inset-0 opacity-[0.4]"
+                    style={{
+                      backgroundImage:
+                        'radial-gradient(ellipse 90% 80% at 30% 40%, rgba(59,130,246,0.12), transparent 55%)',
+                    }}
+                    aria-hidden
+                  />
+                  <figure className="relative z-[1] w-full">
+                    <div className="overflow-hidden rounded-lg border border-white/[0.1] bg-slate-950 shadow-[0_40px_80px_-32px_rgba(0,0,0,0.9),inset_0_1px_0_rgba(255,255,255,0.06)]">
+                      <img
+                        src={expandedItem.image}
+                        alt={expandedItem.title}
+                        loading="eager"
+                        decoding="async"
+                        fetchPriority="high"
+                        className="mx-auto block max-h-[min(52vh,560px)] w-full object-contain lg:max-h-[min(78vh,820px)]"
+                      />
+                    </div>
+                  </figure>
+                </div>
+
+                {/* Right — description panel */}
+                <aside className="relative flex flex-col border-t border-white/[0.06] bg-gradient-to-b from-slate-900/95 via-[#0c1222] to-[#060911] lg:border-l lg:border-t-0">
+                  <div
+                    className="pointer-events-none absolute left-0 top-0 h-full w-px bg-gradient-to-b from-cyan-400/50 via-blue-500/30 to-transparent lg:block"
+                    aria-hidden
+                  />
+                  <div className="relative flex flex-1 flex-col justify-between gap-8 p-6 sm:p-8 lg:p-10 lg:pl-11">
+                    <div>
+                      <div className="flex flex-wrap items-center gap-3">
+                        <span className="inline-flex items-center gap-2 rounded-full bg-blue-500/10 px-3 py-1 text-[11px] font-mono uppercase tracking-[0.2em] text-cyan-300/90 ring-1 ring-cyan-500/20">
+                          {expandedItem.isAward ? (
+                            <>
+                              <Medal className="h-3.5 w-3.5" aria-hidden />
+                              Award
+                            </>
+                          ) : (
+                            <>
+                              <Award className="h-3.5 w-3.5" aria-hidden />
+                              Certificate
+                            </>
+                          )}
+                        </span>
+                        <span className="font-mono text-[11px] tabular-nums text-slate-600">
+                          {currentIndex + 1} / {mergedItems.length}
+                        </span>
+                      </div>
+
+                      <h3
+                        id="certificate-lightbox-title"
+                        className="font-heading mt-6 text-2xl font-bold leading-[1.15] tracking-tight text-white sm:text-3xl lg:text-[1.85rem] xl:text-[2rem]"
+                      >
+                        {expandedItem.title}
+                      </h3>
+
+                      <div className="mt-6 flex items-start gap-4 border-l-2 border-cyan-500/40 pl-4">
+                        <div className="min-w-0 flex-1 space-y-1">
+                          <p className="text-[10px] font-mono uppercase tracking-[0.25em] text-slate-500">Issued by</p>
+                          <p className="text-sm font-medium leading-snug text-slate-200 sm:text-base">
+                            {expandedItem.issuer}
+                          </p>
+                        </div>
+                      </div>
+
+                      <div className="mt-6 inline-flex items-baseline gap-2 rounded-xl bg-white/[0.03] px-4 py-3 ring-1 ring-white/[0.06]">
+                        <span className="text-[10px] font-mono uppercase tracking-widest text-slate-500">Date</span>
+                        <span className="font-mono text-sm tabular-nums text-cyan-200/90">{expandedItem.date}</span>
+                      </div>
+
+                      {expandedItem.description ? (
+                        <div className="mt-8 border-t border-white/[0.06] pt-8">
+                          <p className="text-[10px] font-mono uppercase tracking-[0.28em] text-slate-500">About</p>
+                          <p className="mt-3 text-sm leading-relaxed text-slate-400 sm:text-[15px]">
+                            {expandedItem.description}
+                          </p>
+                        </div>
+                      ) : null}
+                    </div>
+
+                    <p className="text-[11px] text-slate-600 lg:text-slate-500">
+                      Tap outside or press <kbd className="rounded border border-white/10 bg-white/5 px-1.5 py-0.5 font-mono text-[10px] text-slate-400">Esc</kbd> to close
+                    </p>
+                  </div>
+                </aside>
+              </motion.div>
+            </div>
+
+            <div className="shrink-0 border-t border-white/[0.06] bg-black/40 px-4 py-3 text-center lg:hidden sm:py-4">
+              <p className="text-[11px] text-slate-600">Tap backdrop to close</p>
+            </div>
           </motion.div>
         )}
       </AnimatePresence>

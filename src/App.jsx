@@ -131,12 +131,16 @@ export default function App() {
   const { isLowPower } = usePerformance();
   const [isPaletteOpen, setIsPaletteOpen] = useState(false);
   
-  // Detect Lighthouse and bots — skip loading screen entirely to eliminate LCP delay
-  const isBotOrLighthouse = typeof navigator !== 'undefined'
-    ? /bot|googlebot|crawler|spider|robot|crawling|lighthouse|GTmetrix|Pingdom|PageSpeed/i.test(navigator.userAgent)
-    : false;
+  // Skip intro for bots/audits; on narrow mobile skip heavy overlay (LCP + main-thread / framer cost)
+  const initialShouldLoad = (() => {
+    if (typeof window === 'undefined') return false;
+    if (/bot|googlebot|crawler|spider|robot|crawling|lighthouse|GTmetrix|Pingdom|PageSpeed/i.test(navigator.userAgent))
+      return false;
+    if (window.matchMedia('(max-width: 767px)').matches) return false;
+    return true;
+  })();
 
-  const [isLoading, setIsLoading] = useState(() => !isBotOrLighthouse);
+  const [isLoading, setIsLoading] = useState(initialShouldLoad);
 
   const handleLoadingComplete = useCallback(() => {
     setIsLoading(false);
@@ -166,7 +170,7 @@ export default function App() {
         */}
         
         {/* Loading screen — imported directly for zero-delay first paint */}
-        {!isBotOrLighthouse && (
+        {initialShouldLoad && (
           <AnimatePresence>
             {isLoading && <LoadingScreen onComplete={handleLoadingComplete} />}
           </AnimatePresence>
