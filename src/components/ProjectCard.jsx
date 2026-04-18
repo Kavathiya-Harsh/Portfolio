@@ -2,6 +2,7 @@ import React, { useRef, useState } from 'react';
 import { motion, useMotionValue, useSpring, useTransform } from 'framer-motion';
 import { ExternalLink, Github, Code2, ArrowUpRight, Gauge, FileCode, Layers, Play, X } from 'lucide-react';
 import { transitionSpring, blurScaleIn } from '../utils/motion';
+import { useDimensions } from '../hooks/useDimensions';
 import CodeSnippetModal from './CodeSnippetModal';
 
 function MetricBadge({ icon: Icon, label, value, color }) {
@@ -37,8 +38,7 @@ function PerformanceBadge({ score }) {
 }
 
 export default function ProjectCard({ project, index = 0 }) {
-  const cardRef = useRef(null);
-  const rectRef = useRef(null); // Cache rect to avoid forced reflow
+  const [measureRef, dimensions] = useDimensions();
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
   const [showCode, setShowCode] = useState(false);
@@ -47,19 +47,13 @@ export default function ProjectCard({ project, index = 0 }) {
   const rotateX = useSpring(useTransform(mouseY, [-0.5, 0.5], [8, -8]), { stiffness: 100, damping: 30 });
   const rotateY = useSpring(useTransform(mouseX, [-0.5, 0.5], [-8, 8]), { stiffness: 100, damping: 30 });
 
-  function onMouseEnter() {
-    if (!cardRef.current) return;
-    rectRef.current = cardRef.current.getBoundingClientRect();
-  }
-
   function onMouseMove(e) {
     if (typeof window !== 'undefined' && window.matchMedia('(hover: none)').matches) return;
-    if (!rectRef.current) return;
-    const { left, top, width, height } = rectRef.current;
+    if (dimensions.width === 0) return;
     
-    // Performance: prevent layout thrashing
-    const x = (e.clientX - left) / width - 0.5;
-    const y = (e.clientY - top) / height - 0.5;
+    // Performance: Use cached dimensions to prevent layout thrashing
+    const x = (e.clientX - dimensions.left) / dimensions.width - 0.5;
+    const y = (e.clientY - dimensions.top) / dimensions.height - 0.5;
     mouseX.set(x);
     mouseY.set(y);
   }
@@ -67,7 +61,6 @@ export default function ProjectCard({ project, index = 0 }) {
   function onMouseLeave() {
     mouseX.set(0);
     mouseY.set(0);
-    rectRef.current = null;
   }
 
   const { metrics, codeSnippet, video } = project;
@@ -79,8 +72,7 @@ export default function ProjectCard({ project, index = 0 }) {
         className="h-full perspective-1000 will-change-transform"
       >
         <motion.div
-          ref={cardRef}
-          onMouseEnter={onMouseEnter}
+          ref={measureRef}
           onMouseMove={onMouseMove}
           onMouseLeave={onMouseLeave}
           style={{ rotateX, rotateY, transformStyle: 'preserve-3d' }}

@@ -1,5 +1,6 @@
 import React, { useRef } from 'react';
 import { motion, useScroll, useTransform, useSpring } from 'framer-motion';
+import { useDimensions } from '../hooks/useDimensions';
 import { experience } from '../data/experience';
 import {
   textRevealUp,
@@ -12,25 +13,18 @@ import {
 import { useBreakpoint } from '../utils/useBreakpoint';
 
 function TimelineCard({ item, index }) {
+  const [measureRef, dimensions] = useDimensions();
   const cardRef = useRef(null);
-  const rectRef = useRef(null);
 
   const onMouseMove = (e) => {
     if (typeof window !== 'undefined' && window.matchMedia('(hover: none)').matches) return;
-    if (!rectRef.current) return;
-    const rect = rectRef.current;
-    const x = ((e.clientX - rect.left) / rect.width) * 100;
-    const y = ((e.clientY - rect.top) / rect.height) * 100;
+    if (dimensions.width === 0) return;
+    
+    const x = ((e.clientX - dimensions.left) / dimensions.width) * 100;
+    const y = ((e.clientY - dimensions.top) / dimensions.height) * 100;
     if (cardRef.current) {
       cardRef.current.style.setProperty('--mx', `${x}%`);
       cardRef.current.style.setProperty('--my', `${y}%`);
-    }
-  };
-
-  const onMouseEnter = () => {
-    if (typeof window !== 'undefined' && window.matchMedia('(hover: none)').matches) return;
-    if (cardRef.current) {
-      rectRef.current = cardRef.current.getBoundingClientRect();
     }
   };
 
@@ -39,7 +33,6 @@ function TimelineCard({ item, index }) {
       cardRef.current.style.setProperty('--mx', `50%`);
       cardRef.current.style.setProperty('--my', `50%`);
     }
-    rectRef.current = null;
   };
 
   return (
@@ -74,8 +67,10 @@ function TimelineCard({ item, index }) {
       </motion.div>
 
       <motion.div
-        ref={cardRef}
-        onMouseEnter={onMouseEnter}
+        ref={(node) => {
+          cardRef.current = node;
+          measureRef(node);
+        }}
         onMouseMove={onMouseMove}
         onMouseLeave={onMouseLeave}
         className="relative group overflow-hidden rounded-xl border border-white/12 bg-slate-800/50 backdrop-blur-md p-5 hover:border-blue-500/20 transition-colors"

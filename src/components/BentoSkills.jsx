@@ -4,6 +4,7 @@ import { Layout, Server, TrendingUp, Cpu, Code } from 'lucide-react';
 import { skillCategories, currentlyLearning } from '../data/skills';
 import { blurScaleIn, textRevealUp, staggerContainer, viewportOnce, transitionSlow, fadeInUp } from '../utils/motion';
 import { useBreakpoint } from '../utils/useBreakpoint';
+import { useDimensions } from '../hooks/useDimensions';
 
 // Map icon names from skills data to actual imported components
 const iconMap = { Layout, Server, TrendingUp, Cpu, Code };
@@ -15,8 +16,7 @@ function SkillIcon({ iconName, className }) {
 
 function SkillCard({ skill, index, categoryColor }) {
   const isMobile = useBreakpoint(1024);
-  const cardRef = useRef(null);
-  const rectRef = useRef(null); // Cache rect to avoid forced reflow
+  const [measureRef, dimensions] = useDimensions();
   const x = useMotionValue(0);
   const y = useMotionValue(0);
 
@@ -26,20 +26,14 @@ function SkillCard({ skill, index, categoryColor }) {
   const rotateX = useTransform(mouseYSpring, [-0.5, 0.5], ["10deg", "-10deg"]);
   const rotateY = useTransform(mouseXSpring, [-0.5, 0.5], ["-10deg", "10deg"]);
 
-  const handleMouseEnter = () => {
-    if (!cardRef.current || isMobile) return;
-    rectRef.current = cardRef.current.getBoundingClientRect();
-  };
-
   const handleMouseMove = (e) => {
-    if (!rectRef.current || isMobile) return;
-    const { left, top, width, height } = rectRef.current;
+    if (dimensions.width === 0 || isMobile) return;
     
-    // Performance optimization: prevent layout thrashing by using cached rect
-    const mouseX = e.clientX - left;
-    const mouseY = e.clientY - top;
-    const xPct = mouseX / width - 0.5;
-    const yPct = mouseY / height - 0.5;
+    // Performance optimization: prevent layout thrashing by using cached dimensions
+    const mouseX = e.clientX - dimensions.left;
+    const mouseY = e.clientY - dimensions.top;
+    const xPct = mouseX / dimensions.width - 0.5;
+    const yPct = mouseY / dimensions.height - 0.5;
     x.set(xPct);
     y.set(yPct);
   };
@@ -47,13 +41,11 @@ function SkillCard({ skill, index, categoryColor }) {
   const handleMouseLeave = () => {
     x.set(0);
     y.set(0);
-    rectRef.current = null;
   };
 
   return (
     <motion.div
-      ref={cardRef}
-      onMouseEnter={handleMouseEnter}
+      ref={measureRef}
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
       style={{

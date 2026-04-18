@@ -1,45 +1,39 @@
 import React, { useRef } from 'react';
 import { motion, useMotionTemplate, useMotionValue } from 'framer-motion';
+import { useDimensions } from '../hooks/useDimensions';
 
 const MAX_TILT = 8;
 
 export default function TiltCard({ children, className = '', ...props }) {
-  const ref = useRef(null);
+  const [measureRef, dimensions] = useDimensions();
+  const cardRef = useRef(null);
   const x = useMotionValue(0);
   const y = useMotionValue(0);
 
-  const rectRef = useRef(null);
-
-  const handleMouseEnter = () => {
-    if (typeof window !== 'undefined' && window.matchMedia('(hover: none)').matches) return;
-    if (ref.current) {
-      rectRef.current = ref.current.getBoundingClientRect();
-    }
-  };
-
   const handleMouseMove = (e) => {
     if (typeof window !== 'undefined' && window.matchMedia('(hover: none)').matches) return;
-    if (!ref.current || !rectRef.current) return;
-    const rect = rectRef.current;
-    const centerX = rect.left + rect.width / 2;
-    const centerY = rect.top + rect.height / 2;
-    const moveX = (e.clientX - centerX) / (rect.width / 2);
-    const moveY = (e.clientY - centerY) / (rect.height / 2);
+    if (dimensions.width === 0) return;
+    
+    const centerX = dimensions.left + dimensions.width / 2;
+    const centerY = dimensions.top + dimensions.height / 2;
+    const moveX = (e.clientX - centerX) / (dimensions.width / 2);
+    const moveY = (e.clientY - centerY) / (dimensions.height / 2);
     x.set(Math.max(-1, Math.min(1, moveX)) * MAX_TILT);
     y.set(Math.max(-1, Math.min(1, moveY)) * -MAX_TILT);
-    const px = ((e.clientX - rect.left) / rect.width) * 100;
-    const py = ((e.clientY - rect.top) / rect.height) * 100;
-    ref.current.style.setProperty('--mx', `${px}%`);
-    ref.current.style.setProperty('--my', `${py}%`);
+    const px = ((e.clientX - dimensions.left) / dimensions.width) * 100;
+    const py = ((e.clientY - dimensions.top) / dimensions.height) * 100;
+    if (cardRef.current) {
+      cardRef.current.style.setProperty('--mx', `${px}%`);
+      cardRef.current.style.setProperty('--my', `${py}%`);
+    }
   };
 
   const handleMouseLeave = () => {
     x.set(0);
     y.set(0);
-    rectRef.current = null;
-    if (ref.current) {
-      ref.current.style.setProperty('--mx', `50%`);
-      ref.current.style.setProperty('--my', `50%`);
+    if (cardRef.current) {
+      cardRef.current.style.setProperty('--mx', `50%`);
+      cardRef.current.style.setProperty('--my', `50%`);
     }
   };
 
@@ -47,8 +41,10 @@ export default function TiltCard({ children, className = '', ...props }) {
 
   return (
     <motion.div
-      ref={ref}
-      onMouseEnter={handleMouseEnter}
+      ref={(node) => {
+        cardRef.current = node;
+        measureRef(node);
+      }}
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
       style={{ transform: rotateX }}

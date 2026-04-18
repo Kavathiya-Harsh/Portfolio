@@ -15,9 +15,8 @@ export default defineConfig({
     rollupOptions: {
       output: {
         manualChunks: {
-          // Split vendor dependencies for better caching
+          // Split core vendor dependencies for better long-term caching
           'react-vendor': ['react', 'react-dom'],
-          'router': ['react-router-dom'],
           'animation': ['framer-motion'],
           'icons': ['lucide-react'],
         },

@@ -38,6 +38,7 @@ function NavItem({ link, isActive, isHovered, onHoverEnter, onHoverLeave, onClic
               background:
                 'radial-gradient(ellipse at 50% 80%, rgba(212,175,55,0.14) 0%, rgba(212,175,55,0.04) 70%, transparent 100%)',
               boxShadow: '0 0 18px rgba(212,175,55,0.10)',
+              willChange: 'opacity, transform',
             }}
           />
         )}
@@ -63,6 +64,7 @@ function NavItem({ link, isActive, isHovered, onHoverEnter, onHoverLeave, onClic
                 background: '#d4af37',
                 boxShadow:
                   '0 0 6px 2px rgba(212,175,55,0.95), 0 0 18px 4px rgba(212,175,55,0.45)',
+                willChange: 'opacity, transform',
               }}
             />
           )}
@@ -287,10 +289,10 @@ export default function Navbar() {
       <AnimatePresence>
         {mobileOpen && (
           <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: 'auto' }}
-            exit={{ opacity: 0, height: 0 }}
-            transition={{ duration: 0.26, ease: [0.4, 0, 0.2, 1] }}
+            initial={{ opacity: 0, scaleY: 0, originY: 0 }}
+            animate={{ opacity: 1, scaleY: 1 }}
+            exit={{ opacity: 0, scaleY: 0 }}
+            transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
             className={`md:hidden bg-[#0b1120]/98 border-b border-slate-700/50 overflow-hidden ${!isMobile && 'backdrop-blur-2xl'}`}
           >
             <ul className="px-6 py-5 flex flex-col gap-1">

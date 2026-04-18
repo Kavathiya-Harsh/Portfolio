@@ -7,17 +7,20 @@
     
     <!-- Preload Critical Assets (LCP & Branding) -->
     <!-- Only preconnect to origins used in critical path (max 4) -->
-    <link rel="preconnect" href="https://res.cloudinary.com" crossorigin />
+    <!-- Preconnect to Font & Asset Origins -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <!-- GitHub API is lazy-loaded — use dns-prefetch only, not preconnect -->
-    <link rel="dns-prefetch" href="https://api.github.com" />
+    <link rel="preconnect" href="https://res.cloudinary.com" crossorigin />
+    
+    <!-- Modulepreload for Main Bundle (Breaks Critical Request Chain) -->
+    <link rel="modulepreload" href="data:text/jsx;base64,aW1wb3J0IFJlYWN0IGZyb20gJ3JlYWN0JzsKaW1wb3J0IFJlYWN0RE9NIGZyb20gJ3JlYWN0LWRvbS9jbGllbnQnOwppbXBvcnQgeyBCcm93c2VyUm91dGVyIH0gZnJvbSAncmVhY3Qtcm91dGVyLWRvbSc7CmltcG9ydCBBcHAgZnJvbSAnLi9BcHAnOwppbXBvcnQgeyBQZXJmb3JtYW5jZVByb3ZpZGVyIH0gZnJvbSAnLi9jb250ZXh0L1BlcmZvcm1hbmNlQ29udGV4dCc7CgpSZWFjdERPTS5jcmVhdGVSb290KGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCdyb290JykpLnJlbmRlcigKICA8UmVhY3QuU3RyaWN0TW9kZT4KICAgIDxQZXJmb3JtYW5jZVByb3ZpZGVyPgogICAgICA8QnJvd3NlclJvdXRlcj4KICAgICAgICA8QXBwIC8+CiAgICAgIDwvQnJvd3NlclJvdXRlcj4KICAgIDwvUGVyZm9ybWFuY2VQcm92aWRlcj4KICA8L1JlYWN0LlN0cmljdE1vZGU+Cik7Cg==" />
 
+    <!-- Preload LCP Images -->
     <link rel="preload" as="image" 
           imagesrcset="https://res.cloudinary.com/dvv5mtpli/image/upload/q_auto,f_auto,w_400/v1776351778/Harsh_Kavathiya_Profile_duaqrs.jpg 400w, https://res.cloudinary.com/dvv5mtpli/image/upload/q_auto,f_auto,w_800/v1776351778/Harsh_Kavathiya_Profile_duaqrs.jpg 800w"
           imagesizes="(max-width: 1024px) 400px, 800px"
           fetchpriority="high" />
-    <link rel="preload" as="image" href="https://res.cloudinary.com/dvv5mtpli/image/upload/q_auto,f_auto,w_100/v1776355358/hk_logo_pb2u8w.jpg" fetchpriority="high" />
+
 
     <style>
       *,*::before,*::after{box-sizing:border-box}
@@ -33,68 +36,40 @@
         /* System fonts — zero network cost, instant render */
         font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
       }
-      /* ── App Shell: Loading Screen ── */
+      /* ── App shell: background only (no hero text — avoids double intro with React LoadingScreen) ── */
       #app-shell {
         position: fixed;
         inset: 0;
         z-index: 9999;
+        overflow: hidden;
+        background: radial-gradient(circle at 50% 50%, #0b1628 0%, #060c1a 100%);
         display: flex;
         align-items: center;
         justify-content: center;
-        overflow: hidden;
-        background: linear-gradient(150deg, #060c1a 0%, #0b1628 55%, #07101f 100%);
-        /* contain:strict here would prevent compositing with React mount — avoid */
       }
-      /* 
-       * LCP element: rendered from pure HTML+CSS at 0ms.
-       * CRITICAL: font-family uses system fonts so this paints BEFORE
-       * Google Fonts finish loading. React replaces this with the
-       * animated version after JS executes.
-       */
-      .shell-name {
-        display: block;
-        line-height: 1.02;
-        font-size: clamp(4.5rem, 13vw, 9rem);
-        font-weight: 900;
-        letter-spacing: -0.03em;
-        margin: 0;
-        /* System font stack — paints instantly, no network wait */
-        font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
-        text-align: center;
-      }
-      .shell-name-first {
-        color: #ede9df;
-        text-shadow: 0 18px 45px rgba(0,0,0,0.55);
-        margin-bottom: -0.06em;
-      }
-      .shell-name-last {
-        background: linear-gradient(135deg, #67e8f9 0%, #38bdf8 28%, #3b82f6 65%, #6366f1 100%);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
-        /* Fallback for browsers that don't support background-clip:text */
-        color: #38bdf8;
-      }
-      .shell-content {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        user-select: none;
-      }
-      /* Subtle grid overlay */
       .shell-grid {
         position: absolute;
         inset: 0;
         pointer-events: none;
-        opacity: 0.022;
+        opacity: 0.02;
         background-image:
-          linear-gradient(rgba(255,255,255,.15) 1px, transparent 1px),
-          linear-gradient(90deg, rgba(255,255,255,.15) 1px, transparent 1px);
+          linear-gradient(rgba(255,255,255,.1) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(255,255,255,.1) 1px, transparent 1px);
         background-size: 80px 80px;
+      }
+      .shell-logo {
+        width: 60px;
+        height: 60px;
+        opacity: 0.2;
+        animation: shell-pulse 2s ease-in-out infinite;
+      }
+      @keyframes shell-pulse {
+        0%, 100% { opacity: 0.1; transform: scale(0.95); }
+        50% { opacity: 0.3; transform: scale(1.05); }
       }
     </style>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-    <meta name="theme-color" content="#080d1a" />
+    <meta name="theme-color" content="#060c1a" />
     
     <!-- Primary Meta Tags -->
     <title>Harsh Kavathiya | Full Stack Developer & 5x Hackathon Winner</title>
@@ -166,26 +141,27 @@
     <noscript>
       <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
     </noscript>
-    <script type="module" crossorigin src="/assets/index-BM5yHt6Y.js"></script>
-    <link rel="modulepreload" crossorigin href="/assets/router-Dia-6GUi.js">
-    <link rel="modulepreload" crossorigin href="/assets/animation-BiX96d7n.js">
-    <link rel="modulepreload" crossorigin href="/assets/icons-CZ24dbPy.js">
-    <link rel="stylesheet" crossorigin href="/assets/index-DsBWr6fl.css">
+    <script type="module" crossorigin src="/assets/index-DDfZ5AAB.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/animation-DzqLN9ic.js">
+    <link rel="modulepreload" crossorigin href="/assets/react-vendor-Du7tOHny.js">
+    <link rel="modulepreload" crossorigin href="/assets/icons-BSw6n4-m.js">
+    <link rel="stylesheet" crossorigin href="/assets/style-Dt4OMKVb.css">
   </head>
   <body>
     <div id="root">
-      <!--
-        App Shell: static HTML that matches the React LoadingScreen exactly.
-        The browser paints this INSTANTLY (0ms render delay) before any JS loads.
-        React will replace this entire div when it hydrates/mounts.
-        The LCP element is the "Harsh" / "Kavathiya" text.
-      -->
+      <!-- Same gradient + grid as LoadingScreen; branding animates once in React (no duplicate static name). -->
       <div id="app-shell" aria-hidden="true">
         <div class="shell-grid"></div>
-        <div class="shell-content">
-          <p class="shell-name shell-name-first" style="margin-bottom:-0.06em">Harsh</p>
-          <p class="shell-name shell-name-last">Kavathiya</p>
-        </div>
+        <svg class="shell-logo" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="logo-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#3b82f6" />
+              <stop offset="100%" stop-color="#06b6d4" />
+            </linearGradient>
+          </defs>
+          <rect width="100" height="100" rx="24" fill="url(#logo-grad)" fill-opacity="0.15" stroke="url(#logo-grad)" stroke-width="2"/>
+          <path d="M30 30V70M30 50H50M50 30V70M70 30L50 50M50 50L70 70" stroke="white" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
       </div>
     </div>
   </body>

@@ -1,20 +1,19 @@
 import React, { useRef, useState } from 'react';
 import { motion, useMotionTemplate, useMotionValue } from 'framer-motion';
+import { useDimensions } from '../hooks/useDimensions';
 
 export default function MagneticButton({ children, className = '', href, ...props }) {
-  const ref = useRef(null);
+  const [measureRef, dimensions] = useDimensions();
   const x = useMotionValue(0);
   const y = useMotionValue(0);
   const [isHovered, setIsHovered] = useState(false);
 
-  const rectRef = useRef(null);
-
   const handleMouseMove = (e) => {
     if (typeof window !== 'undefined' && window.matchMedia('(hover: none)').matches) return;
-    if (!ref.current || !rectRef.current) return;
-    const rect = rectRef.current;
-    const centerX = rect.left + rect.width / 2;
-    const centerY = rect.top + rect.height / 2;
+    if (dimensions.width === 0) return;
+    
+    const centerX = dimensions.left + dimensions.width / 2;
+    const centerY = dimensions.top + dimensions.height / 2;
     const distance = 60;
     const moveX = (e.clientX - centerX) / 4;
     const moveY = (e.clientY - centerY) / 4;
@@ -26,22 +25,18 @@ export default function MagneticButton({ children, className = '', href, ...prop
     x.set(0);
     y.set(0);
     setIsHovered(false);
-    rectRef.current = null;
   };
 
   const handleMouseEnter = () => {
     if (typeof window !== 'undefined' && window.matchMedia('(hover: none)').matches) return;
-    if (ref.current) {
-      rectRef.current = ref.current.getBoundingClientRect();
-      setIsHovered(true);
-    }
+    setIsHovered(true);
   };
 
   const transform = useMotionTemplate`translate(${x}px, ${y}px)`;
 
   return (
     <motion.a
-      ref={ref}
+      ref={measureRef}
       href={href || "#contact"}
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
