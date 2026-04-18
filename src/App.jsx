@@ -142,9 +142,13 @@ export default function App() {
   })();
 
   const [isLoading, setIsLoading] = useState(initialShouldLoad);
+  const [isDelayedReady, setIsDelayedReady] = useState(!initialShouldLoad);
 
   const handleLoadingComplete = useCallback(() => {
     setIsLoading(false);
+    // Settling delay: Prevents motion engine from triggering forced reflows 
+    // while the browser is busy clearing the loading overlay.
+    setTimeout(() => setIsDelayedReady(true), 150);
   }, []);
 
   useEffect(() => {
@@ -206,7 +210,7 @@ export default function App() {
         {/* Main page content — always in DOM, no conditional rendering */}
         <div className="pb-32 sm:pb-40 md:pb-12" style={{ paddingBottom: 'calc(10rem + env(safe-area-inset-bottom, 0px))' }}>
           <main>
-            <div id="hero"><Hero isReady={!isLoading} /></div>
+            <div id="hero"><Hero isReady={isDelayedReady} /></div>
             
             <Suspense fallback={<SectionFallback />}>
               <SectionDivider />
