@@ -1,6 +1,10 @@
 import React, { useRef, useState } from 'react';
 import { motion, useMotionValue, useSpring, useTransform, AnimatePresence } from 'framer-motion';
-import { Layout, Server, TrendingUp, Cpu, Code } from 'lucide-react';
+import Layout from 'lucide-react/dist/esm/icons/layout';
+import Server from 'lucide-react/dist/esm/icons/server';
+import TrendingUp from 'lucide-react/dist/esm/icons/trending-up';
+import Cpu from 'lucide-react/dist/esm/icons/cpu';
+import Code from 'lucide-react/dist/esm/icons/code';
 import { skillCategories, currentlyLearning } from '../data/skills';
 import { blurScaleIn, textRevealUp, staggerContainer, viewportOnce, transitionSlow, fadeInUp } from '../utils/motion';
 import { useBreakpoint } from '../utils/useBreakpoint';
@@ -81,12 +85,16 @@ function SkillCard({ skill, index, categoryColor }) {
       <div className="relative z-10 mt-auto">
         <div className="w-full h-[2px] bg-white/[0.05] rounded-full overflow-hidden mb-2">
           <motion.div
-            initial={{ width: 0 }}
-            whileInView={{ width: '100%' }}
+            initial={{ scaleX: 0, originX: 0 }}
+            whileInView={{ scaleX: 1 }}
             viewport={{ once: true }}
             transition={{ duration: 1.5, ease: "easeOut", delay: index * 0.05 }}
             className="h-full rounded-full"
-            style={{ backgroundColor: 'var(--skill-color)', boxShadow: `0 0 10px var(--skill-color)` }}
+            style={{ 
+              backgroundColor: 'var(--skill-color)', 
+              boxShadow: `0 0 10px var(--skill-color)`,
+              willChange: 'transform'
+            }}
           />
         </div>
       </div>

@@ -1,6 +1,10 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Github, Linkedin, Mail, Twitter, Youtube } from 'lucide-react';
+import Github from 'lucide-react/dist/esm/icons/github';
+import Linkedin from 'lucide-react/dist/esm/icons/linkedin';
+import Mail from 'lucide-react/dist/esm/icons/mail';
+import Twitter from 'lucide-react/dist/esm/icons/twitter';
+import Youtube from 'lucide-react/dist/esm/icons/youtube';
 import {
   smoothFadeIn,
   staggerContainer,

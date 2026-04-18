@@ -1,6 +1,12 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Mail, Linkedin, Twitter, Youtube, Send, Copy, CheckCircle2 } from 'lucide-react';
+import Mail from 'lucide-react/dist/esm/icons/mail';
+import Linkedin from 'lucide-react/dist/esm/icons/linkedin';
+import Twitter from 'lucide-react/dist/esm/icons/twitter';
+import Youtube from 'lucide-react/dist/esm/icons/youtube';
+import Send from 'lucide-react/dist/esm/icons/send';
+import Copy from 'lucide-react/dist/esm/icons/copy';
+import CheckCircle2 from 'lucide-react/dist/esm/icons/check-circle-2';
 import {
   textRevealUp,
   slideInLeft,

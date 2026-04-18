@@ -1,6 +1,11 @@
 import React, { useRef, useState } from 'react';
 import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion';
-import { Search, FolderOpen, Zap, X as CloseIcon, Figma, ExternalLink } from 'lucide-react';
+import Search from 'lucide-react/dist/esm/icons/search';
+import FolderOpen from 'lucide-react/dist/esm/icons/folder-open';
+import Zap from 'lucide-react/dist/esm/icons/zap';
+import X from 'lucide-react/dist/esm/icons/x';
+import Figma from 'lucide-react/dist/esm/icons/figma';
+import ExternalLink from 'lucide-react/dist/esm/icons/external-link';
 import ProjectCard from './ProjectCard';
 import { projects } from '../data/projects';
 import {

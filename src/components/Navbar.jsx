@@ -1,7 +1,9 @@
 import React, { useEffect, useState, useCallback, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Link, useLocation } from 'react-router-dom';
-import { Menu, X, FileDown } from 'lucide-react';
+import Menu from 'lucide-react/dist/esm/icons/menu';
+import X from 'lucide-react/dist/esm/icons/x';
+import FileDown from 'lucide-react/dist/esm/icons/file-down';
 import { useBreakpoint } from '../utils/useBreakpoint';
 import { profile } from '../data/profile';
 

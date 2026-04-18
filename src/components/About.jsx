@@ -1,9 +1,15 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import {
-  User, Code2, Rocket, MapPin, Trophy, GitBranch,
-  Layers, Zap, GraduationCap, ArrowUpRight
-} from 'lucide-react';
+import User from 'lucide-react/dist/esm/icons/user';
+import Code2 from 'lucide-react/dist/esm/icons/code-2';
+import Rocket from 'lucide-react/dist/esm/icons/rocket';
+import MapPin from 'lucide-react/dist/esm/icons/map-pin';
+import Trophy from 'lucide-react/dist/esm/icons/trophy';
+import GitBranch from 'lucide-react/dist/esm/icons/git-branch';
+import Layers from 'lucide-react/dist/esm/icons/layers';
+import Zap from 'lucide-react/dist/esm/icons/zap';
+import GraduationCap from 'lucide-react/dist/esm/icons/graduation-cap';
+import ArrowUpRight from 'lucide-react/dist/esm/icons/arrow-up-right';
 import ScrollReveal from './ScrollReveal';
 import {
   slideInLeft,

@@ -1,6 +1,11 @@
 import React, { useRef } from 'react';
 import { motion, useScroll, useTransform, useSpring, AnimatePresence } from 'framer-motion';
-import { ArrowRight, MapPin, GraduationCap, Download, CheckCircle2, Sparkles } from 'lucide-react';
+import ArrowRight from 'lucide-react/dist/esm/icons/arrow-right';
+import MapPin from 'lucide-react/dist/esm/icons/map-pin';
+import GraduationCap from 'lucide-react/dist/esm/icons/graduation-cap';
+import Download from 'lucide-react/dist/esm/icons/download';
+import CheckCircle2 from 'lucide-react/dist/esm/icons/check-circle-2';
+import Sparkles from 'lucide-react/dist/esm/icons/sparkles';
 import Typewriter from './Typewriter';
 import MagneticButton from './MagneticButton';
 import { profile } from '../data/profile';

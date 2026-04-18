@@ -1,6 +1,14 @@
 import React, { useRef, useState } from 'react';
 import { motion, useMotionValue, useSpring, useTransform } from 'framer-motion';
-import { ExternalLink, Github, Code2, ArrowUpRight, Gauge, FileCode, Layers, Play, X } from 'lucide-react';
+import ExternalLink from 'lucide-react/dist/esm/icons/external-link';
+import Github from 'lucide-react/dist/esm/icons/github';
+import Code2 from 'lucide-react/dist/esm/icons/code-2';
+import ArrowUpRight from 'lucide-react/dist/esm/icons/arrow-up-right';
+import Gauge from 'lucide-react/dist/esm/icons/gauge';
+import FileCode from 'lucide-react/dist/esm/icons/file-code';
+import Layers from 'lucide-react/dist/esm/icons/layers';
+import Play from 'lucide-react/dist/esm/icons/play';
+import X from 'lucide-react/dist/esm/icons/x';
 import { transitionSpring, blurScaleIn } from '../utils/motion';
 import { useDimensions } from '../hooks/useDimensions';
 import CodeSnippetModal from './CodeSnippetModal';

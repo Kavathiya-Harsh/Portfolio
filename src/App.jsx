@@ -2,7 +2,8 @@ import React, { useState, useEffect, useCallback, lazy, Suspense, useMemo } from
 import { motion, AnimatePresence, MotionConfig } from 'framer-motion';
 import { useLocation } from 'react-router-dom';
 import { useBreakpoint } from './utils/useBreakpoint';
-import { FileText, Linkedin } from 'lucide-react';
+import FileText from 'lucide-react/dist/esm/icons/file-text';
+import Linkedin from 'lucide-react/dist/esm/icons/linkedin';
 
 // Critical components (loaded immediately)
 import Navbar from './components/Navbar';
