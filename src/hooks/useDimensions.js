@@ -27,15 +27,17 @@ export function useDimensions() {
   useEffect(() => {
     if (!nodeRef.current) return;
 
-    const resizeObserver = new ResizeObserver(() => {
-      // Still use rAF to batch with frame
-      requestAnimationFrame(measure);
+    const resizeObserver = new ResizeObserver((entries) => {
+      const entry = entries[0];
+      if (entry) {
+        const { width, height, left, top } = entry.contentRect;
+        setDimensions({ width, height, left, top });
+      }
     });
 
     resizeObserver.observe(nodeRef.current);
-
     return () => resizeObserver.disconnect();
-  }, [measure]);
+  }, []);
 
   return [ref, dimensions, measure];
 }

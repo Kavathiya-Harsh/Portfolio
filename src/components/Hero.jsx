@@ -272,14 +272,16 @@ function PhotoSection({ isLowPower, isReady, isMobile }) {
         <div className="relative w-56 h-56 sm:w-72 sm:h-72 md:w-80 md:h-80 lg:w-[22rem] lg:h-[22rem] rounded-full overflow-hidden border-[5px] border-[#080d1a] bg-slate-800 z-10 shadow-2xl">
           {!photoError ? (
             <picture>
+              <source 
+                media="(max-width: 1024px)" 
+                srcSet="https://res.cloudinary.com/dvv5mtpli/image/upload/q_auto,f_auto,w_400/v1776351778/Harsh_Kavathiya_Profile_duaqrs.jpg" 
+              />
+              <source 
+                media="(min-width: 1025px)" 
+                srcSet="https://res.cloudinary.com/dvv5mtpli/image/upload/q_auto,f_auto,w_800/v1776351778/Harsh_Kavathiya_Profile_duaqrs.jpg" 
+              />
               <img
-                src="https://res.cloudinary.com/dvv5mtpli/image/upload/q_auto,f_auto,w_500/v1776351778/Harsh_Kavathiya_Profile_duaqrs.jpg"
-                srcSet="
-                  https://res.cloudinary.com/dvv5mtpli/image/upload/q_auto,f_auto,w_400/v1776351778/Harsh_Kavathiya_Profile_duaqrs.jpg 400w,
-                  https://res.cloudinary.com/dvv5mtpli/image/upload/q_auto,f_auto,w_500/v1776351778/Harsh_Kavathiya_Profile_duaqrs.jpg 500w,
-                  https://res.cloudinary.com/dvv5mtpli/image/upload/q_auto,f_auto,w_900/v1776351778/Harsh_Kavathiya_Profile_duaqrs.jpg 900w
-                "
-                sizes="(max-width: 640px) 300px, (max-width: 1024px) 400px, 500px"
+                src="https://res.cloudinary.com/dvv5mtpli/image/upload/q_auto,f_auto,w_800/v1776351778/Harsh_Kavathiya_Profile_duaqrs.jpg"
                 alt="Harsh Kavathiya - Full Stack Developer & Hackathon Winner"
                 width="352"
                 height="352"
