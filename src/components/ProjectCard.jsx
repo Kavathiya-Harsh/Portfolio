@@ -46,7 +46,7 @@ function PerformanceBadge({ score }) {
 }
 
 export default function ProjectCard({ project, index = 0 }) {
-  const [measureRef, dimensions] = useDimensions();
+  const [measureRef, dimensions, measure] = useDimensions();
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
   const [showCode, setShowCode] = useState(false);
@@ -54,6 +54,12 @@ export default function ProjectCard({ project, index = 0 }) {
 
   const rotateX = useSpring(useTransform(mouseY, [-0.5, 0.5], [8, -8]), { stiffness: 100, damping: 30 });
   const rotateY = useSpring(useTransform(mouseX, [-0.5, 0.5], [-8, 8]), { stiffness: 100, damping: 30 });
+
+  const handleMouseEnter = () => {
+    if (typeof window !== 'undefined' && !window.matchMedia('(hover: none)').matches) {
+      measure();
+    }
+  };
 
   function onMouseMove(e) {
     if (typeof window !== 'undefined' && window.matchMedia('(hover: none)').matches) return;
@@ -81,6 +87,7 @@ export default function ProjectCard({ project, index = 0 }) {
       >
         <motion.div
           ref={measureRef}
+          onMouseEnter={handleMouseEnter}
           onMouseMove={onMouseMove}
           onMouseLeave={onMouseLeave}
           style={{ rotateX, rotateY, transformStyle: 'preserve-3d' }}

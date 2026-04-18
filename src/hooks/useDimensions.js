@@ -6,44 +6,37 @@ import { useState, useEffect, useCallback, useRef } from 'react';
  */
 export function useDimensions() {
   const [dimensions, setDimensions] = useState({ width: 0, height: 0, left: 0, top: 0 });
-  const [node, setNode] = useState(null);
+  const nodeRef = useRef(null);
 
-  const ref = useCallback((newNode) => {
-    setNode(newNode);
-  }, []);
-
-  useEffect(() => {
-    if (!node) return;
-
-    const measure = () => {
-      const rect = node.getBoundingClientRect();
+  const measure = useCallback(() => {
+    if (nodeRef.current) {
+      const rect = nodeRef.current.getBoundingClientRect();
       setDimensions({
         width: rect.width,
         height: rect.height,
         left: rect.left,
         top: rect.top,
       });
-    };
+    }
+  }, []);
 
-    // Initial measurement
-    measure();
+  const ref = useCallback((newNode) => {
+    nodeRef.current = newNode;
+    if (newNode) measure();
+  }, [measure]);
+
+  useEffect(() => {
+    if (!nodeRef.current) return;
 
     const resizeObserver = new ResizeObserver(() => {
-      // Use requestAnimationFrame to batch measurements with the browser's render cycle
+      // Still use rAF to batch with frame
       requestAnimationFrame(measure);
     });
 
-    resizeObserver.observe(node);
+    resizeObserver.observe(nodeRef.current);
 
-    // Also measure on scroll if position (left/top) is needed
-    const handleScroll = () => requestAnimationFrame(measure);
-    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => resizeObserver.disconnect();
+  }, [measure]);
 
-    return () => {
-      resizeObserver.disconnect();
-      window.removeEventListener('scroll', handleScroll);
-    };
-  }, [node]);
-
-  return [ref, dimensions];
+  return [ref, dimensions, measure];
 }

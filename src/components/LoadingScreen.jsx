@@ -39,9 +39,16 @@ const charVariants = {
 
 export default function LoadingScreen({ onComplete }) {
   const [phase, setPhase] = useState('intro'); // intro → exit → done
+  const [showEffects, setShowEffects] = useState(false);
   const timersRef = useRef([]);
   const completedRef = useRef(false);
   const { isLowPower } = usePerformance();
+
+  useEffect(() => {
+    // Defer non-critical UI effects to yield to main thread during boot
+    const id = setTimeout(() => setShowEffects(true), 150);
+    return () => clearTimeout(id);
+  }, []);
 
   const isMobile = useMemo(() => {
     if (typeof window === 'undefined') return false;
@@ -49,6 +56,7 @@ export default function LoadingScreen({ onComplete }) {
   }, []);
 
   const particles = useMemo(() => {
+    if (!showEffects) return [];
     let count = isMobile ? 8 : 18;
     if (isLowPower) count = Math.max(4, Math.floor(count * 0.45));
     return Array.from({ length: count }, (_, i) => {
@@ -62,7 +70,7 @@ export default function LoadingScreen({ onComplete }) {
         size:     i % 4 === 0 ? 2.5 : 1.8,
       };
     });
-  }, [isMobile, isLowPower]);
+  }, [isMobile, isLowPower, showEffects]);
 
   const vhRef = useRef(typeof window !== 'undefined' ? window.innerHeight + 60 : 860);
 
@@ -79,13 +87,18 @@ export default function LoadingScreen({ onComplete }) {
       const id = setTimeout(fn, ms);
       timersRef.current.push(id);
     };
-    push(() => setPhase('exit'), T_EXIT);
-    push(() => {
-      if (completedRef.current) return;
-      completedRef.current = true;
-      setPhase('done');
-      onComplete?.();
-    }, T_COMPLETE);
+
+    // Delay start of logic to allow browser to finish parsing
+    requestAnimationFrame(() => {
+      push(() => setPhase('exit'), T_EXIT);
+      push(() => {
+        if (completedRef.current) return;
+        completedRef.current = true;
+        setPhase('done');
+        onComplete?.();
+      }, T_COMPLETE);
+    });
+
     return () => timersRef.current.forEach(clearTimeout);
   }, [onComplete]);
 

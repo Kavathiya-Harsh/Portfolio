@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { motion, useSpring, useMotionValue } from 'framer-motion';
 import { useBreakpoint } from '../utils/useBreakpoint';
 
-export default function MeshGradient() {
+export default React.memo(function MeshGradient() {
   const isMobile = useBreakpoint(1024);
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
@@ -13,14 +13,22 @@ export default function MeshGradient() {
   const smoothY = useSpring(mouseY, springConfig);
 
   useEffect(() => {
-    if (isMobile) return; // No mouse move on mobile/tablet
+    if (isMobile) return;
 
+    let rafId;
     const handleMouseMove = (e) => {
-      mouseX.set(e.clientX);
-      mouseY.set(e.clientY);
+      // Throttle mouse movement to animation frames
+      if (rafId) cancelAnimationFrame(rafId);
+      rafId = requestAnimationFrame(() => {
+        mouseX.set(e.clientX);
+        mouseY.set(e.clientY);
+      });
     };
-    window.addEventListener('mousemove', handleMouseMove);
-    return () => window.removeEventListener('mousemove', handleMouseMove);
+    window.addEventListener('mousemove', handleMouseMove, { passive: true });
+    return () => {
+      window.removeEventListener('mousemove', handleMouseMove);
+      if (rafId) cancelAnimationFrame(rafId);
+    };
   }, [mouseX, mouseY, isMobile]);
 
   return (
@@ -106,4 +114,4 @@ export default function MeshGradient() {
       <div className="absolute inset-0 shadow-[inset_0_0_150px_rgba(0,0,0,0.8)] pointer-events-none" />
     </div>
   );
-}
+});

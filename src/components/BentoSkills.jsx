@@ -13,14 +13,14 @@ import { useDimensions } from '../hooks/useDimensions';
 // Map icon names from skills data to actual imported components
 const iconMap = { Layout, Server, TrendingUp, Cpu, Code };
 
-function SkillIcon({ iconName, className }) {
+const SkillIcon = React.memo(({ iconName, className }) => {
   const Icon = iconMap[iconName] || Code;
   return <Icon className={className} />;
-}
+});
 
-function SkillCard({ skill, index, categoryColor }) {
+const SkillCard = React.memo(({ skill, index, categoryColor }) => {
   const isMobile = useBreakpoint(1024);
-  const [measureRef, dimensions] = useDimensions();
+  const [measureRef, dimensions, measure] = useDimensions();
   const x = useMotionValue(0);
   const y = useMotionValue(0);
 
@@ -30,10 +30,14 @@ function SkillCard({ skill, index, categoryColor }) {
   const rotateX = useTransform(mouseYSpring, [-0.5, 0.5], ["10deg", "-10deg"]);
   const rotateY = useTransform(mouseXSpring, [-0.5, 0.5], ["-10deg", "10deg"]);
 
+  const handleMouseEnter = () => {
+    if (!isMobile) measure();
+  };
+
   const handleMouseMove = (e) => {
     if (dimensions.width === 0 || isMobile) return;
     
-    // Performance optimization: prevent layout thrashing by using cached dimensions
+    // Performance optimization: prevent layout thrashing by using interaction-based dimensions
     const mouseX = e.clientX - dimensions.left;
     const mouseY = e.clientY - dimensions.top;
     const xPct = mouseX / dimensions.width - 0.5;
@@ -50,6 +54,7 @@ function SkillCard({ skill, index, categoryColor }) {
   return (
     <motion.div
       ref={measureRef}
+      onMouseEnter={handleMouseEnter}
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
       style={{
@@ -100,7 +105,7 @@ function SkillCard({ skill, index, categoryColor }) {
       </div>
     </motion.div>
   );
-}
+});
 
 function CategorySection({ category, catIndex }) {
   return (

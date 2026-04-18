@@ -13,8 +13,14 @@ import {
 import { useBreakpoint } from '../utils/useBreakpoint';
 
 function TimelineCard({ item, index }) {
-  const [measureRef, dimensions] = useDimensions();
+  const [measureRef, dimensions, measure] = useDimensions();
   const cardRef = useRef(null);
+
+  const handleMouseEnter = () => {
+    if (typeof window !== 'undefined' && !window.matchMedia('(hover: none)').matches) {
+      measure();
+    }
+  };
 
   const onMouseMove = (e) => {
     if (typeof window !== 'undefined' && window.matchMedia('(hover: none)').matches) return;
@@ -71,6 +77,7 @@ function TimelineCard({ item, index }) {
           cardRef.current = node;
           measureRef(node);
         }}
+        onMouseEnter={handleMouseEnter}
         onMouseMove={onMouseMove}
         onMouseLeave={onMouseLeave}
         className="relative group overflow-hidden rounded-xl border border-white/12 bg-slate-800/50 backdrop-blur-md p-5 hover:border-blue-500/20 transition-colors"

@@ -207,21 +207,37 @@ export default function App() {
         <div className="pb-32 sm:pb-40 md:pb-12" style={{ paddingBottom: 'calc(10rem + env(safe-area-inset-bottom, 0px))' }}>
           <main>
             <div id="hero"><Hero isReady={!isLoading} /></div>
+            
             <Suspense fallback={<SectionFallback />}>
               <SectionDivider />
               <GitHubActivity />
+            </Suspense>
+
+            <Suspense fallback={<SectionFallback />}>
               <SectionDivider />
               <div id="about"><About /></div>
+            </Suspense>
+
+            <Suspense fallback={<SectionFallback />}>
               <SectionDivider />
               <div id="skills"><BentoSkills /></div>
+            </Suspense>
+
+            <Suspense fallback={<SectionFallback />}>
               <SectionDivider />
               <div id="projects"><ProjectGallery /></div>
+            </Suspense>
+
+            <Suspense fallback={<SectionFallback />}>
               <SectionDivider />
               <div id="hackathons"><HackathonJourney /></div>
               <SectionDivider />
               <CertificatesAwards />
               <SectionDivider />
               <Education />
+            </Suspense>
+
+            <Suspense fallback={<SectionFallback />}>
               <SectionDivider />
               <div id="contact"><ContactForm /></div>
               <QuickActionsDock />

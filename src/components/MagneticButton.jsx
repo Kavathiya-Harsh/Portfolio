@@ -3,13 +3,12 @@ import { motion, useMotionTemplate, useMotionValue } from 'framer-motion';
 import { useDimensions } from '../hooks/useDimensions';
 
 export default function MagneticButton({ children, className = '', href, ...props }) {
-  const [measureRef, dimensions] = useDimensions();
+  const [measureRef, dimensions, measure] = useDimensions();
   const x = useMotionValue(0);
   const y = useMotionValue(0);
   const [isHovered, setIsHovered] = useState(false);
 
   const handleMouseMove = (e) => {
-    if (typeof window !== 'undefined' && window.matchMedia('(hover: none)').matches) return;
     if (dimensions.width === 0) return;
     
     const centerX = dimensions.left + dimensions.width / 2;
@@ -28,8 +27,10 @@ export default function MagneticButton({ children, className = '', href, ...prop
   };
 
   const handleMouseEnter = () => {
-    if (typeof window !== 'undefined' && window.matchMedia('(hover: none)').matches) return;
-    setIsHovered(true);
+    if (typeof window !== 'undefined' && !window.matchMedia('(hover: none)').matches) {
+      measure();
+      setIsHovered(true);
+    }
   };
 
   const transform = useMotionTemplate`translate(${x}px, ${y}px)`;

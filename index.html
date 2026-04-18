@@ -2,73 +2,36 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/jpeg" href="https://res.cloudinary.com/dvv5mtpli/image/upload/q_auto,f_auto,w_80,c_fill,g_face/v1776355358/hk_logo_pb2u8w.jpg" />
-    <link rel="apple-touch-icon" href="https://res.cloudinary.com/dvv5mtpli/image/upload/q_auto,f_auto,w_180,c_fill,g_face/v1776355358/hk_logo_pb2u8w.jpg" />
-    
-    <!-- Preload Critical Assets (LCP & Branding) -->
-    <!-- Only preconnect to origins used in critical path (max 4) -->
-    <!-- Preconnect to Font & Asset Origins -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <title>Harsh Kavathiya | Full Stack Developer & 5x Hackathon Winner</title>
+
+    <!-- 1. Critical App Shell Style (Instant Paint) -->
+    <style>
+      *,*::before,*::after{box-sizing:border-box}
+      :root { --base: #080d1a; --text: #f8fafc; color-scheme: dark; }
+      body { margin: 0; background-color: #080d1a; color: #f8fafc; font-family: system-ui, -apple-system, sans-serif; }
+      #app-shell { position: fixed; inset: 0; z-index: 9999; display: flex; align-items: center; justify-content: center; background: radial-gradient(circle at 50% 50%, #0b1628 0%, #060c1a 100%); }
+      .shell-logo { width: 60px; height: 60px; opacity: 0.2; animation: shell-pulse 2s ease-in-out infinite; }
+      @keyframes shell-pulse { 0%, 100% { opacity: 0.1; transform: scale(0.95); } 50% { opacity: 0.3; transform: scale(1.05); } }
+    </style>
+
+    <!-- 2. Primary Handshakes & Discovery -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link rel="preconnect" href="https://res.cloudinary.com" crossorigin />
+    <link rel="dns-prefetch" href="https://api.github.com" />
+    <link rel="stylesheet" href="/src/index.css" />
     
-    <!-- Modulepreload for Main Bundle (Breaks Critical Request Chain) -->
-    <link rel="modulepreload" href="/src/main.jsx" />
-
-    <!-- Preload LCP Images -->
+    <!-- 4. LCP Image Preload -->
     <link rel="preload" as="image" 
           imagesrcset="https://res.cloudinary.com/dvv5mtpli/image/upload/q_auto,f_auto,w_400/v1776351778/Harsh_Kavathiya_Profile_duaqrs.jpg 400w, https://res.cloudinary.com/dvv5mtpli/image/upload/q_auto,f_auto,w_800/v1776351778/Harsh_Kavathiya_Profile_duaqrs.jpg 800w"
           imagesizes="(max-width: 1024px) 400px, 800px"
           fetchpriority="high" />
 
-    <link rel="stylesheet" href="/src/index.css" fetchpriority="high" />
+    <link rel="icon" type="image/jpeg" href="https://res.cloudinary.com/dvv5mtpli/image/upload/q_auto,f_auto,w_80,c_fill,g_face/v1776355358/hk_logo_pb2u8w.jpg" />
+    <link rel="apple-touch-icon" href="https://res.cloudinary.com/dvv5mtpli/image/upload/q_auto,f_auto,w_180,c_fill,g_face/v1776355358/hk_logo_pb2u8w.jpg" />
 
-    <style>
-      *,*::before,*::after{box-sizing:border-box}
-      :root {
-        --base: #080d1a;
-        --text: #f8fafc;
-        color-scheme: dark;
-      }
-      body {
-        margin: 0;
-        background-color: #080d1a;
-        color: #f8fafc;
-        /* System fonts — zero network cost, instant render */
-        font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-      }
-      /* ── App shell: background only (no hero text — avoids double intro with React LoadingScreen) ── */
-      #app-shell {
-        position: fixed;
-        inset: 0;
-        z-index: 9999;
-        overflow: hidden;
-        background: radial-gradient(circle at 50% 50%, #0b1628 0%, #060c1a 100%);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-      }
-      .shell-grid {
-        position: absolute;
-        inset: 0;
-        pointer-events: none;
-        opacity: 0.02;
-        background-image:
-          linear-gradient(rgba(255,255,255,.1) 1px, transparent 1px),
-          linear-gradient(90deg, rgba(255,255,255,.1) 1px, transparent 1px);
-        background-size: 80px 80px;
-      }
-      .shell-logo {
-        width: 60px;
-        height: 60px;
-        opacity: 0.2;
-        animation: shell-pulse 2s ease-in-out infinite;
-      }
-      @keyframes shell-pulse {
-        0%, 100% { opacity: 0.1; transform: scale(0.95); }
-        50% { opacity: 0.3; transform: scale(1.05); }
-      }
-    </style>
+
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <meta name="theme-color" content="#060c1a" />
     
@@ -137,10 +100,11 @@
     }
     </script>
 
-    <!-- Google Fonts: media=print trick defers load, onload makes it active. display=swap prevents FOIT. -->
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" media="print" onload="this.media='all'" fetchpriority="high" />
+    <!-- Google Fonts: media=print trick defers load. display=swap prevents FOIT. -->
+    <!-- Pruned weights (400, 700, 800 only) to reduce critical request chain latency. -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;700;800&family=Inter:wght@400;700&family=DM+Mono:wght@400&display=swap" rel="stylesheet" media="print" onload="this.media='all'" fetchpriority="high" />
     <noscript>
-      <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
+      <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;700;800&family=Inter:wght@400;700&family=DM+Mono:wght@400&display=swap" rel="stylesheet" />
     </noscript>
   </head>
   <body>

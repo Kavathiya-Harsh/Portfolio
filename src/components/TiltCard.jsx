@@ -5,10 +5,16 @@ import { useDimensions } from '../hooks/useDimensions';
 const MAX_TILT = 8;
 
 export default function TiltCard({ children, className = '', ...props }) {
-  const [measureRef, dimensions] = useDimensions();
+  const [measureRef, dimensions, measure] = useDimensions();
   const cardRef = useRef(null);
   const x = useMotionValue(0);
   const y = useMotionValue(0);
+
+  const handleMouseEnter = () => {
+    if (typeof window !== 'undefined' && !window.matchMedia('(hover: none)').matches) {
+      measure();
+    }
+  };
 
   const handleMouseMove = (e) => {
     if (typeof window !== 'undefined' && window.matchMedia('(hover: none)').matches) return;
@@ -45,6 +51,7 @@ export default function TiltCard({ children, className = '', ...props }) {
         cardRef.current = node;
         measureRef(node);
       }}
+      onMouseEnter={handleMouseEnter}
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
       style={{ transform: rotateX }}

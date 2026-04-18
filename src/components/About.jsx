@@ -47,7 +47,7 @@ const paragraphs = [
 ];
 
 /* ── Stat Card ───────────────────────────────────────────────────────────── */
-function StatCard({ stat, index }) {
+const StatCard = React.memo(({ stat, index }) => {
   const [hovered, setHovered] = useState(false);
   return (
     <motion.div
@@ -76,10 +76,10 @@ function StatCard({ stat, index }) {
       <p className="text-xs text-slate-400 mt-1.5 font-medium leading-tight">{stat.label}</p>
     </motion.div>
   );
-}
+});
 
 /* ── Trait Row ───────────────────────────────────────────────────────────── */
-function TraitRow({ trait, index }) {
+const TraitRow = React.memo(({ trait, index }) => {
   const [hovered, setHovered] = useState(false);
   return (
     <motion.div
@@ -119,7 +119,7 @@ function TraitRow({ trait, index }) {
       </motion.div>
     </motion.div>
   );
-}
+});
 
 /* ── Main Component ──────────────────────────────────────────────────────── */
 export default function About() {
