@@ -20,10 +20,6 @@
     <link rel="preconnect" href="https://res.cloudinary.com" crossorigin />
     <link rel="dns-prefetch" href="https://api.github.com" />
     
-    <!-- 3. Zero-Chain Font Discovery (Bypasses Fonts API) -->
-    <link rel="preload" href="https://fonts.gstatic.com/s/plusjakartasans/v12/LDIbaomQNQcsA88c7O9yZ4KMCoOg4IA6-91aHEjcWuA_qU7NSg.ttf" as="font" type="font/ttf" crossorigin />
-    <link rel="preload" href="https://fonts.gstatic.com/s/plusjakartasans/v12/LDIbaomQNQcsA88c7O9yZ4KMCoOg4IA6-91aHEjcWuA_TknNSg.ttf" as="font" type="font/ttf" crossorigin />
-
     <style>
       @font-face { font-family: 'Plus Jakarta Sans'; font-style: normal; font-weight: 400; font-display: swap; src: url(https://fonts.gstatic.com/s/plusjakartasans/v12/LDIbaomQNQcsA88c7O9yZ4KMCoOg4IA6-91aHEjcWuA_qU7NSg.ttf) format('truetype'); }
       @font-face { font-family: 'Plus Jakarta Sans'; font-style: normal; font-weight: 700; font-display: swap; src: url(https://fonts.gstatic.com/s/plusjakartasans/v12/LDIbaomQNQcsA88c7O9yZ4KMCoOg4IA6-91aHEjcWuA_TknNSg.ttf) format('truetype'); }
@@ -35,24 +31,25 @@
       *,*::before,*::after{box-sizing:border-box}
       :root { --base: #080d1a; --text: #f8fafc; color-scheme: dark; }
       body { margin: 0; background-color: #080d1a; color: #f8fafc; font-family: 'Plus Jakarta Sans', system-ui, sans-serif; overflow-x: hidden; }
-      #app-shell { position: fixed; inset: 0; z-index: 9999; display: flex; align-items: center; justify-content: center; background: radial-gradient(circle at 50% 50%, #0b1628 0%, #060c1a 100%); transition: opacity 0.5s ease-out; }
-      .shell-logo { width: 60px; height: 60px; opacity: 0.2; animation: shell-pulse 2s ease-in-out infinite; }
-      @keyframes shell-pulse { 0%, 100% { opacity: 0.1; transform: scale(0.95); } 50% { opacity: 0.3; transform: scale(1.05); } }
+      #app-shell { position: fixed; inset: 0; z-index: 9999; display: flex; align-items: center; justify-content: center; background: radial-gradient(circle at 50% 50%, #0b1628 0%, #060c1a 100%); transition: opacity 0.5s ease-out; pointer-events: none; }
+      .shell-logo { width: 60px; height: 60px; opacity: 0.1; animation: shell-pulse 2s ease-in-out infinite; }
+      @keyframes shell-pulse { 0%, 100% { opacity: 0.05; transform: scale(0.98); } 50% { opacity: 0.15; transform: scale(1.02); } }
       
-      /* Skeleton for First Fold (Hero) */
-      .hero-skeleton { position: absolute; top: 50%; left: 5%; transform: translateY(-50%); width: 45%; pointer-events: none; opacity: 0.05; }
-      .skEL { height: 20px; background: currentColor; border-radius: 4px; margin-bottom: 12px; }
-      .skH { height: 60px; width: 80%; background: currentColor; border-radius: 8px; margin-bottom: 24px; }
+      /* Skeleton & Static FCP Content */
+      .hero-skeleton { position: absolute; top: 50%; left: 5%; transform: translateY(-50%); width: 45%; pointer-events: none; }
+      .sk-name { color: #fff; font-size: clamp(3rem, 6vw, 5rem); font-weight: 800; margin: 0; letter-spacing: -0.02em; line-height: 1; }
+      .sk-role { color: #22d3ee; font-family: 'DM Mono', monospace; font-size: 1rem; margin-top: 1rem; opacity: 0.8; }
+      .skEL { height: 2px; background: rgba(59,130,246,0.15); border-radius: 4px; margin-top: 2rem; width: 60%; }
     </style>
 
     <!-- 4. Zero-Blocking CSS Strategy -->
     <link rel="stylesheet" href="/src/index.css" media="print" onload="this.media='all'" fetchpriority="high" />
     <noscript><link rel="stylesheet" href="/src/index.css" /></noscript>
     
-    <!-- 5. LCP Image Preload -->
+    <!-- 5. LCP Image Preload (Precision Sync) -->
     <link rel="preload" as="image" 
-          imagesrcset="https://res.cloudinary.com/dvv5mtpli/image/upload/q_auto,f_auto,w_400/v1776351778/Harsh_Kavathiya_Profile_duaqrs.jpg 400w, https://res.cloudinary.com/dvv5mtpli/image/upload/q_auto,f_auto,w_800/v1776351778/Harsh_Kavathiya_Profile_duaqrs.jpg 800w"
-          imagesizes="(max-width: 1024px) 400px, 800px"
+          imagesrcset="https://res.cloudinary.com/dvv5mtpli/image/upload/q_auto,f_auto,w_400/v1776351778/Harsh_Kavathiya_Profile_duaqrs.jpg 400w, https://res.cloudinary.com/dvv5mtpli/image/upload/q_auto,f_auto,w_500/v1776351778/Harsh_Kavathiya_Profile_duaqrs.jpg 500w, https://res.cloudinary.com/dvv5mtpli/image/upload/q_auto,f_auto,w_900/v1776351778/Harsh_Kavathiya_Profile_duaqrs.jpg 900w"
+          imagesizes="(max-width: 640px) 300px, (max-width: 1024px) 400px, 500px"
           fetchpriority="high" />
 
     <link rel="icon" type="image/jpeg" href="https://res.cloudinary.com/dvv5mtpli/image/upload/q_auto,f_auto,w_80,c_fill,g_face/v1776355358/hk_logo_pb2u8w.jpg" />
@@ -72,10 +69,9 @@
       <div id="app-shell" aria-hidden="true">
         <div class="shell-grid"></div>
         <div class="hero-skeleton">
-          <div class="skEL" style="width: 30%;"></div>
-          <div class="skH"></div>
-          <div class="skEL" style="width: 90%;"></div>
-          <div class="skEL" style="width: 70%;"></div>
+          <h1 class="sk-name">Harsh Kavathiya</h1>
+          <p class="sk-role">Full Stack Developer &amp; Innovation Specialist</p>
+          <div class="skEL"></div>
         </div>
         <svg class="shell-logo" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
           <defs>
@@ -84,7 +80,7 @@
               <stop offset="100%" stop-color="#06b6d4" />
             </linearGradient>
           </defs>
-          <rect width="100" height="100" rx="24" fill="url(#logo-grad)" fill-opacity="0.15" stroke="url(#logo-grad)" stroke-width="2"/>
+          <rect width="100" height="100" rx="24" fill="url(#logo-grad)" fill-opacity="0.1" stroke="url(#logo-grad)" stroke-width="2"/>
           <path d="M30 30V70M30 50H50M50 30V70M70 30L50 50M50 50L70 70" stroke="white" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
         </svg>
       </div>
