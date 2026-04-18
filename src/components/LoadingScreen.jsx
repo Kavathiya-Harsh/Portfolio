@@ -5,6 +5,7 @@
  */
 import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { usePerformance } from '../context/PerformanceContext';
 
 /* ─── CONSTANTS ─────────────────────────────────────── */
 const FIRST_NAME = 'Harsh';
@@ -21,10 +22,14 @@ const L_STEP  = 0.048;  // stagger per char — lastName
 // When last char of lastName finishes landing (~0.65s animation)
 const NAME_DONE = L_DELAY + LAST_NAME.length * L_STEP + 0.5; // ≈ 1.45s (previously 1.69s)
 
-// Phase timestamps (ms)
-const T_SLOGAN   = NAME_DONE * 1000;            // ~1450
-const T_EXIT     = (NAME_DONE + 1.2) * 1000;   // ~2650
-const T_COMPLETE = (NAME_DONE + 1.8) * 1000;   // ~3250
+// Phase timestamps (ms) — exit must finish before unmount (overlay fade duration = EXIT_DURATION_SEC)
+const EXIT_DURATION_SEC = 0.85;
+const EXIT_DURATION_MS = EXIT_DURATION_SEC * 1000;
+const T_SLOGAN         = NAME_DONE * 1000;
+const HOLD_AFTER_NAME_MS = 1200;
+const T_EXIT           = NAME_DONE * 1000 + HOLD_AFTER_NAME_MS;
+/** Unmount only after exit blur/fade completes — was too short vs Framer duration (visible snap). */
+const T_COMPLETE       = T_EXIT + EXIT_DURATION_MS + 120;
 
 /* ─── SHARED EASING ─────────────────────────────────── */
 const EASE_OUT_EXPO = [0.16, 1, 0.3, 1];
@@ -41,8 +46,9 @@ const charVariants = {
 /* ─── COMPONENT ─────────────────────────────────────── */
 export default function LoadingScreen({ onComplete }) {
   const [phase, setPhase] = useState('name'); // name → slogan → exit → done
-  const [mounted, setMounted] = useState(false);
   const timersRef = useRef([]);
+  const completedRef = useRef(false);
+  const { isLowPower } = usePerformance();
 
   /* detect mobile once */
   const isMobile = useMemo(() => {
@@ -52,7 +58,8 @@ export default function LoadingScreen({ onComplete }) {
 
   /* stable particles — computed once, never re-randomised */
   const particles = useMemo(() => {
-    const count = isMobile ? 10 : 24;
+    let count = isMobile ? 10 : 24;
+    if (isLowPower) count = Math.max(6, Math.floor(count * 0.5));
     return Array.from({ length: count }, (_, i) => {
       const t = i / count;
       return {
@@ -64,24 +71,36 @@ export default function LoadingScreen({ onComplete }) {
         size:     i % 4 === 0 ? 2.5 : 1.8,
       };
     });
-  }, [isMobile]);
+  }, [isMobile, isLowPower]);
 
   /* viewport height ref — no recalc on tick */
   const vhRef = useRef(typeof window !== 'undefined' ? window.innerHeight + 60 : 860);
 
   useEffect(() => {
-    setMounted(true);
+    const prevOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.body.style.overflow = prevOverflow;
+    };
+  }, []);
+
+  useEffect(() => {
     const push = (fn, ms) => {
       const id = setTimeout(fn, ms);
       timersRef.current.push(id);
     };
-    push(() => setPhase('slogan'),  T_SLOGAN);
-    push(() => setPhase('exit'),    T_EXIT);
-    push(() => { setPhase('done'); onComplete?.(); }, T_COMPLETE);
+    push(() => setPhase('slogan'), T_SLOGAN);
+    push(() => setPhase('exit'), T_EXIT);
+    push(() => {
+      if (completedRef.current) return;
+      completedRef.current = true;
+      setPhase('done');
+      onComplete?.();
+    }, T_COMPLETE);
     return () => timersRef.current.forEach(clearTimeout);
   }, [onComplete]);
 
-  if (phase === 'done' || !mounted) return null;
+  if (phase === 'done') return null;
 
   return (
     <AnimatePresence mode="wait">
@@ -93,7 +112,7 @@ export default function LoadingScreen({ onComplete }) {
             ? { opacity: 0, scale: 1.05, filter: 'blur(10px)' }
             : { opacity: 1, scale: 1, filter: 'blur(0px)' }
         }
-        transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+        transition={{ duration: EXIT_DURATION_SEC, ease: [0.16, 1, 0.3, 1] }}
         className="fixed inset-0 z-[9999] flex items-center justify-center overflow-hidden"
         style={{
           background: 'linear-gradient(150deg, #060c1a 0%, #0b1628 55%, #07101f 100%)',
@@ -122,19 +141,35 @@ export default function LoadingScreen({ onComplete }) {
           aria-hidden="true"
           className="absolute pointer-events-none rounded-full"
           style={{ width: 520, height: 520, top: '-5%', left: '-8%', willChange: 'transform, opacity' }}
-          animate={{ scale: [1, 1.28, 1], opacity: [0.09, 0.2, 0.09] }}
-          transition={{ duration: 7, repeat: Infinity, ease: 'easeInOut' }}
+          animate={
+            isLowPower
+              ? { scale: 1, opacity: 0.12 }
+              : { scale: [1, 1.28, 1], opacity: [0.09, 0.2, 0.09] }
+          }
+          transition={
+            isLowPower
+              ? { duration: 0 }
+              : { duration: 7, repeat: Infinity, ease: 'easeInOut' }
+          }
         >
-          <div style={{ width: '100%', height: '100%', borderRadius: '50%', background: 'rgba(59,130,246,0.18)', filter: 'blur(110px)' }} />
+          <div style={{ width: '100%', height: '100%', borderRadius: '50%', background: 'rgba(59,130,246,0.18)', filter: isLowPower ? 'blur(64px)' : 'blur(110px)' }} />
         </motion.div>
         <motion.div
           aria-hidden="true"
           className="absolute pointer-events-none rounded-full"
           style={{ width: 440, height: 440, bottom: '-5%', right: '-8%', willChange: 'transform, opacity' }}
-          animate={{ scale: [1, 1.22, 1], opacity: [0.06, 0.14, 0.06] }}
-          transition={{ duration: 9, repeat: Infinity, ease: 'easeInOut', delay: 1.5 }}
+          animate={
+            isLowPower
+              ? { scale: 1, opacity: 0.08 }
+              : { scale: [1, 1.22, 1], opacity: [0.06, 0.14, 0.06] }
+          }
+          transition={
+            isLowPower
+              ? { duration: 0 }
+              : { duration: 9, repeat: Infinity, ease: 'easeInOut', delay: 1.5 }
+          }
         >
-          <div style={{ width: '100%', height: '100%', borderRadius: '50%', background: 'rgba(6,182,212,0.14)', filter: 'blur(110px)' }} />
+          <div style={{ width: '100%', height: '100%', borderRadius: '50%', background: 'rgba(6,182,212,0.14)', filter: isLowPower ? 'blur(64px)' : 'blur(110px)' }} />
         </motion.div>
 
         {/* ── RISING PARTICLES ────────────────────────── */}
@@ -164,7 +199,7 @@ export default function LoadingScreen({ onComplete }) {
                 variants={charVariants}
                 initial="hidden"
                 animate="visible"
-                className="inline-block font-black"
+                className="inline-block font-black font-heading"
                 style={{
                   fontSize: 'clamp(4.5rem, 13vw, 9rem)',
                   color: '#ede9df',                   /* warm cream — matches screenshot */
@@ -188,7 +223,7 @@ export default function LoadingScreen({ onComplete }) {
                 variants={charVariants}
                 initial="hidden"
                 animate="visible"
-                className="inline-block font-black"
+                className="inline-block font-black font-heading"
                 style={{
                   fontSize: 'clamp(4.5rem, 13vw, 9rem)',
                   letterSpacing: '-0.03em',
