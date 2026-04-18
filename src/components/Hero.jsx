@@ -114,11 +114,9 @@ function InfoCard({ isLowPower }) {
         <div className="p-3.5 sm:p-4 space-y-0.5">
           {/* Location row */}
           <motion.div
-            whileHover={{ x: 5 }}
+            whileHover={{ x: 5, background: 'rgba(56,189,248,0.06)' }}
             transition={{ type: 'spring', stiffness: 340, damping: 26 }}
-            className="flex items-center gap-3 sm:gap-4 p-3 rounded-xl cursor-default transition-colors duration-200"
-            onMouseEnter={e => (e.currentTarget.style.background = 'rgba(56,189,248,0.06)')}
-            onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
+            className="flex items-center gap-3 sm:gap-4 p-3 rounded-xl cursor-default transition-all duration-200"
           >
             <div className="relative shrink-0">
               <div
@@ -160,11 +158,9 @@ function InfoCard({ isLowPower }) {
 
           {/* Education row */}
           <motion.div
-            whileHover={{ x: 5 }}
+            whileHover={{ x: 5, background: 'rgba(99,102,241,0.06)' }}
             transition={{ type: 'spring', stiffness: 340, damping: 26 }}
-            className="flex items-start gap-3 sm:gap-4 p-3 rounded-xl cursor-default transition-colors duration-200"
-            onMouseEnter={e => (e.currentTarget.style.background = 'rgba(99,102,241,0.06)')}
-            onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
+            className="flex items-start gap-3 sm:gap-4 p-3 rounded-xl cursor-default transition-all duration-200"
           >
             <div className="shrink-0 mt-0.5">
               <div

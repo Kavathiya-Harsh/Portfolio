@@ -22,8 +22,7 @@ export function useDimensions() {
 
   const ref = useCallback((newNode) => {
     nodeRef.current = newNode;
-    if (newNode) measure();
-  }, [measure]);
+  }, []);
 
   useEffect(() => {
     if (!nodeRef.current) return;

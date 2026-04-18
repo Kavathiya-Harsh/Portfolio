@@ -15,20 +15,19 @@ export default React.memo(function MeshGradient() {
   useEffect(() => {
     if (isMobile) return;
 
-    let rafId;
+    let ticking = false;
     const handleMouseMove = (e) => {
-      // Throttle mouse movement to animation frames
-      if (rafId) cancelAnimationFrame(rafId);
-      rafId = requestAnimationFrame(() => {
-        mouseX.set(e.clientX);
-        mouseY.set(e.clientY);
-      });
+      if (!ticking) {
+        requestAnimationFrame(() => {
+          mouseX.set(e.clientX);
+          mouseY.set(e.clientY);
+          ticking = false;
+        });
+        ticking = true;
+      }
     };
     window.addEventListener('mousemove', handleMouseMove, { passive: true });
-    return () => {
-      window.removeEventListener('mousemove', handleMouseMove);
-      if (rafId) cancelAnimationFrame(rafId);
-    };
+    return () => window.removeEventListener('mousemove', handleMouseMove);
   }, [mouseX, mouseY, isMobile]);
 
   return (
