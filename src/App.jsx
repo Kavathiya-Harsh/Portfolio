@@ -7,11 +7,11 @@ import Linkedin from 'lucide-react/dist/esm/icons/linkedin';
 
 // Critical components (loaded immediately)
 import Navbar from './components/Navbar';
-import CodeScrollIndicator from './components/CodeScrollIndicator';
 import Hero from './components/Hero';
-import LoadingScreen from './components/LoadingScreen';
 
-// Lazy-loaded: MeshGradient is complex but not part of the initial intro frame
+// Lazy-loaded: Non-critical above-fold components
+const CodeScrollIndicator = lazy(() => import('./components/CodeScrollIndicator'));
+const LoadingScreen = lazy(() => import('./components/LoadingScreen'));
 const MeshGradient  = lazy(() => import('./components/MeshGradient'));
 
 // Data
@@ -35,6 +35,23 @@ const CommandPalette = lazy(() => import('./components/CommandPalette'));
 
 const RESUME_URL = profile.resumeUrl;
 const LINKEDIN_URL = 'https://www.linkedin.com/in/harshkavathiya';
+
+/**
+ * Detect if we should skip the loading screen.
+ * Skip for: bots, lighthouse, mobile devices (< 768px).
+ * This lets the Hero paint as fast as possible on constrained devices.
+ */
+const SHOULD_SKIP_INTRO = (() => {
+  if (typeof window === 'undefined') return true;
+  // Always skip for performance auditors
+  if (/bot|googlebot|crawler|spider|robot|crawling|lighthouse|GTmetrix|Pingdom|PageSpeed/i.test(navigator.userAgent))
+    return true;
+  // Skip on mobile/tablet — loading screen adds ~3s of TBT
+  if (window.innerWidth < 768) return true;
+  // Skip if session already saw loading screen
+  if (sessionStorage.getItem('portfolio-loaded')) return true;
+  return false;
+})();
 
 /**
  * Helper component that manages smooth scrolling to sections when 
@@ -132,23 +149,23 @@ export default function App() {
   const { isLowPower } = usePerformance();
   const [isPaletteOpen, setIsPaletteOpen] = useState(false);
   
-  // Skip intro for bots/audits; on narrow mobile skip heavy overlay (LCP + main-thread / framer cost)
-  const initialShouldLoad = (() => {
-    if (typeof window === 'undefined') return false;
-    if (/bot|googlebot|crawler|spider|robot|crawling|lighthouse|GTmetrix|Pingdom|PageSpeed/i.test(navigator.userAgent))
-      return false;
-    if (window.matchMedia('(max-width: 767px)').matches) return false;
-    return true;
-  })();
-
-  const [isLoading, setIsLoading] = useState(initialShouldLoad);
-  const [isDelayedReady, setIsDelayedReady] = useState(!initialShouldLoad);
+  const [isLoading, setIsLoading] = useState(!SHOULD_SKIP_INTRO);
+  const [isDelayedReady, setIsDelayedReady] = useState(SHOULD_SKIP_INTRO);
 
   const handleLoadingComplete = useCallback(() => {
     setIsLoading(false);
-    // Settling delay: Prevents motion engine from triggering forced reflows 
-    // while the browser is busy clearing the loading overlay.
-    setTimeout(() => setIsDelayedReady(true), 150);
+    // Mark session so we don't play intro again on navigation
+    try { sessionStorage.setItem('portfolio-loaded', '1'); } catch {}
+    // Minimal settling delay
+    setTimeout(() => setIsDelayedReady(true), 50);
+  }, []);
+
+  // If we skipped the intro, remove the app-shell immediately
+  useEffect(() => {
+    if (SHOULD_SKIP_INTRO) {
+      const shell = document.getElementById('app-shell');
+      if (shell) shell.remove();
+    }
   }, []);
 
   useEffect(() => {
@@ -174,11 +191,13 @@ export default function App() {
           The content is already laid out underneath, just hidden by the overlay.
         */}
         
-        {/* Loading screen — imported directly for zero-delay first paint */}
-        {initialShouldLoad && (
-          <AnimatePresence>
-            {isLoading && <LoadingScreen onComplete={handleLoadingComplete} />}
-          </AnimatePresence>
+        {/* Loading screen — lazy loaded, only for desktop with no prior session */}
+        {!SHOULD_SKIP_INTRO && (
+          <Suspense fallback={null}>
+            <AnimatePresence>
+              {isLoading && <LoadingScreen onComplete={handleLoadingComplete} />}
+            </AnimatePresence>
+          </Suspense>
         )}
 
         {/* Main content — ALWAYS rendered, stable in DOM from first paint */}
@@ -194,7 +213,11 @@ export default function App() {
               animate={{ opacity: 1 }}
               transition={{ duration: 1, ease: 'easeOut' }}
             >
-              {(!isLowPower && !isMobile) && <CodeScrollIndicator />}
+              {(!isLowPower && !isMobile) && (
+                <Suspense fallback={null}>
+                  <CodeScrollIndicator />
+                </Suspense>
+              )}
               <Navbar />
             </motion.div>
           )}

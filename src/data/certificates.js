@@ -66,7 +66,7 @@ export const certificates = [
 
 export const awards = [
   {
-    id: 1,
+    id: 101,
     title: 'Code Fusion Participation',
     issuer: 'Shaastra, IIT Madras',
     date: '2026',

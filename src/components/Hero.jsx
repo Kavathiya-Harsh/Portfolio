@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useRef, useMemo } from 'react';
 import { motion, useScroll, useTransform, useSpring, AnimatePresence } from 'framer-motion';
 import ArrowRight from 'lucide-react/dist/esm/icons/arrow-right';
 import MapPin from 'lucide-react/dist/esm/icons/map-pin';
@@ -16,9 +16,9 @@ import { usePerformance } from '../context/PerformanceContext';
 const EXPO = [0.16, 1, 0.3, 1];
 
 /* ─── Stagger container variant ─────────────────────── */
-const staggerContainer = (stagger = 0.09, delay = 0) => ({
+const staggerContainer = (stagger = 0.09, delay = 0, instant = false) => ({
   hidden: {},
-  visible: { transition: { staggerChildren: stagger, delayChildren: delay } },
+  visible: { transition: { staggerChildren: instant ? 0 : stagger, delayChildren: instant ? 0 : delay } },
 });
 
 /* ─── Standard child variant ─────────────────────────── */
@@ -27,10 +27,16 @@ const fadeUp = {
   visible: { opacity: 1, y: 0, transition: { duration: 0.65, ease: EXPO } },
 };
 
+/* Instant variant — zero delay/duration for immediate paint (LCP) */
+const fadeUpInstant = {
+  hidden: { opacity: 1, y: 0 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0 } },
+};
+
 /* ─────────────────────────────────────────────────────── */
 /* Animated Name — char-by-char, only once isReady fires  */
 /* ─────────────────────────────────────────────────────── */
-function AnimatedName({ firstName, lastName, isReady }) {
+function AnimatedName({ firstName, lastName, isReady, instant = false }) {
   const chars = [];
   firstName.split('').forEach((c, i) => chars.push({ c, gradient: false, idx: i }));
   chars.push({ c: ' ', gradient: false, idx: firstName.length });
@@ -42,19 +48,22 @@ function AnimatedName({ firstName, lastName, isReady }) {
     <motion.h1
       className="font-bold tracking-tighter leading-[1.05] mb-4 whitespace-nowrap"
       style={{ fontSize: 'clamp(1.7rem, 5.5vw, 5.25rem)' }}
-      initial="hidden"
+      initial={instant ? 'visible' : 'hidden'}
       animate={isReady ? 'visible' : 'hidden'}
       aria-label={`Harsh Kavathiya — Full Stack Developer & 5x Hackathon Winner`}
       variants={{
         hidden: {},
-        visible: { transition: { staggerChildren: 0.042, delayChildren: 0.05 } },
+        visible: { transition: { staggerChildren: instant ? 0 : 0.042, delayChildren: instant ? 0 : 0.05 } },
       }}
     >
       {chars.map((item, i) => (
         <motion.span
           key={i}
           aria-hidden="true"
-          variants={{
+          variants={instant ? {
+            hidden: { opacity: 1, y: 0, rotateX: 0 },
+            visible: { opacity: 1, y: 0, rotateX: 0, transition: { duration: 0 } },
+          } : {
             hidden: { opacity: 0, y: 38, rotateX: -55 },
             visible: {
               opacity: 1, y: 0, rotateX: 0,
@@ -208,14 +217,14 @@ function InfoCard({ isLowPower }) {
 /* ─────────────────────────────────────────────────────── */
 /* PhotoSection — profile photo with premium orb effects  */
 /* ─────────────────────────────────────────────────────── */
-function PhotoSection({ isLowPower, isReady, isMobile }) {
+function PhotoSection({ isLowPower, isReady, isMobile, instant = false }) {
   const [photoError, setPhotoError] = React.useState(false);
 
   return (
     <motion.div
-      initial={{ opacity: 0, scale: 0.88, y: 20 }}
+      initial={instant ? { opacity: 1, scale: 1, y: 0 } : { opacity: 0, scale: 0.88, y: 20 }}
       animate={isReady ? { opacity: 1, scale: 1, y: 0 } : { opacity: 0, scale: 0.88, y: 20 }}
-      transition={{ duration: 0.9, ease: EXPO, delay: 0.15 }}
+      transition={instant ? { duration: 0 } : { duration: 0.9, ease: EXPO, delay: 0.15 }}
       className="flex justify-center items-center order-1 lg:order-2 will-change-transform"
     >
       <div className="relative group">
@@ -313,6 +322,9 @@ export default function Hero({ isReady = false }) {
   const isMobile = useBreakpoint(1024);
   const { isLowPower } = usePerformance();
   const sectionRef = useRef(null);
+  // If isReady was true on mount, this is an instant-paint scenario (mobile/bot)
+  const instantRef = useRef(isReady);
+  const instant = instantRef.current;
 
   const { scrollYProgress } = useScroll({
     target: sectionRef,
@@ -348,14 +360,14 @@ export default function Hero({ isReady = false }) {
 
           {/* ── LEFT: Content ──────────────────────────────────── */}
           <motion.div
-            initial="hidden"
+            initial={instant ? 'visible' : 'hidden'}
             animate={isReady ? 'visible' : 'hidden'}
-            variants={staggerContainer(0.09, 0)}
+            variants={staggerContainer(0.09, 0, instant)}
             className="order-2 lg:order-1 flex flex-col"
             style={{ y: contentY }}
           >
             {/* Status badge */}
-            <motion.div variants={fadeUp} className="mb-5">
+            <motion.div variants={instant ? fadeUpInstant : fadeUp} className="mb-5">
               <span
                 className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-semibold"
                 style={{
@@ -371,30 +383,30 @@ export default function Hero({ isReady = false }) {
             </motion.div>
 
             {/* Animated name */}
-            <AnimatedName firstName={firstName} lastName={lastName} isReady={isReady} />
+            <AnimatedName firstName={firstName} lastName={lastName} isReady={isReady} instant={instant} />
 
             {/* Typewriter role */}
             <motion.div
-              variants={fadeUp}
+              variants={instant ? fadeUpInstant : fadeUp}
               className="text-lg sm:text-xl md:text-2xl font-medium text-slate-300 flex items-center gap-3 mb-7"
             >
               <motion.div
-                initial={{ width: 0 }}
+                initial={instant ? { width: 28 } : { width: 0 }}
                 animate={isReady ? { width: 28 } : { width: 0 }}
-                transition={{ duration: 0.55, delay: 0.5, ease: EXPO }}
+                transition={instant ? { duration: 0 } : { duration: 0.55, delay: 0.5, ease: EXPO }}
                 className="h-px bg-blue-500/50 shrink-0 hidden sm:block"
               />
               <Typewriter />
             </motion.div>
 
             {/* Info card */}
-            <motion.div variants={fadeUp}>
+            <motion.div variants={instant ? fadeUpInstant : fadeUp}>
               <InfoCard isLowPower={isLowPower} />
             </motion.div>
 
             {/* CTAs */}
             <motion.div
-              variants={fadeUp}
+              variants={instant ? fadeUpInstant : fadeUp}
               className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4"
             >
               {/* Primary CTA */}
@@ -440,7 +452,7 @@ export default function Hero({ isReady = false }) {
           </motion.div>
 
           {/* ── RIGHT: Photo ────────────────────────────────────── */}
-          <PhotoSection isLowPower={isLowPower} isReady={isReady} isMobile={isMobile} />
+          <PhotoSection isLowPower={isLowPower} isReady={isReady} isMobile={isMobile} instant={instant} />
         </div>
       </div>
     </section>
