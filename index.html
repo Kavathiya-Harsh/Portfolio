@@ -16,10 +16,28 @@
     </style>
 
     <!-- 2. Primary Handshakes & Discovery -->
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link rel="preconnect" href="https://res.cloudinary.com" crossorigin />
     <link rel="dns-prefetch" href="https://api.github.com" />
+    
+    <!-- 3. Zero-Chain Font Discovery (Bypasses Fonts API) -->
+    <link rel="preload" href="https://fonts.gstatic.com/s/plusjakartasans/v12/LDIbaomQNQcsA88c7O9yZ4KMCoOg4IA6-91aHEjcWuA_qU7NSg.ttf" as="font" type="font/ttf" crossorigin />
+    <link rel="preload" href="https://fonts.gstatic.com/s/plusjakartasans/v12/LDIbaomQNQcsA88c7O9yZ4KMCoOg4IA6-91aHEjcWuA_TknNSg.ttf" as="font" type="font/ttf" crossorigin />
+
+    <style>
+      @font-face { font-family: 'Plus Jakarta Sans'; font-style: normal; font-weight: 400; font-display: swap; src: url(https://fonts.gstatic.com/s/plusjakartasans/v12/LDIbaomQNQcsA88c7O9yZ4KMCoOg4IA6-91aHEjcWuA_qU7NSg.ttf) format('truetype'); }
+      @font-face { font-family: 'Plus Jakarta Sans'; font-style: normal; font-weight: 700; font-display: swap; src: url(https://fonts.gstatic.com/s/plusjakartasans/v12/LDIbaomQNQcsA88c7O9yZ4KMCoOg4IA6-91aHEjcWuA_TknNSg.ttf) format('truetype'); }
+      @font-face { font-family: 'Plus Jakarta Sans'; font-style: normal; font-weight: 800; font-display: swap; src: url(https://fonts.gstatic.com/s/plusjakartasans/v12/LDIbaomQNQcsA88c7O9yZ4KMCoOg4IA6-91aHEjcWuA_KUnNSg.ttf) format('truetype'); }
+      @font-face { font-family: 'Inter'; font-style: normal; font-weight: 400; font-display: swap; src: url(https://fonts.gstatic.com/s/inter/v20/UcCO3FwrK3iLTeHuS_nVMrMxCp50SjIw2boKoduKmMEVuLyfMZg.ttf) format('truetype'); }
+      @font-face { font-family: 'Inter'; font-style: normal; font-weight: 700; font-display: swap; src: url(https://fonts.gstatic.com/s/inter/v20/UcCO3FwrK3iLTeHuS_nVMrMxCp50SjIw2boKoduKmMEVuFuYMZg.ttf) format('truetype'); }
+      @font-face { font-family: 'DM Mono'; font-style: normal; font-weight: 400; font-display: swap; src: url(https://fonts.gstatic.com/s/dmmono/v16/aFTU7PB1QTsUX8KYhh0.ttf) format('truetype'); }
+      
+      *,*::before,*::after{box-sizing:border-box}
+      :root { --base: #080d1a; --text: #f8fafc; color-scheme: dark; }
+      body { margin: 0; background-color: #080d1a; color: #f8fafc; font-family: 'Plus Jakarta Sans', system-ui, sans-serif; }
+      #app-shell { position: fixed; inset: 0; z-index: 9999; display: flex; align-items: center; justify-content: center; background: radial-gradient(circle at 50% 50%, #0b1628 0%, #060c1a 100%); }
+    </style>
+
     <link rel="stylesheet" href="/src/index.css" />
     
     <!-- 4. LCP Image Preload -->
@@ -31,81 +49,13 @@
     <link rel="icon" type="image/jpeg" href="https://res.cloudinary.com/dvv5mtpli/image/upload/q_auto,f_auto,w_80,c_fill,g_face/v1776355358/hk_logo_pb2u8w.jpg" />
     <link rel="apple-touch-icon" href="https://res.cloudinary.com/dvv5mtpli/image/upload/q_auto,f_auto,w_180,c_fill,g_face/v1776355358/hk_logo_pb2u8w.jpg" />
 
-
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <meta name="theme-color" content="#060c1a" />
     
     <!-- Primary Meta Tags -->
     <title>Harsh Kavathiya | Full Stack Developer & 5x Hackathon Winner</title>
     <meta name="title" content="Harsh Kavathiya | Full Stack Developer & 5x Hackathon Winner" />
-    <meta name="description" content="Portfolio of Harsh Kavathiya — A Full Stack Developer and 5x Hackathon Winner from Gujarat, India. Specializing in MERN stack (React, Node.js), high-performance UI/UX, and scalable web solutions. Discover projects like Trading Bot Pro, AI Dashboards, and more." />
-    <meta name="keywords" content="Harsh Kavathiya, Full Stack Developer, MERN Stack, React Developer, Hackathon Winner, Software Engineer, Portfolio, CodingGita, Shree Swaminarayan University, Web Development Gujarat, Innovative UI/UX, Trading Bot Pro, AI Analytics Dashboard, Open Source Contributor" />
-    <meta name="author" content="Harsh Kavathiya" />
-    <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
-    <link rel="canonical" href="https://harshkavathiya.vercel.app" />
 
-    <!-- Open Graph / Facebook -->
-    <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://harshkavathiya.vercel.app" />
-    <meta property="og:title" content="Harsh Kavathiya | Full Stack Developer & Innovation Specialist" />
-    <meta property="og:description" content="Explore projects, hackathon wins, and technical expertise of Harsh Kavathiya." />
-    <meta property="og:image" content="https://res.cloudinary.com/dvv5mtpli/image/upload/q_auto,f_auto,w_1200,h_630,c_fill/v1776351778/Harsh_Kavathiya_Profile_duaqrs.jpg" />
-
-    <!-- Twitter -->
-    <meta property="twitter:card" content="summary_large_image" />
-    <meta property="twitter:url" content="https://harshkavathiya.vercel.app" />
-    <meta property="twitter:title" content="Harsh Kavathiya | Full Stack Developer" />
-    <meta property="twitter:description" content="A 5x Hackathon Winner building high-performance web applications." />
-    <meta property="twitter:image" content="https://res.cloudinary.com/dvv5mtpli/image/upload/q_auto,f_auto,w_1200,h_630,c_fill/v1776351778/Harsh_Kavathiya_Profile_duaqrs.jpg" />
-
-    <!-- Structured Data (JSON-LD) -->
-    <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "Person",
-      "name": "Harsh Kavathiya",
-      "url": "https://harshkavathiya.vercel.app",
-      "image": "https://res.cloudinary.com/dvv5mtpli/image/upload/v1776351778/Harsh_Kavathiya_Profile_duaqrs.jpg",
-      "sameAs": [
-        "https://github.com/Kavathiya-Harsh",
-        "https://www.linkedin.com/in/harshkavathiya",
-        "https://x.com/HarshK62610"
-      ],
-      "jobTitle": "Full Stack Developer",
-      "alumniOf": {
-        "@type": "CollegeOrUniversity",
-        "name": "Shree Swaminarayan University"
-      },
-      "address": {
-        "@type": "PostalAddress",
-        "addressLocality": "Ahmedabad",
-        "addressRegion": "Gujarat",
-        "addressCountry": "India"
-      },
-      "description": "Full Stack Developer specializing in React, Node.js, and modern web architectures. 5x Hackathon winner from Ahmedabad, India.",
-      "knowsAbout": ["Web Development", "React", "Node.js", "MongoDB", "UI/UX Design", "Hackathons", "FinTech", "AI Analytics"]
-    }
-    </script>
-    <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "WebSite",
-      "name": "Harsh Kavathiya Portfolio",
-      "url": "https://harshkavathiya.vercel.app",
-      "potentialAction": {
-        "@type": "SearchAction",
-        "target": "https://harshkavathiya.vercel.app/#projects",
-        "query-input": "required name=search_term_string"
-      }
-    }
-    </script>
-
-    <!-- Google Fonts: media=print trick defers load. display=swap prevents FOIT. -->
-    <!-- Pruned weights (400, 700, 800 only) to reduce critical request chain latency. -->
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;700;800&family=Inter:wght@400;700&family=DM+Mono:wght@400&display=swap" rel="stylesheet" media="print" onload="this.media='all'" fetchpriority="high" />
-    <noscript>
-      <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;700;800&family=Inter:wght@400;700&family=DM+Mono:wght@400&display=swap" rel="stylesheet" />
-    </noscript>
   </head>
   <body>
     <div id="root">
