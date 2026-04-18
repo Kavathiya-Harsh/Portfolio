@@ -20,7 +20,9 @@ const SkillIcon = React.memo(({ iconName, className }) => {
 
 const SkillCard = React.memo(({ skill, index, categoryColor }) => {
   const isMobile = useBreakpoint(1024);
-  const [measureRef, dimensions, measure] = useDimensions();
+  const cardRef = useRef(null);
+  const rectRef = useRef(null);
+  
   const x = useMotionValue(0);
   const y = useMotionValue(0);
 
@@ -30,31 +32,32 @@ const SkillCard = React.memo(({ skill, index, categoryColor }) => {
   const rotateX = useTransform(mouseYSpring, [-0.5, 0.5], ["10deg", "-10deg"]);
   const rotateY = useTransform(mouseXSpring, [-0.5, 0.5], ["-10deg", "10deg"]);
 
-  const handleMouseEnter = () => {
-    if (!isMobile) measure();
-  };
-
   const handleMouseMove = (e) => {
-    if (dimensions.width === 0 || isMobile) return;
+    if (isMobile) return;
     
-    // Performance optimization: prevent layout thrashing by using interaction-based dimensions
-    const mouseX = e.clientX - dimensions.left;
-    const mouseY = e.clientY - dimensions.top;
-    const xPct = mouseX / dimensions.width - 0.5;
-    const yPct = mouseY / dimensions.height - 0.5;
+    if (!rectRef.current && cardRef.current) {
+      rectRef.current = cardRef.current.getBoundingClientRect();
+    }
+    const rect = rectRef.current;
+    if (!rect) return;
+    
+    const mouseX = e.clientX - rect.left;
+    const mouseY = e.clientY - rect.top;
+    const xPct = mouseX / rect.width - 0.5;
+    const yPct = mouseY / rect.height - 0.5;
     x.set(xPct);
     y.set(yPct);
   };
 
   const handleMouseLeave = () => {
+    rectRef.current = null;
     x.set(0);
     y.set(0);
   };
 
   return (
     <motion.div
-      ref={measureRef}
-      onMouseEnter={handleMouseEnter}
+      ref={cardRef}
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
       style={{
