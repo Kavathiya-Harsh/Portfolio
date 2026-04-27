@@ -132,7 +132,7 @@ export default function ExperienceTimeline() {
   const finalScaleY = useTransform(scaleY, (v) => isMobile ? 1 : v);
 
   return (
-    <section id="experience" ref={sectionRef} className="py-24 px-6">
+    <section id="experience" ref={sectionRef} className="py-24 px-6 relative">
       <div className="max-w-3xl mx-auto">
         {/* Section header with text reveal */}
         <motion.div

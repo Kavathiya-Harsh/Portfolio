@@ -45,7 +45,7 @@ function PerformanceBadge({ score }) {
   );
 }
 
-export default function ProjectCard({ project, index = 0 }) {
+const ProjectCard = React.forwardRef(({ project, index = 0 }, ref) => {
   const [measureRef, dimensions, measure] = useDimensions();
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
@@ -82,6 +82,7 @@ export default function ProjectCard({ project, index = 0 }) {
   return (
     <>
       <motion.div
+        ref={ref}
         variants={blurScaleIn}
         className="h-full perspective-1000 will-change-transform"
       >
@@ -281,4 +282,7 @@ export default function ProjectCard({ project, index = 0 }) {
       )}
     </>
   );
-}
+});
+
+ProjectCard.displayName = 'ProjectCard';
+export default ProjectCard;

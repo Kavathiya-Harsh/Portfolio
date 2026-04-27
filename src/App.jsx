@@ -38,7 +38,7 @@ const LINKEDIN_URL = 'https://www.linkedin.com/in/harshkavathiya';
 
 /**
  * Detect if we should skip the loading screen.
- * Skip for: bots, lighthouse, mobile devices (< 768px).
+ * Skip for: bots, lighthouse, etc.
  * This lets the Hero paint as fast as possible on constrained devices.
  */
 const SHOULD_SKIP_INTRO = (() => {
@@ -46,8 +46,8 @@ const SHOULD_SKIP_INTRO = (() => {
   // Always skip for performance auditors (Lighthouse, bots)
   if (/bot|googlebot|crawler|spider|robot|crawling|lighthouse|GTmetrix|Pingdom|PageSpeed/i.test(navigator.userAgent))
     return true;
-  // Skip if session already saw loading screen
-  if (sessionStorage.getItem('portfolio-loaded')) return true;
+  
+  // NOTE: Session storage check removed as per user request to always show preloader on reload
   return false;
 })();
 

@@ -7,6 +7,8 @@ import FileDown from 'lucide-react/dist/esm/icons/file-down';
 import { useBreakpoint } from '../utils/useBreakpoint';
 import { profile } from '../data/profile';
 
+const MotionLink = motion.create(Link);
+
 const navLinks = [
   { href: 'hero',       label: 'Home' },
   { href: 'about',      label: 'About' },
@@ -216,7 +218,7 @@ export default function Navbar() {
       <nav className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
 
         {/* Brand */}
-        <Link
+        <MotionLink
           to="/"
           onClick={(e) => handleNavClick(e, 'hero')}
           className="flex items-center group relative"
@@ -241,7 +243,7 @@ export default function Navbar() {
             className="absolute inset-0 blur-xl rounded-full -z-10"
             style={{ background: 'radial-gradient(circle, rgba(212,175,55,0.28) 0%, transparent 70%)' }}
           />
-        </Link>
+        </MotionLink>
 
         {/* Desktop links */}
         <ul className="hidden md:flex items-center gap-1">

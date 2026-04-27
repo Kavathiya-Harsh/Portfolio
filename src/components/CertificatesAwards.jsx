@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Award, Medal, ChevronLeft, ChevronRight, Maximize2, X } from 'lucide-react';
+import React, { useState, useEffect, useRef } from 'react';
+import { motion, AnimatePresence, useMotionValue, useTransform } from 'framer-motion';
+import { Award, Medal, ChevronLeft, ChevronRight, Maximize2, X, Sparkles } from 'lucide-react';
 import { certificates, awards } from '../data/certificates';
 import {
   textRevealUp,
@@ -14,6 +14,139 @@ const mergedItems = [
   ...certificates.map(c => ({ ...c, isAward: false })),
   ...awards.map(a => ({ ...a, isAward: true, image: a.image || '/certificates/shaastra_ai.jpg' }))
 ];
+
+/* ─── 3D Tilt Card with Cursor Glow ─────────────────────────────────── */
+function TiltCertCard({ item, isCenter, onClick }) {
+  const cardRef = useRef(null);
+  const mouseX = useMotionValue(0.5);
+  const mouseY = useMotionValue(0.5);
+
+  const rotateX = useTransform(mouseY, [0, 1], [8, -8]);
+  const rotateY = useTransform(mouseX, [0, 1], [-8, 8]);
+  const glowX = useTransform(mouseX, [0, 1], [0, 100]);
+  const glowY = useTransform(mouseY, [0, 1], [0, 100]);
+
+  const handleMouseMove = (e) => {
+    if (!cardRef.current || !isCenter) return;
+    const rect = cardRef.current.getBoundingClientRect();
+    mouseX.set((e.clientX - rect.left) / rect.width);
+    mouseY.set((e.clientY - rect.top) / rect.height);
+  };
+
+  const handleMouseLeave = () => {
+    mouseX.set(0.5);
+    mouseY.set(0.5);
+  };
+
+  return (
+    <motion.div
+      ref={cardRef}
+      onMouseMove={handleMouseMove}
+      onMouseLeave={handleMouseLeave}
+      onClick={onClick}
+      className="w-full h-full cursor-pointer"
+      style={{
+        perspective: '1200px',
+        transformStyle: 'preserve-3d',
+      }}
+    >
+      <motion.div
+        className="w-full h-full relative rounded-2xl overflow-hidden group"
+        style={{
+          rotateX: isCenter ? rotateX : 0,
+          rotateY: isCenter ? rotateY : 0,
+          transformStyle: 'preserve-3d',
+        }}
+        transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+      >
+        {/* Glass Border Effect */}
+        <div className="absolute inset-0 rounded-2xl border border-white/[0.08] z-30 pointer-events-none 
+                        group-hover:border-cyan-500/30 transition-colors duration-500" />
+        
+        {/* Cursor-tracking Glow Orb (only on center card) */}
+        {isCenter && (
+          <motion.div
+            className="absolute w-[300px] h-[300px] rounded-full pointer-events-none z-20 opacity-0 group-hover:opacity-100 transition-opacity duration-500 mix-blend-overlay"
+            style={{
+              left: glowX,
+              top: glowY,
+              x: '-50%',
+              y: '-50%',
+              background: 'radial-gradient(circle, rgba(34,211,238,0.25) 0%, rgba(59,130,246,0.08) 40%, transparent 70%)',
+              filter: 'blur(20px)',
+            }}
+          />
+        )}
+
+        {/* Image */}
+        <div className="w-full h-full overflow-hidden bg-slate-950">
+          <motion.img
+            src={item.image}
+            alt={item.title}
+            width="700"
+            height="450"
+            loading="lazy"
+            decoding="async"
+            className="w-full h-full object-cover"
+            whileHover={isCenter ? { scale: 1.06 } : {}}
+            transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
+          />
+        </div>
+
+        {/* Bottom Gradient Overlay — always visible but more opaque on hover */}
+        <div className="absolute inset-x-0 bottom-0 h-2/3 bg-gradient-to-t from-black/90 via-black/40 to-transparent 
+                        opacity-60 group-hover:opacity-100 transition-opacity duration-500 z-20 pointer-events-none" />
+
+        {/* Title & Issuer — slide up on hover */}
+        <div className="absolute inset-x-0 bottom-0 p-5 md:p-6 z-20 flex flex-col gap-2
+                        translate-y-4 group-hover:translate-y-0 transition-transform duration-500 ease-out">
+          {/* Type Badge */}
+          <motion.div className="flex items-center gap-2">
+            <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-mono uppercase tracking-widest
+                             backdrop-blur-md border transition-all duration-300
+                             ${item.isAward 
+                               ? 'bg-amber-500/10 border-amber-500/20 text-amber-300 group-hover:border-amber-400/40 group-hover:shadow-[0_0_20px_rgba(245,158,11,0.15)]' 
+                               : 'bg-cyan-500/10 border-cyan-500/20 text-cyan-300 group-hover:border-cyan-400/40 group-hover:shadow-[0_0_20px_rgba(34,211,238,0.15)]'
+                             }`}>
+              {item.isAward ? <Medal className="w-3 h-3" /> : <Award className="w-3 h-3" />}
+              {item.isAward ? 'Award' : 'Certificate'}
+            </span>
+          </motion.div>
+
+          {/* Title with shimmer on hover */}
+          <h3 className="text-white text-base md:text-lg font-bold line-clamp-1 
+                         group-hover:drop-shadow-[0_0_20px_rgba(255,255,255,0.15)] transition-all duration-300">
+            {item.title}
+          </h3>
+
+          {/* Issuer — fades in on hover */}
+          <p className="text-slate-400 text-xs font-mono opacity-0 group-hover:opacity-100 
+                        -translate-y-2 group-hover:translate-y-0 transition-all duration-500 delay-75">
+            {item.issuer}
+          </p>
+        </div>
+
+        {/* Expand Icon — appears on hover with a glow pulse */}
+        <div className="absolute top-4 right-4 z-30 opacity-0 group-hover:opacity-100 scale-75 group-hover:scale-100 
+                        transition-all duration-300">
+          <div className="p-2.5 rounded-xl bg-white/5 backdrop-blur-xl border border-white/10 
+                          hover:bg-white/10 hover:border-cyan-500/30 hover:shadow-[0_0_25px_rgba(34,211,238,0.2)]
+                          transition-all duration-300">
+            <Maximize2 className="w-4 h-4 text-white" />
+          </div>
+        </div>
+
+        {/* Subtle scan line effect on hover */}
+        <motion.div
+          className="absolute inset-0 z-10 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-700"
+          style={{
+            background: 'repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(255,255,255,0.01) 2px, rgba(255,255,255,0.01) 4px)',
+          }}
+        />
+      </motion.div>
+    </motion.div>
+  );
+}
 
 export default function CertificatesAwards() {
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -42,31 +175,46 @@ export default function CertificatesAwards() {
   const activeItem = mergedItems[currentIndex];
 
   return (
-    <section id="certificates" className="py-24 px-6 relative overflow-hidden bg-[#0b1120]">
-      {/* Background ambient glow */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[500px] bg-blue-500/5 blur-[120px] rounded-full pointer-events-none" />
+    <section id="certificates" className="py-28 px-6 relative overflow-hidden">
+      {/* Background ambient glow — dual orbs */}
+      <div className="absolute top-1/3 left-1/4 w-[600px] h-[400px] bg-blue-500/[0.04] blur-[120px] rounded-full pointer-events-none" />
+      <div className="absolute bottom-1/4 right-1/4 w-[500px] h-[300px] bg-cyan-500/[0.03] blur-[100px] rounded-full pointer-events-none" />
 
       <div className="max-w-7xl mx-auto relative z-10">
-        {/* Section Header with text reveal */}
+        {/* ─── Section Header ─── */}
         <motion.div
           initial="hidden"
           whileInView="visible"
           viewport={viewportOnce}
           variants={staggerContainer(0.12, 0)}
-          className="text-center mb-16"
+          className="text-center mb-20"
         >
           <motion.div
             variants={textRevealUp}
-            className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-xs font-mono uppercase tracking-widest mb-4"
+            className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-blue-500/8 border border-blue-500/15 text-blue-400 text-xs font-mono uppercase tracking-[0.2em] mb-5"
           >
-            <Award className="w-3 h-3" />
+            <Sparkles className="w-3 h-3" />
             <span>Showcase & Recognition</span>
           </motion.div>
           <motion.h2
             variants={textRevealUp}
-            className="text-4xl sm:text-5xl md:text-7xl font-bold text-white tracking-tight mb-8 leading-[1.1]"
+            className="text-4xl sm:text-5xl md:text-7xl font-bold text-white tracking-tight mb-6 leading-[1.08]"
           >
-            Official <span className="bg-gradient-to-r from-blue-400 via-cyan-400 to-blue-500 bg-clip-text text-transparent">Credentials</span>
+            Official{' '}
+            <span className="relative inline-block">
+              <span className="bg-gradient-to-r from-blue-400 via-cyan-300 to-blue-500 bg-clip-text text-transparent">
+                Credentials
+              </span>
+              {/* Underline glow */}
+              <motion.span 
+                className="absolute -bottom-2 left-0 right-0 h-[2px] rounded-full"
+                style={{ background: 'linear-gradient(90deg, transparent, #22d3ee, #3b82f6, transparent)' }}
+                initial={{ scaleX: 0, opacity: 0 }}
+                whileInView={{ scaleX: 1, opacity: 1 }}
+                viewport={{ once: true }}
+                transition={{ duration: 1.2, delay: 0.5, ease: [0.16, 1, 0.3, 1] }}
+              />
+            </span>
           </motion.h2>
           <motion.p
             variants={textRevealUp}
@@ -76,7 +224,7 @@ export default function CertificatesAwards() {
           </motion.p>
         </motion.div>
 
-        {/* Slider container with blurScaleIn entrance */}
+        {/* ─── 3D Card Slider ─── */}
         <motion.div
           initial="hidden"
           whileInView="visible"
@@ -84,26 +232,34 @@ export default function CertificatesAwards() {
           variants={blurScaleIn}
           className="relative min-h-[450px] md:min-h-[550px] flex items-center justify-center"
         >
-          {/* Navigation Controls */}
-          <div className="absolute inset-x-0 top-1/2 -translate-y-1/2 flex justify-between px-4 md:px-12 z-40 pointer-events-none">
-            <button
+          {/* Navigation Controls — glass morphism buttons */}
+          <div className="absolute inset-x-0 top-1/2 -translate-y-1/2 flex justify-between px-2 sm:px-4 md:px-8 z-40 pointer-events-none">
+            <motion.button
               onClick={prev}
-              className="p-5 rounded-full bg-white/5 border border-white/10 text-white hover:bg-white/10 hover:scale-110 active:scale-95 transition-all pointer-events-auto backdrop-blur-md shadow-2xl"
+              whileHover={{ scale: 1.15, x: -4 }}
+              whileTap={{ scale: 0.9 }}
+              className="p-4 md:p-5 rounded-2xl bg-white/[0.04] border border-white/[0.08] text-white 
+                         hover:bg-white/[0.08] hover:border-cyan-500/20 hover:shadow-[0_0_30px_rgba(34,211,238,0.1),inset_0_1px_0_rgba(255,255,255,0.06)]
+                         transition-all duration-300 pointer-events-auto backdrop-blur-xl"
               aria-label="Previous certificate"
             >
-              <ChevronLeft className="w-6 h-6" />
-            </button>
-            <button
+              <ChevronLeft className="w-5 h-5 md:w-6 md:h-6" />
+            </motion.button>
+            <motion.button
               onClick={next}
-              className="p-5 rounded-full bg-white/5 border border-white/10 text-white hover:bg-white/10 hover:scale-110 active:scale-95 transition-all pointer-events-auto backdrop-blur-md shadow-2xl"
+              whileHover={{ scale: 1.15, x: 4 }}
+              whileTap={{ scale: 0.9 }}
+              className="p-4 md:p-5 rounded-2xl bg-white/[0.04] border border-white/[0.08] text-white 
+                         hover:bg-white/[0.08] hover:border-cyan-500/20 hover:shadow-[0_0_30px_rgba(34,211,238,0.1),inset_0_1px_0_rgba(255,255,255,0.06)]
+                         transition-all duration-300 pointer-events-auto backdrop-blur-xl"
               aria-label="Next certificate"
             >
-              <ChevronRight className="w-6 h-6" />
-            </button>
+              <ChevronRight className="w-5 h-5 md:w-6 md:h-6" />
+            </motion.button>
           </div>
 
           {/* Cards Stack */}
-          <div className="relative w-full max-w-4xl h-[350px] md:h-[450px] flex items-center justify-center">
+          <div className="relative w-full max-w-4xl h-[350px] md:h-[450px] flex items-center justify-center" style={{ perspective: '1200px' }}>
             <AnimatePresence mode="popLayout">
               {mergedItems.map((item, index) => {
                 const isCenter = index === currentIndex;
@@ -119,74 +275,33 @@ export default function CertificatesAwards() {
                 let rotateY = 0;
 
                 if (isCenter) {
-                  x = 0;
-                  scale = 1;
-                  zIndex = 30;
-                  opacity = 1;
+                  x = 0; scale = 1; zIndex = 30; opacity = 1;
                 } else if (isLeft) {
-                  x = -250;
-                  scale = 0.85;
-                  zIndex = 20;
-                  opacity = 0.4;
-                  rotateY = 25;
+                  x = -260; scale = 0.82; zIndex = 20; opacity = 0.35; rotateY = 20;
                 } else if (isRight) {
-                  x = 250;
-                  scale = 0.85;
-                  zIndex = 20;
-                  opacity = 0.4;
-                  rotateY = -25;
+                  x = 260; scale = 0.82; zIndex = 20; opacity = 0.35; rotateY = -20;
                 }
-
-                // Mobile adjustments — handled via CSS responsive classes instead of JS
-                // to avoid forced reflow from window.innerWidth in render path
 
                 return (
                   <motion.div
                     key={item.id}
                     initial={{ opacity: 0, scale: 0.8, x: isRight ? 200 : -200 }}
-                    animate={{ 
-                      opacity, 
-                      scale, 
-                      x, 
-                      zIndex,
-                      rotateY,
-                    }}
+                    animate={{ opacity, scale, x, zIndex, rotateY }}
                     exit={{ opacity: 0, scale: 0.8, x: isLeft ? 200 : -200 }}
-                    transition={{ type: "spring", stiffness: 300, damping: 30 }}
-                    className="absolute w-[300px] sm:w-[500px] lg:w-[700px] h-full perspective-1000"
-                    onClick={() => {
+                    transition={{ type: "spring", stiffness: 280, damping: 28 }}
+                    className="absolute w-[300px] sm:w-[500px] lg:w-[700px] h-full"
+                  >
+                    <TiltCertCard
+                      item={item}
+                      isCenter={isCenter}
+                      onClick={() => {
                         if (isCenter) {
                           setExpandedItem(item);
                         } else {
                           setCurrentIndex(index);
                         }
-                    }}
-                  >
-                    <div className="w-full h-full relative rounded-3xl overflow-hidden border border-white/10 shadow-[0_20px_50px_rgba(0,0,0,0.5)] bg-slate-900 group cursor-pointer">
-                      <img
-                        src={item.image}
-                        alt={item.title}
-                        width="700"
-                        height="450"
-                        loading="lazy"
-                        decoding="async"
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
-                      />
-                      
-                      {/* Subtitle Overlay */}
-                      <div className="absolute inset-x-0 bottom-0 p-6 md:p-8 bg-gradient-to-t from-black via-black/40 to-transparent flex flex-col justify-end opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                        <div className="flex items-center gap-2 text-blue-400 text-xs font-mono uppercase tracking-tighter mb-1">
-                          {item.isAward ? <Medal className="w-3 h-3" /> : <Award className="w-3 h-3" />}
-                          <span>{item.issuer}</span>
-                        </div>
-                        <h3 className="text-white text-lg md:text-xl font-bold line-clamp-1">{item.title}</h3>
-                      </div>
-
-                      {/* Click to Expand */}
-                      <div className="absolute top-4 right-4 p-2 rounded-full bg-black/40 backdrop-blur-md opacity-0 group-hover:opacity-100 transition-opacity">
-                         <Maximize2 className="w-4 h-4 text-white" />
-                      </div>
-                    </div>
+                      }}
+                    />
                   </motion.div>
                 );
               })}
@@ -194,24 +309,31 @@ export default function CertificatesAwards() {
           </div>
         </motion.div>
 
-        {/* Dots Indicator */}
-        <div className="flex justify-center gap-1 mt-16">
+        {/* ─── Dots Indicator — modern pill style ─── */}
+        <div className="flex justify-center gap-1.5 mt-14">
           {mergedItems.map((_, i) => (
             <button
               key={i}
               onClick={() => setCurrentIndex(i)}
               aria-label={`Go to certificate ${i + 1}`}
-              className="p-3 group"
+              className="p-2.5 group"
             >
-              <span className={`block h-1.5 rounded-full transition-all duration-500 ${
-                i === currentIndex ? 'w-10 bg-blue-500 shadow-[0_0_15px_rgba(59,130,246,0.6)]' : 'w-2 bg-slate-700 group-hover:bg-slate-600'
-              }`} />
+              <motion.span 
+                style={{ display: 'block', borderRadius: '9999px', width: 8, height: 6, backgroundColor: 'rgba(255,255,255,0.12)', boxShadow: '0 0 0px rgba(34,211,238,0)' }}
+                animate={{
+                  width: i === currentIndex ? 32 : 8,
+                  backgroundColor: i === currentIndex ? '#22d3ee' : 'rgba(255,255,255,0.12)',
+                  boxShadow: i === currentIndex ? '0 0 18px rgba(34,211,238,0.5)' : '0 0 0px rgba(34,211,238,0)',
+                }}
+                whileHover={{ backgroundColor: i === currentIndex ? '#22d3ee' : 'rgba(255,255,255,0.25)' }}
+                transition={{ type: 'spring', stiffness: 400, damping: 30 }}
+              />
             </button>
           ))}
         </div>
       </div>
 
-      {/* Certificate lightbox — minimal gallery viewer (image-first, slim caption) */}
+      {/* ─── Lightbox ─── */}
       <AnimatePresence>
         {expandedItem && (
           <motion.div
@@ -221,13 +343,20 @@ export default function CertificatesAwards() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 0.18 }}
-            className="fixed inset-0 z-[120] flex flex-col bg-[#020617] cursor-pointer"
+            transition={{ duration: 0.2 }}
+            className="fixed inset-0 z-[120] flex flex-col bg-black/90 backdrop-blur-xl cursor-pointer"
             onClick={() => setExpandedItem(null)}
           >
-            <button
+            {/* Close Button */}
+            <motion.button
               type="button"
-              className="absolute right-4 top-4 z-10 flex h-10 w-10 items-center justify-center rounded-full bg-black/50 text-white/90 ring-1 ring-white/15 transition hover:bg-white/10 hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400 sm:right-6 sm:top-6 sm:h-11 sm:w-11"
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: 0.15 }}
+              className="absolute right-4 top-4 z-10 flex h-11 w-11 items-center justify-center rounded-xl 
+                         bg-white/5 text-white/80 border border-white/10 
+                         hover:bg-white/10 hover:text-white hover:border-cyan-500/30 hover:shadow-[0_0_25px_rgba(34,211,238,0.15)]
+                         transition-all duration-300 focus:outline-none sm:right-6 sm:top-6"
               aria-label="Close"
               onClick={(e) => {
                 e.stopPropagation();
@@ -235,15 +364,17 @@ export default function CertificatesAwards() {
               }}
             >
               <X className="h-5 w-5" strokeWidth={2} />
-            </button>
+            </motion.button>
 
             <div className="flex min-h-0 flex-1 items-center justify-center overflow-y-auto px-4 pb-6 pt-16 sm:px-6 sm:pb-10 sm:pt-20 lg:px-10">
               <motion.div
-                initial={{ opacity: 0, y: 14 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: 10 }}
-                transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
-                className="grid w-full max-w-6xl grid-cols-1 gap-0 overflow-hidden rounded-2xl ring-1 ring-white/[0.08] lg:grid-cols-2 lg:max-h-[min(88vh,920px)]"
+                initial={{ opacity: 0, y: 20, scale: 0.96 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, y: 10, scale: 0.98 }}
+                transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
+                className="grid w-full max-w-6xl grid-cols-1 gap-0 overflow-hidden rounded-2xl 
+                           ring-1 ring-white/[0.08] lg:grid-cols-2 lg:max-h-[min(88vh,920px)]
+                           shadow-[0_60px_120px_-40px_rgba(0,0,0,0.8)]"
                 onClick={(e) => e.stopPropagation()}
               >
                 {/* Left — certificate image */}
@@ -272,8 +403,9 @@ export default function CertificatesAwards() {
 
                 {/* Right — description panel */}
                 <aside className="relative flex flex-col border-t border-white/[0.06] bg-gradient-to-b from-slate-900/95 via-[#0c1222] to-[#060911] lg:border-l lg:border-t-0">
+                  {/* Accent line */}
                   <div
-                    className="pointer-events-none absolute left-0 top-0 h-full w-px bg-gradient-to-b from-cyan-400/50 via-blue-500/30 to-transparent lg:block"
+                    className="pointer-events-none absolute left-0 top-0 h-full w-px bg-gradient-to-b from-cyan-400/50 via-blue-500/30 to-transparent hidden lg:block"
                     aria-hidden
                   />
                   <div className="relative flex flex-1 flex-col justify-between gap-8 p-6 sm:p-8 lg:p-10 lg:pl-11">

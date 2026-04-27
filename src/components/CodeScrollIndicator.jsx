@@ -6,7 +6,7 @@ export default function CodeScrollIndicator() {
   const percentRef = useRef(null);
 
   useEffect(() => {
-    return scrollYProgress.onChange((v) => {
+    return scrollYProgress.on('change', (v) => {
       if (percentRef.current) {
         percentRef.current.textContent = Math.round(v * 100);
       }
