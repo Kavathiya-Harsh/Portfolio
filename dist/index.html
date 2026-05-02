@@ -4,34 +4,56 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <title>Harsh Kavathiya | Full Stack Developer & 5x Hackathon Winner</title>
-    <meta name="description" content="Harsh Kavathiya — Full Stack Developer, 5x Hackathon Winner, and Innovation Specialist from Gujarat, India. Explore projects, skills, and achievements in web development, React, Node.js, and more." />
+    <meta name="description" content="Harsh Kavathiya — Full Stack Developer, 5x Hackathon Winner, and Innovation Specialist from Gujarat, India. Specialist in React, Node.js, and high-performance web applications." />
+    <meta name="keywords" content="Harsh Kavathiya Portfolio, Harsh, Kavathiya, Full Stack Developer, Software Engineer, Portfolio, Hackathon Winner, React Developer, Node.js Developer, Gujarat, India, IIT Madras, IIT Hyderabad, DA-IICT" />
+    <meta name="author" content="Harsh Kavathiya" />
+    <link rel="canonical" href="https://harshkavathiya.vercel.app/" />
     <meta name="theme-color" content="#060c1a" />
 
     <!-- Primary Meta Tags -->
     <meta name="title" content="Harsh Kavathiya | Full Stack Developer & 5x Hackathon Winner" />
 
-    <!-- Open Graph -->
+    <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://harshkavathiya.vercel.app/" />
     <meta property="og:title" content="Harsh Kavathiya | Full Stack Developer & 5x Hackathon Winner" />
-    <meta property="og:description" content="Full Stack Developer, 5x Hackathon Winner, and Innovation Specialist. Explore projects, skills, and achievements." />
-    <meta property="og:url" content="https://harshkavathiya.vercel.app" />
+    <meta property="og:description" content="Explore the portfolio of Harsh Kavathiya, a Full Stack Developer and 5x Hackathon Winner specializing in building high-performance web solutions." />
+    <meta property="og:image" content="https://res.cloudinary.com/dvv5mtpli/image/upload/q_auto,f_auto,w_1200,h_630,c_fill/v1776351778/Harsh_Kavathiya_Profile_duaqrs.jpg" />
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image" />
+    <meta property="twitter:url" content="https://harshkavathiya.vercel.app/" />
+    <meta property="twitter:title" content="Harsh Kavathiya | Full Stack Developer & 5x Hackathon Winner" />
+    <meta property="twitter:description" content="Explore the portfolio of Harsh Kavathiya, a Full Stack Developer and 5x Hackathon Winner specializing in building high-performance web solutions." />
+    <meta property="twitter:image" content="https://res.cloudinary.com/dvv5mtpli/image/upload/q_auto,f_auto,w_1200,h_630,c_fill/v1776351778/Harsh_Kavathiya_Profile_duaqrs.jpg" />
+
+    <!-- JSON-LD Structured Data for Person -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Person",
+      "name": "Harsh Kavathiya",
+      "url": "https://harshkavathiya.vercel.app/",
+      "image": "https://res.cloudinary.com/dvv5mtpli/image/upload/q_auto,f_auto,w_600/v1776351778/Harsh_Kavathiya_Profile_duaqrs.jpg",
+      "sameAs": [
+        "https://github.com/Kavathiya-Harsh",
+        "https://linkedin.com/in/harsh-kavathiya"
+      ],
+      "jobTitle": "Full Stack Developer",
+      "worksFor": {
+        "@type": "Organization",
+        "name": "Freelance"
+      },
+      "description": "Full Stack Developer and 5x Hackathon Winner specializing in high-performance React and Node.js applications.",
+      "knowsAbout": ["Web Development", "React", "Node.js", "Full Stack Development", "Hackathons", "Software Engineering"]
+    }
+    </script>
 
     <!-- 1. Critical App Shell Style (Instant Paint) -->
     <style>
       *,*::before,*::after{box-sizing:border-box}
       :root { --base: #080d1a; --text: #f8fafc; color-scheme: dark; }
-      body { margin: 0; background-color: #080d1a; color: #f8fafc; font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif; overflow-x: hidden; }
-
-      /* App shell — loading overlay */
-      #app-shell { position: fixed; inset: 0; z-index: 9999; display: flex; align-items: center; justify-content: center; background: radial-gradient(circle at 50% 50%, #0b1628 0%, #060c1a 100%); transition: opacity 0.5s ease-out; pointer-events: none; }
-      .shell-logo { width: 60px; height: 60px; opacity: 0.1; animation: shell-pulse 2s ease-in-out infinite; }
-      @keyframes shell-pulse { 0%, 100% { opacity: 0.05; transform: scale(0.98); } 50% { opacity: 0.15; transform: scale(1.02); } }
-
-      /* Skeleton & Static FCP Content */
-      .hero-skeleton { position: absolute; top: 50%; left: 5%; transform: translateY(-50%); width: 45%; pointer-events: none; }
-      .sk-name { color: #fff; font-size: clamp(3rem, 6vw, 5rem); font-weight: 800; margin: 0; letter-spacing: -0.02em; line-height: 1; }
-      .sk-role { color: #22d3ee; font-family: 'DM Mono', monospace; font-size: 1rem; margin-top: 1rem; opacity: 0.8; }
-      .skEL { height: 2px; background: rgba(59,130,246,0.15); border-radius: 4px; margin-top: 2rem; width: 60%; }
+      body { margin: 0; background-color: #010204; color: #f8fafc; font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif; overflow-x: hidden; }
 
       /* Font face declarations — inlined for zero-chain discovery */
       @font-face { font-family: 'Plus Jakarta Sans'; font-style: normal; font-weight: 400; font-display: swap; src: url(https://fonts.gstatic.com/s/plusjakartasans/v12/LDIbaomQNQcsA88c7O9yZ4KMCoOg4IA6-91aHEjcWuA_qU7NSg.ttf) format('truetype'); }
@@ -47,48 +69,27 @@
     <link rel="preconnect" href="https://res.cloudinary.com" crossorigin />
     <link rel="dns-prefetch" href="https://api.github.com" />
     
-    <!-- 3. Zero-Chain Font Preloads — ALL critical font files -->
-    <link rel="preload" href="https://fonts.gstatic.com/s/plusjakartasans/v12/LDIbaomQNQcsA88c7O9yZ4KMCoOg4IA6-91aHEjcWuA_qU7NSg.ttf" as="font" type="font/ttf" crossorigin />
-    <link rel="preload" href="https://fonts.gstatic.com/s/plusjakartasans/v12/LDIbaomQNQcsA88c7O9yZ4KMCoOg4IA6-91aHEjcWuA_TknNSg.ttf" as="font" type="font/ttf" crossorigin />
+    <!-- 3. Critical Font Preloads — only the 2 most important weights -->
     <link rel="preload" href="https://fonts.gstatic.com/s/plusjakartasans/v12/LDIbaomQNQcsA88c7O9yZ4KMCoOg4IA6-91aHEjcWuA_KUnNSg.ttf" as="font" type="font/ttf" crossorigin />
     <link rel="preload" href="https://fonts.gstatic.com/s/inter/v20/UcCO3FwrK3iLTeHuS_nVMrMxCp50SjIw2boKoduKmMEVuLyfMZg.ttf" as="font" type="font/ttf" crossorigin />
-    <link rel="preload" href="https://fonts.gstatic.com/s/dmmono/v16/aFTU7PB1QTsUX8KYhh0.ttf" as="font" type="font/ttf" crossorigin />
 
-    <!-- 4. LCP Image Preload (Precision Sync) -->
+    <!-- 4. LCP Image Preload — Hero profile photo -->
     <link rel="preload" as="image" 
-          imagesrcset="https://res.cloudinary.com/dvv5mtpli/image/upload/q_auto,f_auto,w_400/v1776351778/Harsh_Kavathiya_Profile_duaqrs.jpg 400w, https://res.cloudinary.com/dvv5mtpli/image/upload/q_auto,f_auto,w_500/v1776351778/Harsh_Kavathiya_Profile_duaqrs.jpg 500w, https://res.cloudinary.com/dvv5mtpli/image/upload/q_auto,f_auto,w_900/v1776351778/Harsh_Kavathiya_Profile_duaqrs.jpg 900w"
-          imagesizes="(max-width: 640px) 300px, (max-width: 1024px) 400px, 500px"
+          href="https://res.cloudinary.com/dvv5mtpli/image/upload/q_auto,f_auto,w_400/v1776351778/Harsh_Kavathiya_Profile_duaqrs.jpg"
           fetchpriority="high" />
 
-    <link rel="icon" type="image/jpeg" href="https://res.cloudinary.com/dvv5mtpli/image/upload/q_auto,f_auto,w_80,c_fill,g_face/v1776355358/hk_logo_pb2u8w.jpg" />
-    <link rel="apple-touch-icon" href="https://res.cloudinary.com/dvv5mtpli/image/upload/q_auto,f_auto,w_180,c_fill,g_face/v1776355358/hk_logo_pb2u8w.jpg" />
-    <script type="module" crossorigin src="/assets/index-CfPJb9La.js"></script>
-    <link rel="modulepreload" crossorigin href="/assets/animation-ZySnE9Fl.js">
-    <link rel="modulepreload" crossorigin href="/assets/react-vendor-C0IzkZZE.js">
-    <link rel="modulepreload" crossorigin href="/assets/icons-DX1Ig0CU.js">
-    <link rel="stylesheet" crossorigin href="/assets/style-Cpl_3vDG.css">
+    <!-- Favicons — HK Logo -->
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/site.webmanifest" />
+    <script type="module" crossorigin src="/assets/index-Bsq7KJSK.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/router-Dia-6GUi.js">
+    <link rel="modulepreload" crossorigin href="/assets/animation-Dzm92fnt.js">
+    <link rel="modulepreload" crossorigin href="/assets/icons-B1MIsYN5.js">
+    <link rel="stylesheet" crossorigin href="/assets/style-CXvnAAxE.css">
   </head>
   <body>
-    <div id="root">
-      <!-- Same gradient + grid as LoadingScreen; branding animates once in React (no duplicate static name). -->
-      <div id="app-shell" aria-hidden="true">
-        <div class="shell-grid"></div>
-        <div class="hero-skeleton">
-          <h1 class="sk-name">Harsh Kavathiya</h1>
-          <p class="sk-role">Full Stack Developer &amp; Innovation Specialist</p>
-          <div class="skEL"></div>
-        </div>
-        <svg class="shell-logo" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <defs>
-            <linearGradient id="logo-grad" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stop-color="#3b82f6" />
-              <stop offset="100%" stop-color="#06b6d4" />
-            </linearGradient>
-          </defs>
-          <rect width="100" height="100" rx="24" fill="url(#logo-grad)" fill-opacity="0.1" stroke="url(#logo-grad)" stroke-width="2"/>
-          <path d="M30 30V70M30 50H50M50 30V70M70 30L50 50M50 50L70 70" stroke="white" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>
-      </div>
-    </div>
+    <div id="root"></div>
   </body>
 </html>

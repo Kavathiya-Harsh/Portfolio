@@ -50,7 +50,7 @@ function AnimatedName({ firstName, lastName, isReady, instant = false }) {
       style={{ fontSize: 'clamp(1.7rem, 5.5vw, 5.25rem)' }}
       initial={instant ? 'visible' : 'hidden'}
       animate={isReady ? 'visible' : 'hidden'}
-      aria-label={`Harsh Kavathiya — Full Stack Developer & 5x Hackathon Winner`}
+      aria-label={`Harsh Kavathiya — Full Stack Developer`}
       variants={{
         hidden: {},
         visible: { transition: { staggerChildren: instant ? 0 : 0.042, delayChildren: instant ? 0 : 0.05 } },
@@ -218,98 +218,89 @@ function InfoCard({ isLowPower }) {
 /* PhotoSection — profile photo with premium orb effects  */
 /* ─────────────────────────────────────────────────────── */
 function PhotoSection({ isLowPower, isReady, isMobile, instant = false }) {
-  const [photoError, setPhotoError] = React.useState(false);
+  const skipEffects = isMobile || isLowPower;
 
   return (
     <motion.div
       initial={instant ? { opacity: 1, scale: 1, y: 0 } : { opacity: 0, scale: 0.88, y: 20 }}
       animate={isReady ? { opacity: 1, scale: 1, y: 0 } : { opacity: 0, scale: 0.88, y: 20 }}
       transition={instant ? { duration: 0 } : { duration: 0.9, ease: EXPO, delay: 0.15 }}
-      className="flex justify-center items-center order-1 lg:order-2 will-change-transform"
+      className="flex justify-center items-center order-1 lg:order-2"
     >
       <div className="relative group">
-        {/* Outer glow pulse */}
-        <motion.div
-          className="absolute -inset-16 rounded-full pointer-events-none"
-          style={{ background: 'radial-gradient(circle, rgba(59,130,246,0.12) 0%, transparent 70%)' }}
-          animate={{ opacity: [0.5, 1, 0.5] }}
-          transition={{ duration: 5, repeat: Infinity, ease: 'easeInOut' }}
-        />
-
-        {/* Orbiting dashed ring */}
-        <motion.div
-          className="absolute -inset-5 rounded-full border-2 border-dashed border-blue-500/20"
-          animate={!isLowPower ? { rotate: 360 } : {}}
-          transition={{ duration: 22, repeat: Infinity, ease: 'linear' }}
-        />
-        {/* Outer static ring */}
-        <motion.div
-          className="absolute -inset-9 rounded-full border border-cyan-400/8"
-          animate={!isLowPower ? { rotate: -360 } : {}}
-          transition={{ duration: 32, repeat: Infinity, ease: 'linear' }}
-        />
+        {/* Desktop-only decorative effects */}
+        {!skipEffects && (
+          <>
+            {/* Outer glow pulse */}
+            <motion.div
+              className="absolute -inset-16 rounded-full pointer-events-none"
+              style={{ background: 'radial-gradient(circle, rgba(59,130,246,0.12) 0%, transparent 70%)' }}
+              animate={{ opacity: [0.5, 1, 0.5] }}
+              transition={{ duration: 5, repeat: Infinity, ease: 'easeInOut' }}
+            />
+            {/* Orbiting dashed ring */}
+            <motion.div
+              className="absolute -inset-5 rounded-full border-2 border-dashed border-blue-500/20"
+              animate={{ rotate: 360 }}
+              transition={{ duration: 22, repeat: Infinity, ease: 'linear' }}
+            />
+            {/* Outer static ring */}
+            <motion.div
+              className="absolute -inset-9 rounded-full border border-cyan-400/8"
+              animate={{ rotate: -360 }}
+              transition={{ duration: 32, repeat: Infinity, ease: 'linear' }}
+            />
+            {/* Floating accent dots */}
+            {[
+              { top: '16%', right: '-10px', delay: 0 },
+              { top: '50%', left: '-10px', delay: 0.9 },
+              { top: '80%', right: '-10px', delay: 1.8 },
+            ].map((dot, i) => (
+              <motion.div
+                key={i}
+                className="absolute w-2 h-2 rounded-full bg-blue-400/70"
+                style={{ ...dot, boxShadow: '0 0 8px rgba(59,130,246,0.7)' }}
+                animate={{ y: [0, -10, 0], opacity: [0.5, 1, 0.5] }}
+                transition={{ duration: 3, delay: dot.delay, repeat: Infinity, ease: 'easeInOut' }}
+              />
+            ))}
+          </>
+        )}
 
         {/* Spinning gradient border */}
-        <motion.div
+        <div
           className="absolute -inset-1 rounded-full p-[3px]"
           style={{
             background: 'linear-gradient(135deg, #3b82f6, #06b6d4, #8b5cf6, #3b82f6)',
-            boxShadow: '0 0 70px -18px rgba(37,99,235,0.65)',
+            boxShadow: skipEffects ? 'none' : '0 0 70px -18px rgba(37,99,235,0.65)',
           }}
-          animate={!isLowPower ? { rotate: 360 } : {}}
-          transition={{ duration: 14, repeat: Infinity, ease: 'linear' }}
         >
           <div className="w-full h-full rounded-full bg-[#080d1a]" />
-        </motion.div>
-
-        {/* Floating accent dots */}
-        {[
-          { top: '16%', right: '-10px', delay: 0 },
-          { top: '50%', left: '-10px', delay: 0.9 },
-          { top: '80%', right: '-10px', delay: 1.8 },
-        ].map((dot, i) => (
-          <motion.div
-            key={i}
-            className="absolute w-2 h-2 rounded-full bg-blue-400/70"
-            style={{ ...dot, boxShadow: '0 0 8px rgba(59,130,246,0.7)' }}
-            animate={{ y: [0, -10, 0], opacity: [0.5, 1, 0.5] }}
-            transition={{ duration: 3, delay: dot.delay, repeat: Infinity, ease: 'easeInOut' }}
-          />
-        ))}
+        </div>
 
         {/* Photo */}
         <div className="relative w-56 h-56 sm:w-72 sm:h-72 md:w-80 md:h-80 lg:w-[22rem] lg:h-[22rem] rounded-full overflow-hidden border-[5px] border-[#080d1a] bg-slate-800 z-10 shadow-2xl">
-          {!photoError ? (
-            <picture>
-              <source 
-                media="(max-width: 1024px)" 
-                srcSet="https://res.cloudinary.com/dvv5mtpli/image/upload/q_auto,f_auto,w_400/v1776351778/Harsh_Kavathiya_Profile_duaqrs.jpg" 
-              />
-              <source 
-                media="(min-width: 1025px)" 
-                srcSet="https://res.cloudinary.com/dvv5mtpli/image/upload/q_auto,f_auto,w_800/v1776351778/Harsh_Kavathiya_Profile_duaqrs.jpg" 
-              />
-              <img
-                src="https://res.cloudinary.com/dvv5mtpli/image/upload/q_auto,f_auto,w_800/v1776351778/Harsh_Kavathiya_Profile_duaqrs.jpg"
-                alt="Harsh Kavathiya - Full Stack Developer & Hackathon Winner"
-                width="352"
-                height="352"
-                fetchpriority="high"
-                loading="eager"
-                decoding="async"
-                className="w-full h-full object-cover object-top scale-105 group-hover:scale-110 transition-transform duration-[1.2s] will-change-transform"
-                onError={() => setPhotoError(true)}
-              />
-            </picture>
-          ) : (
-            <div className="w-full h-full flex flex-col items-center justify-center bg-gradient-to-br from-blue-600 to-cyan-500">
-              <span className="text-5xl font-black text-white tracking-widest">{profile.initials}</span>
-              <p className="text-[10px] text-white/50 uppercase tracking-[0.2em] mt-2 font-mono">Profile</p>
-            </div>
-          )}
+          <picture>
+            <source
+              media="(max-width: 1024px)"
+              srcSet="https://res.cloudinary.com/dvv5mtpli/image/upload/q_auto,f_auto,w_400/v1776351778/Harsh_Kavathiya_Profile_duaqrs.jpg"
+            />
+            <source
+              media="(min-width: 1025px)"
+              srcSet="https://res.cloudinary.com/dvv5mtpli/image/upload/q_auto,f_auto,w_800/v1776351778/Harsh_Kavathiya_Profile_duaqrs.jpg"
+            />
+            <img
+              src="https://res.cloudinary.com/dvv5mtpli/image/upload/q_auto,f_auto,w_400/v1776351778/Harsh_Kavathiya_Profile_duaqrs.jpg"
+              alt="Harsh Kavathiya - Full Stack Developer & Hackathon Winner"
+              width="352"
+              height="352"
+              fetchPriority="high"
+              loading="eager"
+              decoding="async"
+              className="w-full h-full object-cover object-top"
+            />
+          </picture>
         </div>
-
-
       </div>
     </motion.div>
   );

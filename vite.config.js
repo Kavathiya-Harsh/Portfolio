@@ -8,19 +8,18 @@ export default defineConfig({
     target: 'esnext',
     minify: 'esbuild',
     chunkSizeWarningLimit: 500,
-    /* Single CSS file: one round-trip, matches <link href="/src/index.css"> in index.html */
     cssCodeSplit: false,
     cssMinify: true,
     reportCompressedSize: false,
+    modulePreload: { polyfill: false },
     rollupOptions: {
       output: {
         manualChunks: {
-          // Split core vendor dependencies for better long-term caching
           'react-vendor': ['react', 'react-dom'],
+          'router': ['react-router-dom'],
           'animation': ['framer-motion'],
           'icons': ['lucide-react'],
         },
-        // Content-hashed filenames for long-term caching
         assetFileNames: 'assets/[name]-[hash][extname]',
         chunkFileNames: 'assets/[name]-[hash].js',
         entryFileNames: 'assets/[name]-[hash].js',
