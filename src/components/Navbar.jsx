@@ -228,26 +228,14 @@ export default function Navbar() {
           aria-label="Harsh Kavathiya - Portfolio Home"
         >
           <motion.div whileHover={{ rotateY: 12, rotateX: -6 }} className="relative z-10">
-            <div
-              className="w-10 h-10 rounded-xl flex items-center justify-center will-change-transform select-none"
-              style={{
-                background: 'linear-gradient(135deg, rgba(212,175,55,0.12) 0%, rgba(212,175,55,0.05) 100%)',
-                border: '1px solid rgba(212,175,55,0.3)',
-                boxShadow: '0 0 14px rgba(212,175,55,0.18)',
-              }}
-            >
-              <span
-                className="text-sm font-black tracking-tight leading-none"
-                style={{
-                  background: 'linear-gradient(135deg, #f5e07a 0%, #d4af37 50%, #a07820 100%)',
-                  WebkitBackgroundClip: 'text',
-                  WebkitTextFillColor: 'transparent',
-                  backgroundClip: 'text',
-                }}
-              >
-                HK
-              </span>
-            </div>
+            <img
+              src="https://res.cloudinary.com/dvv5mtpli/image/upload/q_auto,f_auto,w_80,h_80,c_fill/v1776355358/hk_logo_pb2u8w.jpg"
+              alt="Harsh Kavathiya Logo"
+              width="40"
+              height="40"
+              className="w-10 h-10 rounded-xl object-contain will-change-transform"
+              style={{ filter: 'drop-shadow(0 0 8px rgba(212,175,55,0.5))' }}
+            />
           </motion.div>
           <motion.div
             animate={{ opacity: 0, scale: 0.8 }}

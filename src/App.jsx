@@ -46,8 +46,6 @@ const SHOULD_SKIP_INTRO = (() => {
   // Always skip for performance auditors (Lighthouse, bots)
   if (/bot|googlebot|crawler|spider|robot|crawling|lighthouse|GTmetrix|Pingdom|PageSpeed/i.test(navigator.userAgent))
     return true;
-  // Skip on mobile devices — instant FCP/LCP is more important than a cinematic intro
-  if (window.innerWidth < 1024 || ('ontouchstart' in window)) return true;
   
   // NOTE: Session storage check removed as per user request to always show preloader on reload
   return false;
@@ -143,7 +141,6 @@ function SectionDivider() {
 function SectionFallback() {
   return <div className="min-h-[200px]" />;
 }
-
 
 export default function App() {
   const isMobile = useBreakpoint(1024);
