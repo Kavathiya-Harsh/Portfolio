@@ -50,7 +50,7 @@ function AnimatedName({ firstName, lastName, isReady, instant = false }) {
       style={{ fontSize: 'clamp(1.7rem, 5.5vw, 5.25rem)' }}
       initial={instant ? 'visible' : 'hidden'}
       animate={isReady ? 'visible' : 'hidden'}
-      aria-label={`Harsh Kavathiya — Full Stack Developer & 5x Hackathon Winner`}
+      aria-label={`Harsh Kavathiya — Full Stack Developer & Problem Solver`}
       variants={{
         hidden: {},
         visible: { transition: { staggerChildren: instant ? 0 : 0.042, delayChildren: instant ? 0 : 0.05 } },
