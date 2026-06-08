@@ -168,71 +168,39 @@ export default function ContactForm() {
     setStatus('sending');
 
     try {
-      // Lazy-load EmailJS & confetti on first submit
-      const [emailjsModule, confettiModule] = await Promise.all([
-        import('@emailjs/browser'),
-        import('canvas-confetti'),
-      ]);
-
-      const emailjs = emailjsModule.default;
+      // Lazy-load confetti on first submit
+      const confettiModule = await import('canvas-confetti');
       const confetti = confettiModule.default;
 
-      // 1. Save to MongoDB Atlas via Node backend
-      const dbResponse = await fetch('/api/messages', {
+      // Send to server — it handles both DB save + email notification
+      const response = await fetch('/api/messages', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formState)
       });
 
-      if (!dbResponse.ok) {
-        throw new Error('Failed to save to database');
+      const data = await response.json().catch(() => ({}));
+
+      if (response.ok && data.success) {
+        setStatus('success');
+        
+        // Sweet Success Celebration!
+        confetti({
+          particleCount: 150,
+          spread: 70,
+          origin: { y: 0.6 },
+          colors: ['#3b82f6', '#22d3ee', '#6366f1']
+        });
+
+        setFormState({ name: '', email: '', message: '' });
+        setTimeout(() => setStatus('idle'), 5000);
+      } else {
+        throw new Error(data.error || 'Failed to send message. Please try again.');
       }
-
-      // 2. Send Email via EmailJS
-      const serviceId = import.meta.env.VITE_EMAILJS_SERVICE_ID;
-      const templateId = import.meta.env.VITE_EMAILJS_TEMPLATE_ID;
-      const publicKey = import.meta.env.VITE_EMAILJS_PUBLIC_KEY;
-
-      if (serviceId && templateId && publicKey) {
-        await emailjs.send(
-          serviceId,
-          templateId,
-          {
-            from_name: formState.name,
-            from_email: formState.email,
-            subject: `Portfolio Message from ${formState.name}`,
-            message: formState.message,
-            to_email: 'harsh.kavathiya.cg@gmail.com',
-            time: new Date().toLocaleString(),
-          },
-          publicKey
-        );
-      }
-
-      setStatus('success');
-      
-      // Sweet Success Celebration!
-      confetti({
-        particleCount: 150,
-        spread: 70,
-        origin: { y: 0.6 },
-        colors: ['#3b82f6', '#22d3ee', '#6366f1']
-      });
-
-      setFormState({ name: '', email: '', message: '' });
-      setTimeout(() => setStatus('idle'), 5000);
     } catch (error) {
       console.error('Submission failed:', error);
       setStatus('error');
-      
-      let msg = 'Failed to send. Please check your backend and EmailJS settings.';
-      if (error.message === 'timeout') {
-         msg = 'Request timed out. This is usually due to a slow connection or database error.';
-      } else if (error.message) {
-         msg = `Error: ${error.message}`;
-      }
-      
-      setErrorMessage(msg);
+      setErrorMessage(error.message || 'Failed to send. Please try again later.');
       setTimeout(() => setStatus('idle'), 8000);
     }
   };
