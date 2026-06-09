@@ -56,7 +56,7 @@ export const projects = [
   },
   {
     id: 5,
-    title: 'Woop - best Fitness website',
+    title: 'Whoop - best Fitness website',
     category: 'Full Stack',
     type: 'frontend',
     description: 'A full-stack fitness and wellness platform offering workout tracking, meal planning, and a community-driven health dashboard.',
