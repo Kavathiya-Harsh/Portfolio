@@ -13,12 +13,12 @@ import { usePerformance } from '../context/PerformanceContext';
 const MotionLink = motion.create(Link);
 
 const navLinks = [
-  { href: 'hero',       label: 'Home' },
-  { href: 'about',      label: 'About' },
-  { href: 'skills',     label: 'Skills' },
-  { href: 'projects',   label: 'Projects' },
+  { href: 'hero', label: 'Home' },
+  { href: 'about', label: 'About' },
+  { href: 'skills', label: 'Skills' },
+  { href: 'projects', label: 'Projects' },
   { href: 'hackathons', label: 'Hackathons' },
-  { href: 'contact',    label: 'Contact' },
+  { href: 'contact', label: 'Contact' },
 ];
 
 const RESUME_URL = profile.resumeUrl;
@@ -87,8 +87,8 @@ function NavItem({ link, isActive, isHovered, onHoverEnter, onHoverLeave, onClic
             textShadow: isActive
               ? '0 0 16px rgba(6,182,212,0.5)'
               : isHovered
-              ? '0 0 12px rgba(255,255,255,0.3)'
-              : 'none',
+                ? '0 0 12px rgba(255,255,255,0.3)'
+                : 'none',
             y: isHovered && !isActive ? -1 : 0,
           }}
           transition={{ duration: 0.2, ease: 'easeOut' }}
@@ -175,11 +175,11 @@ function ParticlesToggleBtn() {
 
 /* ─── Main Navbar ────────────────────────────────────────────────────────── */
 export default function Navbar() {
-  const isMobile   = useBreakpoint(1024);
-  const [scrolled,   setScrolled]   = useState(false);
+  const isMobile = useBreakpoint(1024);
+  const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [activeId,   setActiveId]   = useState('hero');
-  const [hoveredId,  setHoveredId]  = useState(null);
+  const [activeId, setActiveId] = useState('hero');
+  const [hoveredId, setHoveredId] = useState(null);
   const location = useLocation();
   const currentHash = location.hash || '#hero';
 
@@ -198,11 +198,11 @@ export default function Navbar() {
       const el = document.getElementById(id);
       if (!el) return;
       const o = new IntersectionObserver(
-        ([e]) => { 
+        ([e]) => {
           if (e.isIntersecting) {
             // Update active state based on scroll
             setActiveId(id);
-          } 
+          }
         },
         { rootMargin: '-30% 0px -40% 0px', threshold: 0 }
       );
@@ -239,11 +239,10 @@ export default function Navbar() {
       initial={{ y: -80, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ type: 'spring', stiffness: 120, damping: 20, delay: 0.1 }}
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
-        scrolled
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${scrolled
           ? `bg-[#0b1120]/90 border-b border-slate-700/40 shadow-[0_4px_40px_rgba(0,0,0,0.5)] ${!isMobile && 'backdrop-blur-2xl'}`
           : 'bg-transparent'
-      }`}
+        }`}
     >
       {/* top gold accent line */}
       <motion.div
@@ -281,7 +280,7 @@ export default function Navbar() {
                   <stop offset="100%" stopColor="#a855f7" />
                 </linearGradient>
               </defs>
-              
+
               {/* Outer soft shield/hexagon container */}
               <polygon
                 points="50,8 88,30 88,70 50,92 12,70 12,30"
@@ -300,7 +299,7 @@ export default function Navbar() {
                 strokeLinecap="round"
                 strokeLinejoin="round"
               />
-              
+
               {/* K letter arms (connecting to the right leg of H) */}
               <path
                 d="M 50,50 L 66,32 M 50,50 L 66,68"
@@ -387,11 +386,10 @@ export default function Navbar() {
                     <Link
                       to={`/${link.href}`}
                       onClick={handleLinkClick}
-                      className={`flex items-center gap-3 px-4 py-3.5 rounded-xl font-medium text-sm transition-all duration-200 ${
-                        isActive
+                      className={`flex items-center gap-3 px-4 py-3.5 rounded-xl font-medium text-sm transition-all duration-200 ${isActive
                           ? 'text-[#06b6d4] border border-[#06b6d4]/20'
                           : 'text-slate-300 hover:text-white hover:bg-white/5'
-                      }`}
+                        }`}
                       style={isActive ? {
                         background: 'radial-gradient(ellipse at left, rgba(6,182,212,0.15) 0%, transparent 70%)',
                       } : {}}

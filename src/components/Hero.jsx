@@ -388,7 +388,7 @@ export default function Hero({ isReady = false }) {
                 whileHover={{ scale: 1.05, y: -2, boxShadow: '0 0 20px rgba(6,182,212,0.4)' }}
                 whileTap={{ scale: 0.97 }}
                 className="relative px-8 py-3.5 rounded-xl text-white font-bold text-sm sm:text-base flex items-center justify-center gap-2 group overflow-hidden"
-                style={{ background: 'linear-gradient(135deg, #0891b2 0%, #06b6d4 100%)', border: '1px solid rgba(6,182,212,0.3)' }}
+                style={{ background: 'linear-gradient(135deg, #2563eb 0%, #06b6d4 100%', border: '1px solid rgba(6,182,212,0.3)' }}
                 title="View My Work"
               >
                 {/* Shimmer on hover */}

@@ -89,40 +89,116 @@ function ScrollToPathElement() {
 function QuickActionsDock() {
   return (
     <motion.div
-      initial={{ opacity: 0, y: 40 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5, delay: 0.8 }}
-      className="fixed inset-x-0 bottom-0 sm:bottom-4 md:bottom-6 flex justify-center z-[100]"
+      initial={{ opacity: 0, y: 60, scale: 0.92 }}
+      animate={{ opacity: 1, y: 0, scale: 1 }}
+      transition={{ duration: 0.65, delay: 0.9, ease: [0.16, 1, 0.3, 1] }}
+      className="fixed inset-x-0 bottom-0 sm:bottom-6 md:bottom-8 flex justify-center z-[100] pointer-events-none"
     >
-      <div className="w-full sm:w-auto p-4 sm:p-0 pointer-events-none">
-        <div className="pointer-events-auto flex items-center gap-3 rounded-t-2xl sm:rounded-2xl bg-[#111827]/95 border-t sm:border border-slate-700/60 backdrop-blur-xl px-4 py-3 sm:px-4 sm:py-2.5 shadow-[0_-8px_30px_rgba(0,0,0,0.5)] sm:shadow-[0_24px_60px_rgba(0,0,0,0.6)] w-full sm:w-auto"
-          style={{ paddingBottom: 'calc(0.75rem + env(safe-area-inset-bottom, 0px))' }}>
-          <span className="hidden lg:inline text-[10px] font-medium uppercase tracking-[0.2em] text-slate-400 mr-2">
-            Quick Actions
-          </span>
-          <div className="grid grid-cols-2 sm:flex items-center gap-3 w-full sm:w-auto">
-            <motion.a
-              href={RESUME_URL}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center justify-center gap-2 rounded-xl bg-blue-600 px-4 py-3 sm:px-3 sm:py-2 text-xs font-bold text-white shadow-md shadow-blue-500/20 hover:bg-blue-500 transition-colors min-h-[44px] sm:min-h-0"
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-            >
-              <FileText className="w-4 h-4" />
-              <span>PDF</span>
-            </motion.a>
-            <motion.a
-              href={LINKEDIN_URL}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center justify-center gap-2 rounded-xl bg-slate-800 px-4 py-3 sm:px-3 sm:py-2 text-xs font-bold text-white border border-slate-600/60 hover:bg-slate-700 transition-colors min-h-[44px] sm:min-h-0"
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-            >
-              <Linkedin className="w-4 h-4" />
-              <span>LinkedIn</span>
-            </motion.a>
+      <div className="w-full sm:w-auto px-4 pb-4 sm:p-0 pointer-events-auto">
+
+        {/* Outer glow ring */}
+        <div className="relative">
+          <motion.div
+            className="absolute -inset-[1px] rounded-t-2xl sm:rounded-2xl pointer-events-none"
+            style={{
+              background: 'linear-gradient(135deg, rgba(56,189,248,0.35) 0%, rgba(99,102,241,0.25) 50%, rgba(56,189,248,0.15) 100%)',
+            }}
+            animate={{ opacity: [0.6, 1, 0.6] }}
+            transition={{ duration: 3.5, repeat: Infinity, ease: 'easeInOut' }}
+          />
+
+          {/* Dock body */}
+          <div
+            className="relative flex items-center gap-2 sm:gap-3 rounded-t-2xl sm:rounded-2xl px-3 py-3 sm:px-4 sm:py-2.5 w-full sm:w-auto"
+            style={{
+              background: 'linear-gradient(135deg, rgba(7,11,22,0.97) 0%, rgba(13,18,32,0.97) 100%)',
+              backdropFilter: 'blur(28px)',
+              boxShadow: '0 -4px 40px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.04) inset, 0 1px 0 rgba(255,255,255,0.06) inset',
+              paddingBottom: 'calc(0.75rem + env(safe-area-inset-bottom, 0px))',
+            }}
+          >
+            {/* Label + live dot */}
+            <div className="hidden lg:flex items-center gap-2 mr-1">
+              <span className="flex items-center gap-1.5">
+                <span className="relative flex h-1.5 w-1.5">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-60" />
+                  <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-500" style={{ boxShadow: '0 0 5px rgba(52,211,153,0.8)' }} />
+                </span>
+                <span className="text-[10px] font-mono uppercase tracking-[0.22em] text-slate-500">
+                  Quick Actions
+                </span>
+              </span>
+            </div>
+
+            {/* Thin vertical divider (desktop only) */}
+            <div className="hidden lg:block w-px h-5 bg-slate-700/60 mr-1" />
+
+            <div className="grid grid-cols-2 sm:flex items-center gap-2 sm:gap-2.5 w-full sm:w-auto">
+
+              {/* ── PDF Button ── */}
+              <motion.a
+                href={RESUME_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="relative flex items-center justify-center gap-2 rounded-xl text-xs font-bold text-white overflow-hidden min-h-[44px] sm:min-h-0 px-4 py-3 sm:px-3.5 sm:py-2 group"
+                style={{
+                  background: 'linear-gradient(135deg, #2563eb 0%, #06b6d4 100%)',
+                  boxShadow: '0 4px 20px rgba(6,182,212,0.3), 0 0 0 1px rgba(6,182,212,0.2)',
+                }}
+                whileHover={{
+                  scale: 1.06,
+                  y: -2,
+                  boxShadow: '0 8px 28px rgba(6,182,212,0.45), 0 0 0 1px rgba(6,182,212,0.35)',
+                }}
+                whileTap={{ scale: 0.96 }}
+                transition={{ type: 'spring', stiffness: 380, damping: 22 }}
+              >
+                {/* Shimmer */}
+                <motion.div
+                  className="absolute inset-0 pointer-events-none"
+                  initial={{ x: '-110%' }}
+                  whileHover={{ x: '110%' }}
+                  transition={{ duration: 0.55, ease: 'easeInOut' }}
+                  style={{ background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.22), transparent)' }}
+                />
+                <FileText className="w-3.5 h-3.5 relative z-10" />
+                <span className="relative z-10">Resume</span>
+              </motion.a>
+
+              {/* ── LinkedIn Button ── */}
+              <motion.a
+                href={LINKEDIN_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="relative flex items-center justify-center gap-2 rounded-xl text-xs font-bold text-slate-300 overflow-hidden min-h-[44px] sm:min-h-0 px-4 py-3 sm:px-3.5 sm:py-2 group"
+                style={{
+                  background: 'rgba(255,255,255,0.05)',
+                  border: '1px solid rgba(255,255,255,0.1)',
+                  backdropFilter: 'blur(10px)',
+                }}
+                whileHover={{
+                  scale: 1.06,
+                  y: -2,
+                  color: '#fff',
+                  boxShadow: '0 8px 24px rgba(99,102,241,0.3)',
+                  borderColor: 'rgba(99,102,241,0.4)',
+                  background: 'rgba(99,102,241,0.12)',
+                }}
+                whileTap={{ scale: 0.96 }}
+                transition={{ type: 'spring', stiffness: 380, damping: 22 }}
+              >
+                {/* Shimmer */}
+                <motion.div
+                  className="absolute inset-0 pointer-events-none"
+                  initial={{ x: '-110%', opacity: 0 }}
+                  whileHover={{ x: '110%', opacity: 1 }}
+                  transition={{ duration: 0.55, ease: 'easeInOut' }}
+                  style={{ background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.08), transparent)' }}
+                />
+                <Linkedin className="w-3.5 h-3.5 relative z-10" />
+                <span className="relative z-10">LinkedIn</span>
+              </motion.a>
+            </div>
           </div>
         </div>
       </div>
