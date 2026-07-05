@@ -38,7 +38,7 @@ const traits = [
 const tags = [
   { icon: GraduationCap, label: 'Modi School Alumnus', color: '#38bdf8' },
   { icon: MapPin, label: 'Gujarat, India', color: '#34d399' },
-  { icon: Trophy, label: '5× Hackathon Winner', color: '#d4af37' },
+  { icon: Trophy, label: '5× Hackathon participent', color: '#d4af37' },
 ];
 
 const paragraphs = [
