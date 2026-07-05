@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { GraduationCap, Calendar, MapPin, CheckCircle2 } from 'lucide-react';
+import { GraduationCap, Calendar, MapPin, Award, CheckCircle2 } from 'lucide-react';
 import { education } from '../data/education';
 import { fadeInUp, staggerContainer, viewportOnce } from '../utils/motion';
 
@@ -10,10 +10,10 @@ function EducationCard({ item, index }) {
   const handleMouseMove = (e) => {
     if (!cardRef.current) return;
     const rect = cardRef.current.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
-    cardRef.current.style.setProperty('--mouse-x', `${x}px`);
-    cardRef.current.style.setProperty('--mouse-y', `${y}px`);
+    const x = ((e.clientX - rect.left) / rect.width) * 100;
+    const y = ((e.clientY - rect.top) / rect.height) * 100;
+    cardRef.current.style.setProperty('--mouse-x', `${x}%`);
+    cardRef.current.style.setProperty('--mouse-y', `${y}%`);
   };
 
   return (
@@ -21,76 +21,72 @@ function EducationCard({ item, index }) {
       ref={cardRef}
       onMouseMove={handleMouseMove}
       variants={fadeInUp}
-      className="relative group lg:pl-8 pb-12 last:pb-0"
+      initial="hidden"
+      whileInView="visible"
+      viewport={viewportOnce}
+      className="group relative"
     >
-      {/* Timeline Line (Desktop) */}
-      <div className="absolute left-0 top-0 bottom-0 w-px bg-slate-800 lg:block hidden">
-        <motion.div 
-          initial={{ height: 0 }}
-          whileInView={{ height: '100%' }}
-          viewport={viewportOnce}
-          transition={{ duration: 1, delay: index * 0.2 }}
-          className="w-full bg-gradient-to-b from-blue-500 via-cyan-400 to-transparent"
-        />
-      </div>
+      {/* Vertical Timeline Line */}
+      <div className="absolute left-8 top-12 bottom-0 w-px bg-gradient-to-b from-transparent via-slate-700 to-transparent hidden lg:block" />
 
-      {/* Timeline Dot (Desktop) */}
-      <div className="absolute left-[-4px] top-0 w-2 h-2 rounded-full bg-blue-500 shadow-[0_0_10px_rgba(59,130,246,0.5)] lg:block hidden group-hover:scale-150 transition-transform" />
+      {/* Timeline Dot */}
+      <div className="absolute left-6 w-5 h-5 rounded-full border-4 border-slate-900 bg-gradient-to-br from-cyan-400 to-blue-500 shadow-[0_0_20px_rgba(103,232,249,0.6)] hidden lg:block z-10" />
 
-      <div className="relative bg-white/[0.03] border border-white/[0.08] hover:border-white/20 rounded-3xl p-6 sm:p-8 backdrop-blur-xl transition-all duration-500 group-hover:-translate-y-2 group-hover:shadow-[0_20px_40px_rgba(0,0,0,0.3)]">
-        {/* Glow Element */}
-        <div 
-          className="absolute -inset-px rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
-          style={{ 
-            background: `radial-gradient(1000px circle at var(--mouse-x, 0) var(--mouse-y, 0), ${item.color}15, transparent 40%)` 
+      <div className="relative bg-white/[0.035] border border-white/10 hover:border-cyan-400/30 rounded-3xl p-8 md:p-10 backdrop-blur-2xl transition-all duration-700 group-hover:-translate-y-1 group-hover:shadow-2xl overflow-hidden">
+
+        {/* Dynamic Mouse Glow */}
+        <div
+          className="absolute inset-0 opacity-0 group-hover:opacity-30 transition-opacity duration-700 pointer-events-none"
+          style={{
+            background: `radial-gradient(circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(103,232,249,0.25) 0%, transparent 60%)`
           }}
         />
 
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
-          <div className="flex items-center gap-4">
-            <div 
-              className="p-3 rounded-2xl bg-white/5 border border-white/10 group-hover:scale-110 transition-transform"
-              style={{ color: item.color }}
-            >
-              <GraduationCap className="w-6 h-6" />
+        <div className="flex flex-col lg:flex-row gap-8 lg:items-start">
+          {/* Left Info */}
+          <div className="lg:w-80 flex-shrink-0">
+            <div className="inline-flex items-center gap-3 mb-6">
+              <div className="p-4 rounded-2xl bg-gradient-to-br from-cyan-500/10 to-blue-500/10 border border-cyan-400/20">
+                <GraduationCap className="w-8 h-8 text-cyan-400" />
+              </div>
+              <div>
+                <div className="font-mono text-xs tracking-[2px] text-cyan-400 mb-1">{item.period}</div>
+                <div className="text-2xl font-bold text-white leading-tight">{item.degree}</div>
+              </div>
             </div>
-            <div>
-              <h3 className="text-xl sm:text-2xl font-bold text-white mb-1">{item.degree}</h3>
-              <p className="text-slate-400 font-medium">{item.institution}</p>
-            </div>
-          </div>
-          
-          <div className="flex flex-col md:items-end">
-            <div className="flex items-center gap-2 text-slate-400 font-mono text-xs uppercase tracking-wider mb-1">
-              <Calendar className="w-3.5 h-3.5" />
-              <span>{item.period}</span>
-            </div>
-            <div className="flex items-center gap-2 text-slate-400 font-mono text-xs uppercase tracking-wider">
-              <MapPin className="w-3.5 h-3.5" />
-              <span>{item.location}</span>
-            </div>
-          </div>
-        </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div>
-            <p className="text-xs font-mono uppercase tracking-[0.2em] text-slate-400 mb-4">Focus & Specialization</p>
-            <div className="inline-flex px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 text-slate-300 text-sm font-medium mb-4">
-              {item.specialization}
+            <div className="space-y-4 text-sm">
+              <div className="flex items-center gap-3 text-slate-400">
+                <MapPin className="w-4 h-4" />
+                <span>{item.institution}, {item.location}</span>
+              </div>
+              <div className="inline-flex items-center px-4 py-2 rounded-full bg-white/5 border border-white/10 text-slate-300">
+                {item.specialization}
+              </div>
             </div>
-            <div className="flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-              <span className="text-xs text-emerald-400 font-mono uppercase tracking-wider">{item.status}</span>
+
+            <div className="mt-8 flex items-center gap-2 text-emerald-400 text-sm font-medium">
+              <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+              {item.status}
             </div>
           </div>
 
-          <div>
-            <p className="text-xs font-mono uppercase tracking-[0.2em] text-slate-400 mb-4">Key Achievements</p>
-            <ul className="space-y-3">
+          {/* Right Content - Achievements */}
+          <div className="flex-1">
+            <div className="uppercase font-mono text-xs tracking-widest text-slate-400 mb-6 flex items-center gap-2">
+              <Award className="w-4 h-4" />
+              KEY ACHIEVEMENTS
+            </div>
+
+            <ul className="space-y-6">
               {item.details.map((detail, idx) => (
-                <li key={idx} className="flex items-start gap-3 group/item">
-                  <CheckCircle2 className="w-4 h-4 text-blue-500/60 mt-0.5 group-hover/item:text-blue-500 transition-colors" />
-                  <span className="text-sm text-slate-400 leading-relaxed group-hover/item:text-slate-300 transition-colors">{detail}</span>
+                <li key={idx} className="flex gap-4 group/item">
+                  <div className="mt-1.5">
+                    <CheckCircle2 className="w-5 h-5 text-cyan-400/70 group-hover/item:text-cyan-400 transition-colors" />
+                  </div>
+                  <p className="text-slate-300 leading-relaxed group-hover/item:text-white transition-colors">
+                    {detail}
+                  </p>
                 </li>
               ))}
             </ul>
@@ -103,46 +99,51 @@ function EducationCard({ item, index }) {
 
 export default function Education() {
   return (
-    <section id="education" className="py-32 px-6 relative overflow-hidden">
-      {/* Background Decorative Elements */}
-      <div className="absolute top-[20%] right-[-10%] w-[500px] h-[500px] bg-blue-500/5 blur-[120px] rounded-full pointer-events-none" />
-      <div className="absolute bottom-[20%] left-[-10%] w-[500px] h-[500px] bg-violet-500/5 blur-[120px] rounded-full pointer-events-none" />
+    <section id="education" className="relative py-28 md:py-36 px-4 sm:px-6 overflow-hidden">
+      {/* Background Accents */}
+      <div className="absolute top-0 right-0 w-1/2 h-1/2 bg-gradient-to-br from-cyan-500/5 to-transparent blur-[140px] pointer-events-none" />
+      <div className="absolute bottom-0 left-0 w-1/2 h-1/2 bg-gradient-to-br from-violet-500/5 to-transparent blur-[140px] pointer-events-none" />
 
       <div className="max-w-5xl mx-auto relative z-10">
+        {/* Header */}
         <motion.div
           initial="hidden"
           whileInView="visible"
           viewport={viewportOnce}
-          variants={staggerContainer(0.1, 0)}
-          className="mb-20 text-center md:text-left"
+          variants={staggerContainer(0.15, 0.1)}
+          className="text-center mb-20"
         >
-          <motion.div variants={fadeInUp} className="flex items-center justify-center md:justify-start gap-3 mb-6">
-            <div className="w-8 h-[1px] bg-blue-500" />
-            <span className="font-mono text-[11px] uppercase tracking-[0.25em] text-blue-500">Academic Foundation</span>
+          <motion.div variants={fadeInUp} className="inline-flex items-center gap-3 mb-6">
+            <div className="h-px w-12 bg-gradient-to-r from-transparent via-cyan-400 to-transparent" />
+            <span className="font-mono uppercase tracking-[3px] text-sm text-cyan-400">My Academic Path</span>
+            <div className="h-px w-12 bg-gradient-to-r from-transparent via-cyan-400 to-transparent" />
           </motion.div>
+
           <motion.h2
             variants={fadeInUp}
-            className="text-4xl sm:text-5xl md:text-7xl font-bold text-white tracking-tight mb-8 leading-[1.1]"
+            className="text-5xl md:text-7xl font-bold tracking-tighter text-white mb-6"
           >
-            Education <span className="bg-gradient-to-r from-blue-400 via-cyan-400 to-blue-500 bg-clip-text text-transparent">Journey</span>
+            Education <span className="bg-gradient-to-r from-cyan-300 via-blue-400 to-cyan-300 bg-clip-text text-transparent">Journey</span>
           </motion.h2>
+
           <motion.p
             variants={fadeInUp}
-            className="text-slate-400 font-medium text-base sm:text-lg max-w-xl leading-relaxed md:mx-0 mx-auto"
+            className="text-slate-400 max-w-2xl mx-auto text-lg"
           >
-            A chronological look at my academic background and key milestones in technology and science.
+            From foundational learning to cutting-edge specialization — here's how I built my technical foundation.
           </motion.p>
         </motion.div>
 
+        {/* Timeline Cards */}
         <motion.div
+          variants={staggerContainer(0.1, 0.2)}
           initial="hidden"
           whileInView="visible"
           viewport={viewportOnce}
-          variants={staggerContainer(0.2, 0.4)}
-          className="space-y-4"
+          className="space-y-16"
         >
           {education.map((item, index) => (
-            <EducationCard key={item.id} item={item} index={index} />
+            <EducationCard key={item.id || index} item={item} index={index} />
           ))}
         </motion.div>
       </div>

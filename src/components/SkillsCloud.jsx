@@ -19,68 +19,37 @@ import {
   Terminal,
 } from "lucide-react";
 import { skillCategories, currentlyLearning } from "../data/skills";
-import {
-  maskReveal,
-  staggerContainer,
-  staggerItem,
-  transitionSpring,
-} from "../utils/motion";
+import { staggerContainer, staggerItem } from "../utils/motion";
 
 const iconMap = { Layout, Server, Box, Palette, Cpu, Zap, Globe, Terminal };
 
 const levelConfig = {
-  expert: {
-    label: "Expert",
-    width: "95%",
-    color: "from-cyan-400 to-blue-600",
-    glow: "shadow-cyan-500/40",
-  },
-  advanced: {
-    label: "Advanced",
-    width: "80%",
-    color: "from-blue-400 to-blue-600",
-    glow: "shadow-blue-500/40",
-  },
-  intermediate: {
-    label: "Intermediate",
-    width: "65%",
-    color: "from-emerald-400 to-teal-600",
-    glow: "shadow-emerald-500/30",
-  },
-  learning: {
-    label: "Learning",
-    width: "40%",
-    color: "from-orange-400 to-red-600",
-    glow: "shadow-orange-500/30",
-  },
+  expert: { label: "Expert", width: "95%", color: "from-cyan-400 via-blue-500 to-indigo-500", glow: "shadow-cyan-400/50" },
+  advanced: { label: "Advanced", width: "82%", color: "from-blue-400 to-cyan-500", glow: "shadow-blue-400/40" },
+  intermediate: { label: "Intermediate", width: "68%", color: "from-emerald-400 to-teal-500", glow: "shadow-emerald-400/30" },
+  learning: { label: "Learning", width: "45%", color: "from-amber-400 to-orange-500", glow: "shadow-orange-400/30" },
 };
 
 function SkillPill({ skill, index }) {
   const config = levelConfig[skill.level] || levelConfig.intermediate;
+
   return (
     <motion.div
       variants={staggerItem}
-      className="group relative flex flex-col gap-2 p-3 rounded-xl bg-slate-800/50 border border-white/8 hover:border-white/12 transition-all duration-300"
+      className="group relative bg-white/5 border border-white/10 hover:border-white/20 rounded-2xl p-4 transition-all duration-500 hover:-translate-y-0.5"
     >
-      <div className="flex items-center justify-between">
-        <span className="text-sm font-medium text-slate-300 group-hover:text-white transition-colors">
-          {skill.name}
-        </span>
-        <span className="text-[10px] font-mono text-slate-400 uppercase tracking-tighter">
-          {config.label}
-        </span>
+      <div className="flex justify-between items-center mb-3">
+        <span className="font-medium text-white group-hover:text-cyan-300 transition-colors">{skill.name}</span>
+        <span className="text-[10px] font-mono uppercase tracking-widest text-slate-400">{config.label}</span>
       </div>
-      <div className="h-1 w-full bg-slate-800/50 rounded-full overflow-hidden">
+
+      <div className="h-1 bg-white/10 rounded-full overflow-hidden">
         <motion.div
           initial={{ width: 0 }}
           whileInView={{ width: config.width }}
           viewport={{ once: true }}
-          transition={{
-            duration: 1.2,
-            ease: [0.22, 1, 0.36, 1],
-            delay: index * 0.05,
-          }}
-          className={`h-full bg-gradient-to-r ${config.color} ${config.glow} shadow-[0_0_10px_rgba(0,0,0,0.1)]`}
+          transition={{ duration: 1.4, ease: [0.23, 1, 0.32, 1], delay: index * 0.04 }}
+          className={`h-full bg-gradient-to-r ${config.color} ${config.glow}`}
         />
       </div>
     </motion.div>
@@ -93,79 +62,58 @@ function CategoryCard({ category, index }) {
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
 
-  const rotateX = useSpring(useTransform(mouseY, [-0.5, 0.5], [10, -10]), {
-    stiffness: 100,
-    damping: 30,
-  });
-  const rotateY = useSpring(useTransform(mouseX, [-0.5, 0.5], [-10, 10]), {
-    stiffness: 100,
-    damping: 30,
-  });
+  const rotateX = useSpring(useTransform(mouseY, [-0.5, 0.5], [14, -14]), { stiffness: 110, damping: 28 });
+  const rotateY = useSpring(useTransform(mouseX, [-0.5, 0.5], [-14, 14]), { stiffness: 110, damping: 28 });
 
-  const rectRef = useRef(null);
-
-  function onMouseMove(e) {
-    if (typeof window !== 'undefined' && window.matchMedia('(hover: none)').matches) return;
+  const handleMouseMove = (e) => {
     if (!cardRef.current) return;
-    if (!rectRef.current) {
-      rectRef.current = cardRef.current.getBoundingClientRect();
-    }
-    const rect = rectRef.current;
+    const rect = cardRef.current.getBoundingClientRect();
     const x = (e.clientX - rect.left) / rect.width - 0.5;
     const y = (e.clientY - rect.top) / rect.height - 0.5;
     mouseX.set(x);
     mouseY.set(y);
-  }
+  };
 
-  function onMouseLeave() {
+  const handleMouseLeave = () => {
     mouseX.set(0);
     mouseY.set(0);
-    rectRef.current = null;
-  }
+  };
 
   return (
     <motion.div
+      ref={cardRef}
       variants={staggerItem}
       style={{ rotateX, rotateY, transformStyle: "preserve-3d" }}
-      onMouseMove={onMouseMove}
-      onMouseLeave={onMouseLeave}
-      ref={cardRef}
-      className="group relative perspective-1000"
+      onMouseMove={handleMouseMove}
+      onMouseLeave={handleMouseLeave}
+      className="group relative h-full perspective-[1100px]"
     >
-      <div className="relative h-full p-6 rounded-3xl border border-white/12 bg-gradient-to-br from-white/10 to-white/[0.02] backdrop-blur-xl overflow-hidden transition-all duration-500 group-hover:border-blue-500/50 group-hover:shadow-[0_0_50px_-12px_rgba(59, 130, 246,0.3)]">
-        {/* Animated Background Gradient */}
-        <div className="absolute inset-0 bg-gradient-to-br from-blue-500/10 via-transparent to-cyan-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+      <div className="relative h-full rounded-3xl border border-white/10 bg-[#0a0f1c] p-8 backdrop-blur-2xl transition-all duration-700 group-hover:border-cyan-400/30 group-hover:shadow-2xl group-hover:shadow-cyan-500/10 overflow-hidden">
 
-        {/* Spot Light Effect */}
+        {/* Dynamic Glow */}
         <motion.div
-          className="absolute -inset-px opacity-0 group-hover:opacity-100 transition-opacity duration-500 z-10 pointer-events-none"
+          className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none"
           style={{
-            background: useTransform(
-              [mouseX, mouseY],
-              ([x, y]) =>
-                `radial-gradient(600px circle at ${(x + 0.5) * 100}% ${(y + 0.5) * 100}%, rgba(59, 130, 246, 0.15), transparent 80%)`,
+            background: useTransform([mouseX, mouseY], ([x, y]) =>
+              `radial-gradient(700px circle at ${(x + 0.5) * 100}% ${(y + 0.5) * 100}%, rgba(103,232,249,0.12), transparent 75%)`
             ),
           }}
         />
 
-        <div className="relative z-20 flex flex-col h-full">
-          <div className="flex items-start justify-between mb-6">
-            <div className="p-3 rounded-2xl bg-blue-500/15 border border-blue-500/20 text-blue-400 group-hover:scale-110 group-hover:bg-blue-500/20 transition-all duration-300">
-              <Icon className="w-6 h-6" />
+        <div className="relative z-10 flex flex-col h-full">
+          <div className="flex items-center justify-between mb-8">
+            <div className="p-4 rounded-2xl bg-gradient-to-br from-cyan-500/10 to-blue-500/10 border border-cyan-400/20 group-hover:scale-110 transition-transform">
+              <Icon className="w-8 h-8 text-cyan-400" />
             </div>
-            <div className="text-[10px] font-mono text-white/20 uppercase tracking-widest">
-              0{index + 1}
-            </div>
+            <div className="text-xs font-mono text-slate-500">0{index + 1}</div>
           </div>
 
-          <h3 className="text-xl font-bold text-white mb-2 group-hover:text-blue-300 transition-colors">
+          <h3 className="text-3xl font-bold text-white mb-3 tracking-tight group-hover:text-cyan-100 transition-colors">
             {category.title}
           </h3>
-          <p className="text-sm text-slate-400 mb-8 line-clamp-2">
-            {category.description}
-          </p>
+          <p className="text-slate-400 mb-10 leading-relaxed">{category.description}</p>
 
-          <div className="grid grid-cols-1 gap-3 mt-auto">
+          <div className="space-y-3 mt-auto">
             {category.skills.map((skill, i) => (
               <SkillPill key={skill.name} skill={skill} index={i} />
             ))}
@@ -180,94 +128,75 @@ export default function SkillsCloud() {
   const [filter, setFilter] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
 
-  // Extract unique categories dynamically
-  const categories = ['all', ...skillCategories.map(cat => cat.id)];
-
   const filteredCategories = skillCategories
-    .map(category => ({
-      ...category,
-      // Filter skills within the category if searching
-      displaySkills: category.skills.filter(s => 
+    .map(cat => ({
+      ...cat,
+      displaySkills: cat.skills.filter(s =>
         s.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        category.title.toLowerCase().includes(searchQuery.toLowerCase())
+        cat.title.toLowerCase().includes(searchQuery.toLowerCase())
       )
     }))
     .filter(cat => {
-      const matchesFilter = filter === 'all' || cat.id === filter;
-      const matchesSearch = cat.displaySkills.length > 0;
-      return matchesFilter && matchesSearch;
+      if (filter !== 'all' && cat.id !== filter) return false;
+      return cat.displaySkills.length > 0;
     });
 
   return (
-    <section id="skills" className="py-32 px-6 relative overflow-hidden">
-      {/* Decorative Background Elements */}
-      <div className="absolute top-0 left-1/4 w-[500px] h-[500px] bg-blue-600/10 rounded-full blur-[120px] pointer-events-none" />
-      <div className="absolute bottom-0 right-1/4 w-[500px] h-[500px] bg-cyan-600/10 rounded-full blur-[120px] pointer-events-none" />
-      
-      <div className="max-w-7xl mx-auto relative z-10">
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 mb-20">
-          <motion.div
-            initial={{ opacity: 0, x: -20 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            className="flex-1"
-          >
-            <span className="inline-block px-3 py-1 rounded-full bg-blue-500/15 border border-blue-500/20 text-blue-400 text-xs font-mono tracking-widest uppercase mb-4">
-              Expertise
-            </span>
-            <h2 className="text-4xl md:text-6xl font-bold text-white mb-6 tracking-tight">
-              Skills <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-400">&</span> Tools
-            </h2>
-            <p className="text-slate-400 text-lg max-w-xl border-l-2 border-slate-600/60 pl-6">
-              My technical arsenal refined through professional experience and passion projects. 
-              I specialize in building high-performance web applications with modern stacks.
-            </p>
-          </motion.div>
+    <section id="skills" className="relative py-28 md:py-36 px-4 sm:px-6 overflow-hidden">
+      <div className="absolute top-20 -left-40 w-[700px] h-[700px] bg-cyan-500/5 rounded-full blur-[140px]" />
+      <div className="absolute bottom-20 -right-40 w-[700px] h-[700px] bg-blue-500/5 rounded-full blur-[140px]" />
 
-          {/* Search & Filter - Modern UI */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="flex flex-col gap-6 min-w-[320px]"
-          >
-            <div className="relative group">
-              <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 group-focus-within:text-blue-400 transition-all" />
+      <div className="max-w-7xl mx-auto relative z-10">
+        {/* Header */}
+        <div className="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-8">
+          <div>
+            <div className="inline-flex items-center gap-2 px-4 py-1 rounded-full bg-white/5 border border-cyan-400/20 text-cyan-400 text-xs font-mono tracking-[3px] mb-6">
+              MASTERED &amp; GROWING
+            </div>
+            <h2 className="text-5xl md:text-7xl font-bold tracking-tighter text-white">
+              Skills <span className="bg-gradient-to-r from-cyan-300 to-blue-400 bg-clip-text text-transparent">&amp; Expertise</span>
+            </h2>
+          </div>
+
+          {/* Controls */}
+          <div className="flex flex-col sm:flex-row gap-4 min-w-[340px]">
+            <div className="relative flex-1">
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" />
               <input
                 type="text"
-                placeholder="Search technologies..."
+                placeholder="Search skills..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-12 pr-4 py-4 bg-slate-800/50 border border-white/12 rounded-2xl text-white placeholder:text-slate-600 focus:outline-none focus:border-blue-500/50 focus:bg-white/[0.05] transition-all"
+                className="w-full pl-12 pr-6 py-4 bg-white/5 border border-white/10 rounded-2xl text-white placeholder:text-slate-500 focus:border-cyan-400 focus:bg-white/10 transition-all"
               />
             </div>
-            <div className="flex flex-wrap gap-2">
-              {categories.map((f) => (
+
+            <div className="flex gap-2 flex-wrap">
+              {['all', ...skillCategories.map(c => c.id)].map((f) => (
                 <button
                   key={f}
                   onClick={() => setFilter(f)}
-                  className={`px-5 py-2 rounded-xl text-xs font-semibold capitalize transition-all duration-300 ${
-                    filter === f
-                      ? "bg-blue-600 text-white shadow-[0_0_25px_rgba(37, 99, 235,0.5)]"
-                      : "bg-slate-800/50 text-slate-400 hover:bg-white/10 border border-white/8"
-                  }`}
+                  className={`px-6 py-3 rounded-2xl text-sm font-medium capitalize transition-all ${filter === f
+                      ? "bg-cyan-500 text-black shadow-lg shadow-cyan-500/30"
+                      : "bg-white/5 border border-white/10 hover:bg-white/10 text-slate-400 hover:text-white"
+                    }`}
                 >
-                  {f.replace('-', ' ')}
+                  {f === 'all' ? 'All' : f}
                 </button>
               ))}
             </div>
-          </motion.div>
+          </div>
         </div>
 
-        {/* Categories Grid */}
+        {/* Skills Grid */}
         <motion.div
-          variants={staggerContainer(0.1, 0)}
+          variants={staggerContainer(0.08, 0.05)}
           initial="hidden"
           whileInView="visible"
-          viewport={{ once: true, margin: '-100px' }}
+          viewport={{ once: true }}
           className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
         >
-          <AnimatePresence mode="popLayout" initial={false}>
+          <AnimatePresence mode="popLayout">
             {filteredCategories.map((category, index) => (
               <CategoryCard
                 key={category.id}
@@ -278,42 +207,35 @@ export default function SkillsCloud() {
           </AnimatePresence>
         </motion.div>
 
-        {/* Learning Journey - Bottom Section */}
+        {/* Currently Learning */}
         <motion.div
           initial={{ opacity: 0, y: 40 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="mt-20 relative p-8 rounded-[2.5rem] border border-white/12 bg-gradient-to-r from-blue-500/5 to-cyan-500/5 backdrop-blur-sm overflow-hidden"
+          className="mt-24 p-10 rounded-3xl border border-white/10 bg-gradient-to-br from-slate-900/80 to-slate-950/80 backdrop-blur-xl"
         >
-          <div className="absolute top-0 right-0 p-4 opacity-10">
-            <Sparkles className="w-24 h-24 text-white" />
+          <div className="flex items-center gap-4 mb-8">
+            <Sparkles className="w-8 h-8 text-cyan-400" />
+            <div>
+              <h3 className="text-3xl font-bold text-white">Currently Exploring</h3>
+              <p className="text-slate-400">Always learning. Always evolving.</p>
+            </div>
           </div>
 
-          <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-8">
-            <div className="flex-1 text-center md:text-left">
-              <h3 className="text-2xl font-bold text-white mb-2 flex items-center justify-center md:justify-start gap-2">
-                Learning Journey <Sparkles className="w-5 h-5 text-blue-400" />
-              </h3>
-              <p className="text-slate-400 text-sm">
-                The tech world moves fast. Here&apos;s what I&apos;m currently adding to my repertoire.
-              </p>
-            </div>
-
-            <div className="flex flex-wrap justify-center md:justify-end gap-3 flex-1">
-              {currentlyLearning.map((tech, i) => (
-                <motion.div
-                  key={tech}
-                  initial={{ opacity: 0, scale: 0.8 }}
-                  whileInView={{ opacity: 1, scale: 1 }}
-                  whileHover={{ y: -5, scale: 1.05, backgroundColor: 'rgba(59, 130, 246, 0.1)' }}
-                  transition={{ delay: i * 0.1 }}
-                  className="px-5 py-2.5 rounded-full bg-slate-800/50 border border-white/12 text-cyan-400 font-mono text-xs flex items-center gap-2 hover:border-slate-600/60 transition-all cursor-default"
-                >
-                  <div className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse" />
-                  {tech}
-                </motion.div>
-              ))}
-            </div>
+          <div className="flex flex-wrap gap-4">
+            {currentlyLearning.map((tech, i) => (
+              <motion.div
+                key={tech}
+                initial={{ opacity: 0, scale: 0.8 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                whileHover={{ scale: 1.08, y: -4 }}
+                transition={{ delay: i * 0.05 }}
+                className="px-6 py-3 bg-white/5 border border-white/10 hover:border-cyan-400/30 rounded-2xl text-cyan-300 font-medium flex items-center gap-3 text-sm transition-all"
+              >
+                <div className="w-2 h-2 bg-cyan-400 rounded-full animate-ping" />
+                {tech}
+              </motion.div>
+            ))}
           </div>
         </motion.div>
       </div>

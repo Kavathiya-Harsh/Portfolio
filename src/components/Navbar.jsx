@@ -265,20 +265,57 @@ export default function Navbar() {
           aria-label="Harsh Kavathiya - Portfolio Home"
         >
           <motion.div whileHover={{ rotateY: 12, rotateX: -6 }} className="relative z-10">
-            <img
-              src="https://res.cloudinary.com/dvv5mtpli/image/upload/q_auto,f_auto,w_80,h_80,c_fill/v1776355358/hk_logo_pb2u8w.jpg"
-              alt="Harsh Kavathiya Logo"
+            <svg
               width="40"
               height="40"
-              className="w-10 h-10 rounded-xl object-contain will-change-transform"
-              style={{ filter: 'drop-shadow(0 0 10px rgba(6,182,212,0.4))' }}
-            />
+              viewBox="0 0 100 100"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+              className="w-10 h-10 transition-all duration-300"
+              style={{ filter: 'drop-shadow(0 0 12px rgba(6,182,212,0.5))' }}
+            >
+              <defs>
+                <linearGradient id="hk-logo-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stopColor="#00f5ff" />
+                  <stop offset="50%" stopColor="#3b82f6" />
+                  <stop offset="100%" stopColor="#a855f7" />
+                </linearGradient>
+              </defs>
+              
+              {/* Outer soft shield/hexagon container */}
+              <polygon
+                points="50,8 88,30 88,70 50,92 12,70 12,30"
+                stroke="url(#hk-logo-grad)"
+                strokeWidth="3.5"
+                fill="rgba(11, 17, 32, 0.8)"
+                strokeLinejoin="round"
+                className="transition-colors duration-300 group-hover:stroke-white"
+              />
+
+              {/* H letter path */}
+              <path
+                d="M 32,32 L 32,68 M 32,50 L 50,50 M 50,32 L 50,68"
+                stroke="url(#hk-logo-grad)"
+                strokeWidth="7"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+              
+              {/* K letter arms (connecting to the right leg of H) */}
+              <path
+                d="M 50,50 L 66,32 M 50,50 L 66,68"
+                stroke="url(#hk-logo-grad)"
+                strokeWidth="7"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
           </motion.div>
           <motion.div
             animate={{ opacity: 0, scale: 0.8 }}
             whileHover={{ opacity: 1, scale: 1 }}
             className="absolute inset-0 blur-xl rounded-full -z-10"
-            style={{ background: 'radial-gradient(circle, rgba(59,130,246,0.3) 0%, transparent 70%)' }}
+            style={{ background: 'radial-gradient(circle, rgba(6,182,212,0.4) 0%, transparent 70%)' }}
           />
         </MotionLink>
 

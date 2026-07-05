@@ -9,73 +9,48 @@ import FileCode from 'lucide-react/dist/esm/icons/file-code';
 import Layers from 'lucide-react/dist/esm/icons/layers';
 import Play from 'lucide-react/dist/esm/icons/play';
 import X from 'lucide-react/dist/esm/icons/x';
-import { transitionSpring, blurScaleIn } from '../utils/motion';
 import { useDimensions } from '../hooks/useDimensions';
 import CodeSnippetModal from './CodeSnippetModal';
 
-function MetricBadge({ icon: Icon, label, value, color }) {
-  const colorMap = {
-    green: 'bg-green-500/10 border-green-500/25 text-green-400',
-    blue: 'bg-blue-500/10 border-blue-500/25 text-blue-400',
-    cyan: 'bg-cyan-500/10 border-cyan-500/25 text-cyan-400',
-    yellow: 'bg-yellow-500/10 border-yellow-500/25 text-yellow-400',
+function MetricBadge({ icon: Icon, label, value, color = 'cyan' }) {
+  const colors = {
+    green: 'text-emerald-400 border-emerald-500/30 bg-emerald-500/10',
+    blue: 'text-blue-400 border-blue-500/30 bg-blue-500/10',
+    cyan: 'text-cyan-400 border-cyan-500/30 bg-cyan-500/10',
+    yellow: 'text-yellow-400 border-yellow-500/30 bg-yellow-500/10',
   };
 
   return (
-    <div className={`flex items-center gap-1.5 px-2.5 py-1 rounded-lg border text-[10px] font-mono ${colorMap[color]}`}>
-      <Icon className="w-3 h-3" />
-      <span className="text-slate-400">{label}</span>
-      <span className="font-semibold">{value}</span>
-    </div>
-  );
-}
-
-function PerformanceBadge({ score }) {
-  const color = score >= 95 ? 'green' : score >= 85 ? 'yellow' : 'blue';
-  const colorClasses = {
-    green: 'bg-green-500/10 border-green-500/20 text-green-400',
-    yellow: 'bg-yellow-500/10 border-yellow-500/20 text-yellow-400',
-    blue: 'bg-blue-500/10 border-blue-500/20 text-blue-400',
-  };
-  return (
-    <div className={`flex items-center gap-2 px-3 py-1 rounded-full border ${colorClasses[color]}`}>
-      <div className={`w-2 h-2 rounded-full ${color === 'green' ? 'bg-green-500' : color === 'yellow' ? 'bg-yellow-500' : 'bg-blue-500'} animate-pulse`} />
-      <span className="text-[10px] font-mono">Lighthouse: {score}</span>
+    <div className={`flex items-center gap-1.5 px-3 py-1 text-xs font-mono rounded-xl border ${colors[color] || colors.cyan}`}>
+      <Icon className="w-3.5 h-3.5" />
+      {label && <span className="text-slate-400">{label}</span>}
+      <span className="font-semibold text-white">{value}</span>
     </div>
   );
 }
 
 const ProjectCard = React.forwardRef(({ project, index = 0 }, ref) => {
-  const [measureRef, dimensions, measure] = useDimensions();
+  const [measureRef, dimensions] = useDimensions();
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
   const [showCode, setShowCode] = useState(false);
   const [showVideo, setShowVideo] = useState(false);
 
-  const rotateX = useSpring(useTransform(mouseY, [-0.5, 0.5], [8, -8]), { stiffness: 100, damping: 30 });
-  const rotateY = useSpring(useTransform(mouseX, [-0.5, 0.5], [-8, 8]), { stiffness: 100, damping: 30 });
+  const rotateX = useSpring(useTransform(mouseY, [-0.5, 0.5], [12, -12]), { stiffness: 120, damping: 25 });
+  const rotateY = useSpring(useTransform(mouseX, [-0.5, 0.5], [-12, 12]), { stiffness: 120, damping: 25 });
 
-  const handleMouseEnter = () => {
-    if (typeof window !== 'undefined' && !window.matchMedia('(hover: none)').matches) {
-      measure();
-    }
-  };
-
-  function onMouseMove(e) {
-    if (typeof window !== 'undefined' && window.matchMedia('(hover: none)').matches) return;
-    if (dimensions.width === 0) return;
-    
-    // Performance: Use cached dimensions to prevent layout thrashing
+  const handleMouseMove = (e) => {
+    if (!dimensions.width) return;
     const x = (e.clientX - dimensions.left) / dimensions.width - 0.5;
     const y = (e.clientY - dimensions.top) / dimensions.height - 0.5;
     mouseX.set(x);
     mouseY.set(y);
-  }
+  };
 
-  function onMouseLeave() {
+  const handleMouseLeave = () => {
     mouseX.set(0);
     mouseY.set(0);
-  }
+  };
 
   const { metrics, codeSnippet, video } = project;
 
@@ -83,140 +58,124 @@ const ProjectCard = React.forwardRef(({ project, index = 0 }, ref) => {
     <>
       <motion.div
         ref={ref}
-        variants={blurScaleIn}
-        className="h-full perspective-1000 will-change-transform"
+        initial={{ opacity: 0, y: 60 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ delay: index * 0.08 }}
+        className="h-full perspective-[1200px]"
       >
         <motion.div
           ref={measureRef}
-          onMouseEnter={handleMouseEnter}
-          onMouseMove={onMouseMove}
-          onMouseLeave={onMouseLeave}
-          style={{ rotateX, rotateY, transformStyle: 'preserve-3d' }}
-          className="group relative h-full rounded-2xl border border-slate-700/60 bg-[#111827] overflow-hidden shadow-xl transition-all duration-500 hover:border-blue-500/50 hover:shadow-blue-500/10"
+          onMouseMove={handleMouseMove}
+          onMouseLeave={handleMouseLeave}
+          style={{
+            rotateX,
+            rotateY,
+            transformStyle: "preserve-3d"
+          }}
+          className="group relative h-full rounded-3xl border border-white/10 bg-[#0a0f1c] overflow-hidden shadow-2xl hover:shadow-cyan-500/10 transition-all duration-500"
         >
-          {/* Spotlight */}
+          {/* Dynamic Spotlight Overlay */}
           <motion.div
-            className="absolute -inset-px opacity-0 group-hover:opacity-100 transition-opacity duration-500 z-10 pointer-events-none"
+            className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none z-10"
             style={{
               background: useTransform(
                 [mouseX, mouseY],
-                ([x, y]) => `radial-gradient(400px circle at ${(x + 0.5) * 100}% ${(y + 0.5) * 100}%, rgba(59, 130, 246, 0.12), transparent 80%)`
+                ([x, y]) => `radial-gradient(600px circle at ${50 + x * 40}% ${50 + y * 40}%, rgba(103,232,249,0.18), transparent 70%)`
               ),
             }}
           />
 
-
-          {/* Image */}
-          <div className="relative h-48 overflow-hidden">
-            <motion.img
-              loading="lazy"
-              decoding="async"
-              width="600"
-              height="400"
-              src={project.image || 'https://placehold.co/600x400/111827/3b82f6?text=Project'}
-              alt={`${project.title} - ${project.category} Portfolio Project`}
-              className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
+          {/* Project Image */}
+          <div className="relative h-56 overflow-hidden">
+            <img
+              src={project.image}
+              alt={project.title}
+              className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-[#111827] via-[#111827]/30 to-transparent" />
 
-            {/* Quick Actions */}
-            <div className="absolute bottom-3 right-3 flex gap-2 translate-y-8 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300 z-20">
-              {/* Play Demo Button */}
+            <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#0a0f1c]/60 to-[#0a0f1c]" />
+
+            {/* Floating Action Buttons */}
+            <div className="absolute bottom-4 right-4 flex gap-2 opacity-0 group-hover:opacity-100 translate-y-4 group-hover:translate-y-0 transition-all duration-300 z-20">
               {video && (
                 <motion.button
                   onClick={() => setShowVideo(true)}
-                  whileHover={{ scale: 1.1, y: -2 }}
-                  whileTap={{ scale: 0.9 }}
-                  className="p-3.5 bg-red-600/90 backdrop-blur-sm rounded-xl text-white hover:bg-red-500 transition-all border border-red-500/50 hover:border-red-400 shadow-lg shadow-red-500/30"
-                  title="Watch Demo"
-                  aria-label={`Watch demo video for ${project.title}`}
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.95 }}
+                  className="p-3.5 bg-red-600 hover:bg-red-500 rounded-2xl text-white shadow-lg shadow-red-500/40 transition-all"
                 >
-                  <Play className="w-4 h-4 fill-current" />
+                  <Play className="w-4 h-4" />
                 </motion.button>
               )}
+
               {codeSnippet && (
                 <motion.button
                   onClick={() => setShowCode(true)}
-                  whileHover={{ scale: 1.1, y: -2 }}
-                  whileTap={{ scale: 0.9 }}
-                  className="p-3.5 bg-slate-800/90 backdrop-blur-sm rounded-xl text-cyan-400 hover:text-cyan-300 hover:bg-slate-700 transition-all border border-slate-600/50 hover:border-cyan-500/50"
-                  title="View Logic"
-                  aria-label={`View code logic and snippet for project: ${project.title}`}
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.95 }}
+                  className="p-3.5 bg-slate-800 hover:bg-slate-700 text-cyan-400 rounded-2xl border border-cyan-400/20 hover:border-cyan-400/50 transition-all"
                 >
                   <Code2 className="w-4 h-4" />
                 </motion.button>
               )}
+
               <motion.a
-                href={project.github || '#'}
+                href={project.github}
                 target="_blank"
                 rel="noopener noreferrer"
-                whileHover={{ scale: 1.1, y: -2 }}
-                whileTap={{ scale: 0.9 }}
-                className="p-3.5 bg-slate-800/90 backdrop-blur-sm rounded-xl text-slate-300 hover:text-white hover:bg-slate-700 transition-all border border-slate-600/50 hover:border-white/20"
-                aria-label={`View ${project.title} source code on GitHub (opens in new tab)`}
-                title="View GitHub Repository"
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.95 }}
+                className="p-3.5 bg-slate-800 hover:bg-slate-700 rounded-2xl text-slate-300 hover:text-white transition-all"
               >
                 <Github className="w-4 h-4" />
               </motion.a>
+
               <motion.a
-                href={project.link || '#'}
+                href={project.link}
                 target="_blank"
                 rel="noopener noreferrer"
-                whileHover={{ scale: 1.1, y: -2, boxShadow: "0 10px 20px -5px rgba(59,130,246,0.5)" }}
-                whileTap={{ scale: 0.9 }}
-                className="p-3.5 bg-blue-500 text-white rounded-xl hover:bg-blue-400 transition-all shadow-lg shadow-blue-500/30"
-                aria-label={`Visit ${project.title} live website (opens in new tab)`}
-                title="Visit Live Site"
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.95 }}
+                className="p-3.5 bg-gradient-to-r from-blue-500 to-cyan-500 text-white rounded-2xl hover:brightness-110 transition-all shadow-lg"
               >
                 <ArrowUpRight className="w-4 h-4" />
               </motion.a>
             </div>
           </div>
 
-          {/* Content */}
-          <div className="p-5 flex flex-col flex-1">
-            <div className="flex items-center gap-2 mb-2">
-              <div className="w-1.5 h-1.5 rounded-full bg-cyan-400" />
-              <span className="text-[11px] font-mono text-cyan-400 uppercase tracking-[0.2em]">
-                {project.category}
-              </span>
+          {/* Content Area */}
+          <div className="p-6 flex flex-col flex-1">
+            <div className="flex items-center justify-between mb-3">
+              <span className="uppercase font-mono text-[10px] tracking-[2px] text-cyan-400">{project.category}</span>
+              {metrics?.lighthouse && <PerformanceBadge score={metrics.lighthouse} />}
             </div>
 
-            <h3 className="text-lg font-bold text-white mb-2 group-hover:text-blue-400 transition-colors tracking-tight">
+            <h3 className="text-2xl font-bold text-white mb-3 group-hover:text-cyan-300 transition-colors tracking-tight">
               {project.title}
             </h3>
 
-            <p className="text-slate-400 text-sm leading-relaxed mb-4 line-clamp-2">
+            <p className="text-slate-400 text-[15px] leading-relaxed mb-6 line-clamp-3">
               {project.description}
             </p>
 
-            {/* Metrics Bar */}
+            {/* Metrics */}
             {metrics && (
-              <div className="flex flex-wrap gap-2 mb-4">
-                <MetricBadge icon={FileCode} label="" value={metrics.lines + ' LOC'} color="blue" />
+              <div className="flex flex-wrap gap-2 mb-6">
+                <MetricBadge icon={FileCode} value={metrics.lines + " LOC"} color="blue" />
                 {metrics.lighthouse && (
-                  <MetricBadge
-                    icon={Gauge}
-                    label=""
-                    value={metrics.lighthouse + '/100'}
-                    color={metrics.lighthouse >= 95 ? 'green' : 'yellow'}
-                  />
+                  <MetricBadge icon={Gauge} value={metrics.lighthouse + "%"} color="green" />
                 )}
-                <MetricBadge
-                  icon={Layers}
-                  label=""
-                  value={metrics.complexity}
-                  color={metrics.complexity === 'High' ? 'cyan' : 'blue'}
-                />
+                <MetricBadge icon={Layers} value={metrics.complexity} color="cyan" />
               </div>
             )}
 
             {/* Tags */}
-            <div className="mt-auto flex flex-wrap gap-1.5">
-              {(project.tags || []).map((tag) => (
+            <div className="mt-auto flex flex-wrap gap-2">
+              {(project.tags || []).map((tag, i) => (
                 <span
-                  key={tag}
-                  className="px-2.5 py-1 text-[10px] font-medium rounded-md bg-slate-800 border border-slate-700 text-slate-400 group-hover:text-cyan-300 group-hover:border-blue-500/25 transition-all"
+                  key={i}
+                  className="px-3 py-1 text-xs rounded-xl bg-white/5 border border-white/10 text-slate-400 hover:text-cyan-300 hover:border-cyan-400/30 transition-all"
                 >
                   {tag}
                 </span>
@@ -226,53 +185,38 @@ const ProjectCard = React.forwardRef(({ project, index = 0 }, ref) => {
         </motion.div>
       </motion.div>
 
-      {/* Code Snippet Modal */}
+      {/* Modals */}
       {showCode && codeSnippet && (
         <CodeSnippetModal snippet={codeSnippet} onClose={() => setShowCode(false)} />
       )}
 
-      {/* Video Demo Modal */}
       {showVideo && video && (
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          className="fixed inset-0 z-[9999] flex items-center justify-center p-4"
+          className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/90 backdrop-blur-sm"
           onClick={() => setShowVideo(false)}
         >
-          {/* Backdrop */}
-          <div className="absolute inset-0 bg-black/80 backdrop-blur-sm" />
-
-          {/* Modal */}
           <motion.div
-            initial={{ scale: 0.85, opacity: 0 }}
+            initial={{ scale: 0.9, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
-            exit={{ scale: 0.85, opacity: 0 }}
-            transition={{ type: 'spring', stiffness: 260, damping: 24 }}
-            className="relative w-full max-w-3xl rounded-2xl overflow-hidden border border-slate-700/60 shadow-2xl shadow-black/60"
+            exit={{ scale: 0.9, opacity: 0 }}
             onClick={e => e.stopPropagation()}
+            className="w-full max-w-4xl rounded-3xl overflow-hidden border border-slate-700 shadow-2xl"
           >
-            {/* Header */}
-            <div className="flex items-center justify-between px-4 py-3 bg-[#0d1117] border-b border-slate-800">
-              <div className="flex items-center gap-2">
-                <Play className="w-4 h-4 text-red-400 fill-current" />
-                <span className="text-sm font-semibold text-white">{project.title} — Demo</span>
+            <div className="bg-[#0d1117] px-5 py-4 flex items-center justify-between border-b border-slate-800">
+              <div className="flex items-center gap-3 text-white">
+                <Play className="text-red-500" />
+                <span>{project.title} — Live Demo</span>
               </div>
-              <button
-                onClick={() => setShowVideo(false)}
-                className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition-all"
-                aria-label="Close video"
-              >
-                <X className="w-4 h-4" />
+              <button onClick={() => setShowVideo(false)} className="text-slate-400 hover:text-white">
+                <X className="w-5 h-5" />
               </button>
             </div>
-
-            {/* Video */}
-            <div className="relative w-full" style={{ paddingTop: '56.25%' }}>
+            <div className="relative pt-[56.25%] bg-black">
               <iframe
-                src={`${video}?autoplay=1&rel=0&modestbranding=1`}
-                title={`${project.title} Demo`}
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                src={`${video}?autoplay=1&modestbranding=1&rel=0`}
                 allowFullScreen
                 className="absolute inset-0 w-full h-full"
               />
@@ -285,4 +229,15 @@ const ProjectCard = React.forwardRef(({ project, index = 0 }, ref) => {
 });
 
 ProjectCard.displayName = 'ProjectCard';
+
+function PerformanceBadge({ score }) {
+  const isHigh = score >= 95;
+  return (
+    <div className={`px-3 py-1 text-xs font-mono rounded-full border flex items-center gap-1.5 ${isHigh ? 'border-emerald-500/30 text-emerald-400' : 'border-yellow-500/30 text-yellow-400'}`}>
+      <div className={`w-2 h-2 rounded-full ${isHigh ? 'bg-emerald-400' : 'bg-yellow-400'} animate-pulse`} />
+      {score}
+    </div>
+  );
+}
+
 export default ProjectCard;

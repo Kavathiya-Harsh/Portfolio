@@ -4,7 +4,7 @@ export const education = [
     degree: 'B.E in Computer Science',
     institution: 'Shree Swaminarayan University',
     location: 'Gandhinagar, Gujarat',
-    period: '2022 — 2026',
+    period: '2025 — 2029',
     specialization: 'Software Engineering & AI',
     status: 'In Progress',
     details: [
@@ -20,7 +20,7 @@ export const education = [
     degree: 'Higher Secondary Education (12th)',
     institution: 'Modi School',
     location: 'Rajkot, Gujarat',
-    period: '2020 — 2022',
+    period: '2025',
     specialization: 'Science (PCM)',
     status: 'Completed',
     details: [
@@ -34,7 +34,7 @@ export const education = [
     degree: 'Secondary Education (10th)',
     institution: 'Modi School',
     location: 'Rajkot, Gujarat',
-    period: '2019 — 2020',
+    period: '2023',
     specialization: 'General Studies',
     status: 'Completed',
     details: [

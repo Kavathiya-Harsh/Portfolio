@@ -24,10 +24,10 @@ function generateHeatmap(submissionCalendar) {
     let parsed = {};
     try {
       parsed = typeof submissionCalendar === 'string' ? JSON.parse(submissionCalendar) : submissionCalendar;
-    } catch(e) {}
+    } catch (e) { }
     Object.entries(parsed).forEach(([ts, count]) => {
       const d = new Date(parseInt(ts) * 1000);
-      const dateString = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+      const dateString = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
       countsByDate[dateString] = count;
     });
   }
@@ -39,7 +39,7 @@ function generateHeatmap(submissionCalendar) {
   for (let i = 364; i >= 0; i--) {
     const d = new Date(today);
     d.setDate(d.getDate() - i);
-    const dateString = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+    const dateString = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
     const count = countsByDate[dateString] || 0;
     days.push({ date: d, count });
   }
@@ -78,13 +78,13 @@ function CircularProgress({ profileData }) {
   const medium = profileData.mediumSolved || 0;
   const hard = profileData.hardSolved || 0;
   const submissions = profileData.totalSubmissions?.[0]?.submissions || 0;
-  
+
   // Calculate acceptance rate
   const acceptanceRate = submissions > 0 ? ((totalSolved / submissions) * 100).toFixed(2) : '0.00';
 
   const radius = 64;
   const circumference = 2 * Math.PI * radius;
-  
+
   // Calculate arc lengths based on solved ratio (add gap)
   const gap = 4;
   const easyLength = (easy / totalSolved) * circumference - gap;
@@ -98,12 +98,12 @@ function CircularProgress({ profileData }) {
 
   return (
     <div className="flex items-center gap-6 rounded-3xl p-6 shadow-lg border border-slate-700/50"
-         style={{ background: COLOR_BG, backdropFilter: 'blur(20px)' }}>
+      style={{ background: COLOR_BG, backdropFilter: 'blur(20px)' }}>
       <div className="relative w-40 h-40 flex-shrink-0">
         <svg className="w-full h-full -rotate-90 transform" viewBox="0 0 160 160">
           {/* Background track */}
           <circle cx="80" cy="80" r={radius} fill="transparent" stroke="rgba(51, 65, 85, 0.5)" strokeWidth="4" />
-          
+
           {/* Easy Arc */}
           {easy > 0 && (
             <circle cx="80" cy="80" r={radius} fill="transparent" stroke={COLOR_EASY} strokeWidth="4" strokeLinecap="round"
@@ -159,13 +159,13 @@ function BadgesWidget({ badgesData }) {
 
   return (
     <div className="rounded-3xl p-6 shadow-lg relative h-full flex flex-col border border-slate-700/50"
-         style={{ background: COLOR_BG, backdropFilter: 'blur(20px)' }}>
+      style={{ background: COLOR_BG, backdropFilter: 'blur(20px)' }}>
       <div className="flex justify-between items-start mb-2">
         <span className="text-sm text-slate-300">Badges</span>
         <ArrowRight className="w-5 h-5 text-slate-400" />
       </div>
       <span className="text-2xl font-bold text-white mb-4">{badgeCount}</span>
-      
+
       <div className="flex-1 flex flex-col items-center justify-center mb-4">
         {recentBadge && (
           <img src={recentBadge.icon} alt={recentBadge.displayName} className="w-20 h-20 object-contain drop-shadow-[0_0_15px_rgba(255,255,255,0.1)]" />
@@ -183,14 +183,14 @@ function BadgesWidget({ badgesData }) {
 /* ─── Calendar Component ──────────────────────────────────────────────────── */
 function CalendarWidget({ calendarData, profileData }) {
   if (!calendarData) return null;
-  
+
   const submissions = profileData?.totalSubmissions?.[0]?.submissions || 0;
   const weeks = useMemo(() => generateHeatmap(calendarData.submissionCalendar), [calendarData.submissionCalendar]);
-  const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
   return (
     <div className="rounded-3xl p-6 shadow-lg mt-4 w-full overflow-x-auto custom-scrollbar border border-slate-700/50"
-         style={{ background: COLOR_BG, backdropFilter: 'blur(20px)' }}>
+      style={{ background: COLOR_BG, backdropFilter: 'blur(20px)' }}>
       <div className="flex justify-between items-center mb-6 min-w-[600px]">
         <div className="text-[13px] text-slate-300">
           <span className="text-white font-bold text-lg">{submissions}</span> submissions in the past one year <span className="text-slate-500">ⓘ</span>
@@ -206,8 +206,8 @@ function CalendarWidget({ calendarData, profileData }) {
           {weeks.map((week, i) => (
             <div key={i} className="flex flex-col gap-[3px]">
               {week.map((day, j) => (
-                <div 
-                  key={j} 
+                <div
+                  key={j}
                   className="w-3 h-3 rounded-[2px]"
                   style={{ backgroundColor: getLevelColor(day.count) }}
                   title={`${day.count} submissions on ${day.date.toDateString()}`}
@@ -292,7 +292,7 @@ export default function LeetCodeActivity() {
               <BadgesWidget badgesData={badges} />
             </div>
           </div>
-          
+
           <CalendarWidget calendarData={calendar} profileData={profile} />
         </motion.div>
       )}
