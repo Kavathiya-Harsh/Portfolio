@@ -102,7 +102,7 @@ function AntigravityParticles() {
         height: '100%',
         zIndex: -1,
         pointerEvents: 'none',
-        opacity: 0.85,  // 10% visibility reduction
+        opacity: 0.80,  // 10% visibility reduction
       }}
     />
   );
