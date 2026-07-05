@@ -4,8 +4,11 @@ import { Link, useLocation } from 'react-router-dom';
 import Menu from 'lucide-react/dist/esm/icons/menu';
 import X from 'lucide-react/dist/esm/icons/x';
 import FileDown from 'lucide-react/dist/esm/icons/file-down';
+import Sparkles from 'lucide-react/dist/esm/icons/sparkles';
+import ZapOff from 'lucide-react/dist/esm/icons/zap-off';
 import { useBreakpoint } from '../utils/useBreakpoint';
 import { profile } from '../data/profile';
+import { usePerformance } from '../context/PerformanceContext';
 
 const MotionLink = motion.create(Link);
 
@@ -28,32 +31,36 @@ function NavItem({ link, isActive, isHovered, onHoverEnter, onHoverLeave, onClic
       onMouseEnter={() => onHoverEnter(link.href)}
       onMouseLeave={onHoverLeave}
     >
-      {/* Sliding pill — only visible on hover; layoutId lets it glide between items */}
+      {/* Sliding frosted pill — layoutId lets it glide between items */}
       <AnimatePresence>
         {isHovered && (
           <motion.div
             layoutId="nav-hover-pill"
-            className="absolute inset-0 rounded-xl pointer-events-none"
+            className="absolute inset-0 pointer-events-none rounded-xl"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ type: 'spring', stiffness: 400, damping: 34 }}
+            transition={{ type: 'spring', stiffness: 350, damping: 30 }}
             style={{
-              background:
-                'radial-gradient(ellipse at 50% 80%, rgba(212,175,55,0.14) 0%, rgba(212,175,55,0.04) 70%, transparent 100%)',
-              boxShadow: '0 0 18px rgba(212,175,55,0.10)',
+              background: 'rgba(255, 255, 255, 0.05)',
+              border: '1px solid rgba(255, 255, 255, 0.08)',
+              boxShadow: '0 4px 20px -2px rgba(6,182,212,0.15)',
+              backdropFilter: 'blur(12px)',
               willChange: 'opacity, transform',
             }}
-          />
+          >
+            {/* Soft inner bottom glow */}
+            <div className="absolute inset-x-2 bottom-0 h-px bg-gradient-to-r from-transparent via-cyan-400/40 to-transparent" />
+          </motion.div>
         )}
       </AnimatePresence>
 
       <Link
         to={`/${link.href}`}
         onClick={onClick}
-        className="relative flex flex-col items-center px-4 py-3.5 rounded-xl select-none cursor-pointer outline-none"
+        className="relative flex flex-col items-center px-4 py-3 rounded-xl select-none cursor-pointer outline-none"
       >
-        {/* Glowing dot — slides between active items */}
+        {/* Active Indicator Dot */}
         <AnimatePresence>
           {isActive && (
             <motion.span
@@ -62,12 +69,11 @@ function NavItem({ link, isActive, isHovered, onHoverEnter, onHoverLeave, onClic
               initial={{ opacity: 0, scale: 0 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0 }}
-              transition={{ type: 'spring', stiffness: 500, damping: 32 }}
-              className="absolute -top-px left-1/2 -translate-x-1/2 w-1.5 h-1.5 rounded-full"
+              transition={{ type: 'spring', stiffness: 500, damping: 30 }}
+              className="absolute -bottom-[6px] left-1/2 -translate-x-1/2 w-[18px] h-1 rounded-t-full"
               style={{
-                background: '#d4af37',
-                boxShadow:
-                  '0 0 6px 2px rgba(212,175,55,0.95), 0 0 18px 4px rgba(212,175,55,0.45)',
+                background: 'linear-gradient(90deg, #3b82f6, #06b6d4)',
+                boxShadow: '0 -2px 10px rgba(6,182,212,0.6)',
                 willChange: 'opacity, transform',
               }}
             />
@@ -77,38 +83,19 @@ function NavItem({ link, isActive, isHovered, onHoverEnter, onHoverLeave, onClic
         {/* Label */}
         <motion.span
           animate={{
-            color: isActive ? '#d4af37' : isHovered ? '#ffffff' : '#94a3b8',
+            color: isActive ? '#ffffff' : isHovered ? '#f8fafc' : '#94a3b8',
             textShadow: isActive
-              ? '0 0 14px rgba(212,175,55,0.55)'
+              ? '0 0 16px rgba(6,182,212,0.5)'
               : isHovered
-              ? '0 0 20px rgba(212,175,55,0.6), 0 0 40px rgba(212,175,55,0.25)'
+              ? '0 0 12px rgba(255,255,255,0.3)'
               : 'none',
-            y: isHovered && !isActive ? -1.5 : 0,
+            y: isHovered && !isActive ? -1 : 0,
           }}
-          transition={{ duration: 0.16, ease: [0.25, 0.46, 0.45, 0.94] }}
-          className="relative z-10 text-sm font-semibold leading-none tracking-wide"
+          transition={{ duration: 0.2, ease: 'easeOut' }}
+          className="relative z-10 text-sm font-medium leading-none tracking-wide"
         >
           {link.label}
         </motion.span>
-
-        {/* Underline bar */}
-        <span className="relative mt-[5px] h-[2px] w-full rounded-full overflow-hidden">
-          <motion.span
-            className="absolute inset-0 rounded-full"
-            style={{
-              background: isActive
-                ? 'linear-gradient(90deg, transparent, #d4af37 40%, #d4af37 60%, transparent)'
-                : 'linear-gradient(90deg, transparent, rgba(212,175,55,0.75) 40%, rgba(212,175,55,0.75) 60%, transparent)',
-              originX: '0%',
-            }}
-            initial={false}
-            animate={{
-              scaleX: isActive || isHovered ? 1 : 0,
-              opacity: isActive ? 1 : isHovered ? 0.9 : 0,
-            }}
-            transition={{ type: 'spring', stiffness: 420, damping: 36 }}
-          />
-        </span>
       </Link>
     </li>
   );
@@ -132,6 +119,57 @@ function ResumeBtn() {
       <FileDown className="w-3.5 h-3.5" />
       <span className="relative z-10">Resume</span>
     </motion.a>
+  );
+}
+
+/* ─── Particles Toggle Button ─────────────────────────────────────────────── */
+function ParticlesToggleBtn() {
+  const { isLowPower, toggleLowPower } = usePerformance();
+  const active = !isLowPower;
+
+  return (
+    <motion.button
+      type="button"
+      onClick={toggleLowPower}
+      title={active ? 'Disable particles' : 'Enable particles'}
+      aria-label={active ? 'Disable particle animation' : 'Enable particle animation'}
+      whileHover={{ scale: 1.08, y: -1 }}
+      whileTap={{ scale: 0.92 }}
+      className="relative flex items-center justify-center w-9 h-9 rounded-xl transition-all duration-300 ml-1"
+      style={{
+        background: active
+          ? 'rgba(0, 245, 255, 0.08)'
+          : 'rgba(255,255,255,0.04)',
+        border: active
+          ? '1px solid rgba(0,245,255,0.25)'
+          : '1px solid rgba(255,255,255,0.08)',
+        boxShadow: active ? '0 0 12px rgba(0,245,255,0.15)' : 'none',
+      }}
+    >
+      <AnimatePresence mode="wait" initial={false}>
+        {active ? (
+          <motion.span
+            key="on"
+            initial={{ opacity: 0, rotate: -30, scale: 0.6 }}
+            animate={{ opacity: 1, rotate: 0, scale: 1 }}
+            exit={{ opacity: 0, rotate: 30, scale: 0.6 }}
+            transition={{ duration: 0.2 }}
+          >
+            <Sparkles className="w-4 h-4" style={{ color: '#00f5ff' }} />
+          </motion.span>
+        ) : (
+          <motion.span
+            key="off"
+            initial={{ opacity: 0, rotate: 30, scale: 0.6 }}
+            animate={{ opacity: 1, rotate: 0, scale: 1 }}
+            exit={{ opacity: 0, rotate: -30, scale: 0.6 }}
+            transition={{ duration: 0.2 }}
+          >
+            <ZapOff className="w-4 h-4 text-slate-500" />
+          </motion.span>
+        )}
+      </AnimatePresence>
+    </motion.button>
   );
 }
 
@@ -211,8 +249,7 @@ export default function Navbar() {
       <motion.div
         animate={{ scaleX: scrolled ? 1 : 0, opacity: scrolled ? 1 : 0 }}
         transition={{ duration: 0.4 }}
-        className="absolute top-0 left-0 right-0 h-px origin-left"
-        style={{ background: 'linear-gradient(90deg, transparent, #d4af37 40%, #d4af37 60%, transparent)' }}
+        style={{ background: 'linear-gradient(90deg, transparent, #06b6d4 40%, #3b82f6 60%, transparent)' }}
       />
 
       <nav className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
@@ -234,14 +271,14 @@ export default function Navbar() {
               width="40"
               height="40"
               className="w-10 h-10 rounded-xl object-contain will-change-transform"
-              style={{ filter: 'drop-shadow(0 0 8px rgba(212,175,55,0.5))' }}
+              style={{ filter: 'drop-shadow(0 0 10px rgba(6,182,212,0.4))' }}
             />
           </motion.div>
           <motion.div
             animate={{ opacity: 0, scale: 0.8 }}
             whileHover={{ opacity: 1, scale: 1 }}
             className="absolute inset-0 blur-xl rounded-full -z-10"
-            style={{ background: 'radial-gradient(circle, rgba(212,175,55,0.28) 0%, transparent 70%)' }}
+            style={{ background: 'radial-gradient(circle, rgba(59,130,246,0.3) 0%, transparent 70%)' }}
           />
         </MotionLink>
 
@@ -259,6 +296,7 @@ export default function Navbar() {
             />
           ))}
           <li><ResumeBtn /></li>
+          <li><ParticlesToggleBtn /></li>
         </ul>
 
         {/* Mobile toggle */}
@@ -314,18 +352,18 @@ export default function Navbar() {
                       onClick={handleLinkClick}
                       className={`flex items-center gap-3 px-4 py-3.5 rounded-xl font-medium text-sm transition-all duration-200 ${
                         isActive
-                          ? 'text-[#d4af37] border border-[#d4af37]/20'
+                          ? 'text-[#06b6d4] border border-[#06b6d4]/20'
                           : 'text-slate-300 hover:text-white hover:bg-white/5'
                       }`}
                       style={isActive ? {
-                        background: 'radial-gradient(ellipse at left, rgba(212,175,55,0.10) 0%, transparent 70%)',
+                        background: 'radial-gradient(ellipse at left, rgba(6,182,212,0.15) 0%, transparent 70%)',
                       } : {}}
                     >
                       <span
                         className="w-1.5 h-1.5 rounded-full shrink-0"
                         style={{
-                          background: isActive ? '#d4af37' : '#334155',
-                          boxShadow: isActive ? '0 0 8px rgba(212,175,55,0.8)' : 'none',
+                          background: isActive ? '#06b6d4' : '#334155',
+                          boxShadow: isActive ? '0 0 10px rgba(6,182,212,0.8)' : 'none',
                         }}
                       />
                       {link.label}

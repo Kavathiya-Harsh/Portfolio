@@ -78,13 +78,13 @@ export default function GitHubActivity() {
   }, []);
 
   return (
-    <section id="activity" className="py-24 px-4 sm:px-6 relative overflow-hidden bg-[#080d1a]">
+    <section id="activity" className="py-24 px-4 sm:px-6 relative overflow-hidden">
       <motion.div
         variants={slideInLeft}
         initial="hidden"
         whileInView="visible"
         viewport={viewportOnce}
-        className="max-w-5xl mx-auto"
+        className="max-w-5xl mx-auto relative z-10"
       >
         <div className="relative group overflow-hidden rounded-2xl border border-white/12 bg-slate-800/50 backdrop-blur-md p-5 hover:border-blue-500/20 transition-all duration-300">
           <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500"

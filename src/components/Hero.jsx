@@ -8,6 +8,8 @@ import CheckCircle2 from 'lucide-react/dist/esm/icons/check-circle-2';
 import Sparkles from 'lucide-react/dist/esm/icons/sparkles';
 import Typewriter from './Typewriter';
 import MagneticButton from './MagneticButton';
+import MouseGlow from './MouseGlow';
+
 import { profile } from '../data/profile';
 import { useBreakpoint } from '../utils/useBreakpoint';
 import { usePerformance } from '../context/PerformanceContext';
@@ -46,10 +48,11 @@ function AnimatedName({ firstName, lastName, isReady, instant = false }) {
 
   return (
     <motion.h1
-      className="font-bold tracking-tighter leading-[1.05] mb-4 whitespace-nowrap"
+      className="font-bold tracking-tighter leading-[1.05] mb-8 whitespace-nowrap cursor-default"
       style={{ fontSize: 'clamp(1.7rem, 5.5vw, 5.25rem)' }}
       initial={instant ? 'visible' : 'hidden'}
       animate={isReady ? 'visible' : 'hidden'}
+      whileHover={{ textShadow: "0px 0px 25px rgba(6,182,212,0.4)" }}
       aria-label={`Harsh Kavathiya — Full Stack Developer & Problem Solver`}
       variants={{
         hidden: {},
@@ -70,11 +73,10 @@ function AnimatedName({ firstName, lastName, isReady, instant = false }) {
               transition: { duration: 0.55, ease: EXPO },
             },
           }}
-          className={`inline-block will-change-transform ${
-            item.gradient
-              ? 'bg-gradient-to-r from-blue-400 via-cyan-300 to-blue-500 bg-clip-text text-transparent'
-              : 'text-white'
-          }`}
+          className={`inline-block will-change-transform ${item.gradient
+            ? 'bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent'
+            : 'text-white'
+            }`}
           style={{ transformOrigin: 'center bottom', perspective: '700px' }}
         >
           {item.c === ' ' ? '\u00A0' : item.c}
@@ -225,91 +227,66 @@ function PhotoSection({ isLowPower, isReady, isMobile, instant = false }) {
       initial={instant ? { opacity: 1, scale: 1, y: 0 } : { opacity: 0, scale: 0.88, y: 20 }}
       animate={isReady ? { opacity: 1, scale: 1, y: 0 } : { opacity: 0, scale: 0.88, y: 20 }}
       transition={instant ? { duration: 0 } : { duration: 0.9, ease: EXPO, delay: 0.15 }}
-      className="flex justify-center items-center order-1 lg:order-2 will-change-transform"
+      className="flex justify-center items-center order-1 lg:order-2 will-change-transform relative"
     >
-      <div className="relative group">
-        {/* Outer glow pulse */}
+      <div className="relative group perspective-section w-full max-w-md mx-auto">
+
+        {/* Soft background glow tailored for the rectangular card */}
         <motion.div
-          className="absolute -inset-16 rounded-full pointer-events-none"
-          style={{ background: 'radial-gradient(circle, rgba(59,130,246,0.12) 0%, transparent 70%)' }}
-          animate={{ opacity: [0.5, 1, 0.5] }}
-          transition={{ duration: 5, repeat: Infinity, ease: 'easeInOut' }}
+          className="absolute -inset-10 rounded-[3rem] pointer-events-none"
+          style={{ background: 'radial-gradient(circle at 50% 40%, rgba(59,130,246,0.15) 0%, transparent 70%)' }}
+          animate={{ opacity: [0.6, 1, 0.6] }}
+          transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut' }}
         />
 
-        {/* Orbiting dashed ring */}
+        {/* Ambient floating orbs behind the card */}
         <motion.div
-          className="absolute -inset-5 rounded-full border-2 border-dashed border-blue-500/20"
-          animate={!isLowPower ? { rotate: 360 } : {}}
-          transition={{ duration: 22, repeat: Infinity, ease: 'linear' }}
+          className="absolute -top-10 -right-10 w-32 h-32 bg-cyan-400/20 blur-[40px] rounded-full pointer-events-none"
+          animate={{ y: [0, -20, 0], scale: [1, 1.1, 1] }}
+          transition={{ duration: 7, repeat: Infinity, ease: 'easeInOut' }}
         />
-        {/* Outer static ring */}
         <motion.div
-          className="absolute -inset-9 rounded-full border border-cyan-400/8"
-          animate={!isLowPower ? { rotate: -360 } : {}}
-          transition={{ duration: 32, repeat: Infinity, ease: 'linear' }}
+          className="absolute -bottom-10 -left-10 w-40 h-40 bg-indigo-500/20 blur-[50px] rounded-full pointer-events-none"
+          animate={{ y: [0, 20, 0], scale: [1, 1.2, 1] }}
+          transition={{ duration: 8, delay: 1, repeat: Infinity, ease: 'easeInOut' }}
         />
 
-        {/* Spinning gradient border */}
+        {/* Photo Card */}
         <motion.div
-          className="absolute -inset-1 rounded-full p-[3px]"
-          style={{
-            background: 'linear-gradient(135deg, #3b82f6, #06b6d4, #8b5cf6, #3b82f6)',
-            boxShadow: '0 0 70px -18px rgba(37,99,235,0.65)',
+          className="relative w-[16rem] sm:w-[19rem] md:w-[21rem] lg:w-[23rem] aspect-[3/4] rounded-[2rem] overflow-hidden bg-slate-900 z-10 shadow-[0_20px_50px_-12px_rgba(0,0,0,0.7)] mx-auto"
+          style={{ border: '1px solid rgba(255, 255, 255, 0.12)' }}
+          whileHover={{
+            y: -8,
+            boxShadow: '0 30px 80px -15px rgba(59,130,246,0.3)',
+            borderColor: 'rgba(255,255,255,0.25)'
           }}
-          animate={!isLowPower ? { rotate: 360 } : {}}
-          transition={{ duration: 14, repeat: Infinity, ease: 'linear' }}
+          transition={{ type: 'spring', stiffness: 300, damping: 25 }}
         >
-          <div className="w-full h-full rounded-full bg-[#080d1a]" />
-        </motion.div>
+          {/* Subtle inner reflection */}
+          <div className="absolute inset-0 z-20 pointer-events-none rounded-[2rem]" style={{ boxShadow: 'inset 0 1px 1px rgba(255,255,255,0.3)' }} />
 
-        {/* Floating accent dots */}
-        {[
-          { top: '16%', right: '-10px', delay: 0 },
-          { top: '50%', left: '-10px', delay: 0.9 },
-          { top: '80%', right: '-10px', delay: 1.8 },
-        ].map((dot, i) => (
-          <motion.div
-            key={i}
-            className="absolute w-2 h-2 rounded-full bg-blue-400/70"
-            style={{ ...dot, boxShadow: '0 0 8px rgba(59,130,246,0.7)' }}
-            animate={{ y: [0, -10, 0], opacity: [0.5, 1, 0.5] }}
-            transition={{ duration: 3, delay: dot.delay, repeat: Infinity, ease: 'easeInOut' }}
-          />
-        ))}
+          {/* Clean gradient overlay at the bottom to blend with dark mode */}
+          <div className="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-slate-900/40 to-transparent z-10 pointer-events-none" />
 
-        {/* Photo */}
-        <div className="relative w-56 h-56 sm:w-72 sm:h-72 md:w-80 md:h-80 lg:w-[22rem] lg:h-[22rem] rounded-full overflow-hidden border-[5px] border-[#080d1a] bg-slate-800 z-10 shadow-2xl">
           {!photoError ? (
-            <picture>
-              <source 
-                media="(max-width: 1024px)" 
-                srcSet="https://res.cloudinary.com/dvv5mtpli/image/upload/q_auto,f_auto,w_400/v1776351778/Harsh_Kavathiya_Profile_duaqrs.jpg" 
-              />
-              <source 
-                media="(min-width: 1025px)" 
-                srcSet="https://res.cloudinary.com/dvv5mtpli/image/upload/q_auto,f_auto,w_800/v1776351778/Harsh_Kavathiya_Profile_duaqrs.jpg" 
-              />
-              <img
-                src="https://res.cloudinary.com/dvv5mtpli/image/upload/q_auto,f_auto,w_800/v1776351778/Harsh_Kavathiya_Profile_duaqrs.jpg"
-                alt="Harsh Kavathiya - Full Stack Developer & Hackathon Winner"
-                width="352"
-                height="352"
-                fetchpriority="high"
-                loading="eager"
-                decoding="async"
-                className="w-full h-full object-cover object-top scale-105 group-hover:scale-110 transition-transform duration-[1.2s] will-change-transform"
-                onError={() => setPhotoError(true)}
-              />
-            </picture>
+            <img
+              src={profile.photoUrl}
+              alt="Harsh Kavathiya - Full Stack Developer"
+              fetchpriority="high"
+              loading="eager"
+              decoding="async"
+              // object-[50%_15%] to perfectly frame a portrait shot
+              className="w-full h-full object-cover object-[50%_15%] scale-100 group-hover:scale-105 transition-transform duration-700 ease-[0.16,1,0.3,1] will-change-transform"
+              style={{ filter: 'contrast(1.03) saturate(1.05)' }}
+              onError={() => setPhotoError(true)}
+            />
           ) : (
             <div className="w-full h-full flex flex-col items-center justify-center bg-gradient-to-br from-blue-600 to-cyan-500">
               <span className="text-5xl font-black text-white tracking-widest">{profile.initials}</span>
               <p className="text-[10px] text-white/50 uppercase tracking-[0.2em] mt-2 font-mono">Profile</p>
             </div>
           )}
-        </div>
-
-
+        </motion.div>
       </div>
     </motion.div>
   );
@@ -333,11 +310,11 @@ export default function Hero({ isReady = false }) {
   const smoothProgress = useSpring(scrollYProgress, { stiffness: 100, damping: 30, restDelta: 0.001 });
   const noParallax = isMobile || isLowPower;
   const contentY = useTransform(smoothProgress, [0, 1], noParallax ? [0, 0] : [0, -55]);
-  const bgOrb1Y  = useTransform(smoothProgress, [0, 1], noParallax ? [0, 0] : [0, 75]);
-  const bgOrb2Y  = useTransform(smoothProgress, [0, 1], noParallax ? [0, 0] : [0, 45]);
+  const bgOrb1Y = useTransform(smoothProgress, [0, 1], noParallax ? [0, 0] : [0, 75]);
+  const bgOrb2Y = useTransform(smoothProgress, [0, 1], noParallax ? [0, 0] : [0, 45]);
 
   const firstName = profile.name.split(' ')[0];
-  const lastName  = profile.name.split(' ').slice(1).join(' ');
+  const lastName = profile.name.split(' ').slice(1).join(' ');
 
   return (
     <section
@@ -345,15 +322,10 @@ export default function Hero({ isReady = false }) {
       ref={sectionRef}
       className="relative min-h-screen flex flex-col justify-center pt-20 sm:pt-24 pb-16 px-4 sm:px-6 overflow-hidden"
     >
-      {/* Background orbs */}
-      <motion.div
-        className="absolute top-24 right-[8%] w-[280px] sm:w-[480px] h-[280px] sm:h-[480px] rounded-full pointer-events-none will-change-transform"
-        style={{ y: bgOrb1Y, background: 'radial-gradient(circle, rgba(59,130,246,0.1) 0%, transparent 70%)', filter: 'blur(60px)' }}
-      />
-      <motion.div
-        className="absolute bottom-20 left-[3%] w-[240px] sm:w-[380px] h-[240px] sm:h-[380px] rounded-full pointer-events-none will-change-transform"
-        style={{ y: bgOrb2Y, background: 'radial-gradient(circle, rgba(6,182,212,0.07) 0%, transparent 70%)', filter: 'blur(60px)' }}
-      />
+      {/* New Interactive 3D Background handles the environment */}
+
+      {/* Mouse glow effect */}
+      <MouseGlow />
 
       <div className="max-w-7xl mx-auto w-full relative z-10">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 xl:gap-28 items-center">
@@ -377,8 +349,7 @@ export default function Hero({ isReady = false }) {
                   boxShadow: '0 0 20px rgba(16,185,129,0.06)',
                 }}
               >
-                <Sparkles className="w-3 h-3" />
-                Open to Innovation &amp; Collaboration
+                🚀 Open to Opportunities &amp; Collaboration
               </span>
             </motion.div>
 
@@ -399,24 +370,26 @@ export default function Hero({ isReady = false }) {
               <Typewriter />
             </motion.div>
 
-            {/* Info card */}
-            <motion.div variants={instant ? fadeUpInstant : fadeUp}>
-              <InfoCard isLowPower={isLowPower} />
+            {/* Value Proposition */}
+            <motion.div variants={instant ? fadeUpInstant : fadeUp} className="mb-6">
+              <p className="text-slate-300 text-base sm:text-lg max-w-xl leading-relaxed">
+                I build scalable, high-performance web applications with clean architecture and modern user experiences.
+              </p>
             </motion.div>
 
             {/* CTAs */}
             <motion.div
               variants={instant ? fadeUpInstant : fadeUp}
-              className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4"
+              className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 mb-8"
             >
               {/* Primary CTA */}
               <MagneticButton
-                href="#contact"
-                whileHover={{ scale: 1.04, y: -3, boxShadow: '0 18px 40px -10px rgba(37,99,235,0.55)' }}
+                href="#projects"
+                whileHover={{ scale: 1.05, y: -2, boxShadow: '0 0 20px rgba(6,182,212,0.4)' }}
                 whileTap={{ scale: 0.97 }}
-                className="relative px-7 py-3.5 rounded-xl text-white font-bold text-sm sm:text-base flex items-center justify-center gap-2 group overflow-hidden"
-                style={{ background: 'linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%)', border: '1px solid rgba(96,165,250,0.2)' }}
-                title="Contact Harsh Kavathiya"
+                className="relative px-8 py-3.5 rounded-xl text-white font-bold text-sm sm:text-base flex items-center justify-center gap-2 group overflow-hidden"
+                style={{ background: 'linear-gradient(135deg, #0891b2 0%, #06b6d4 100%)', border: '1px solid rgba(6,182,212,0.3)' }}
+                title="View My Work"
               >
                 {/* Shimmer on hover */}
                 <motion.div
@@ -424,30 +397,35 @@ export default function Hero({ isReady = false }) {
                   initial={{ x: '-110%' }}
                   whileHover={{ x: '110%' }}
                   transition={{ duration: 0.6 }}
-                  style={{ background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.12), transparent)' }}
+                  style={{ background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent)' }}
                 />
-                Let's Build Something
-                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-200" />
+                🚀 View My Work
               </MagneticButton>
 
               {/* Secondary CTA */}
               <MagneticButton
-                href={profile.resumeUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                whileHover={{ scale: 1.04, y: -3, boxShadow: '0 14px 32px -8px rgba(0,0,0,0.3)' }}
+                href="#contact"
+                whileHover={{ scale: 1.05, y: -2, boxShadow: '0 14px 32px -8px rgba(139,92,246,0.3)', borderColor: 'rgba(139,92,246,0.4)' }}
                 whileTap={{ scale: 0.97 }}
-                className="px-7 py-3.5 rounded-xl font-bold text-sm sm:text-base flex items-center justify-center gap-2 text-slate-300 hover:text-white transition-colors duration-200"
+                className="px-8 py-3.5 rounded-xl font-bold text-sm sm:text-base flex items-center justify-center gap-2 text-slate-300 hover:text-white transition-all duration-300"
                 style={{
                   background: 'rgba(255,255,255,0.05)',
                   border: '1px solid rgba(255,255,255,0.1)',
                   backdropFilter: 'blur(8px)',
                 }}
-                title="Download Harsh Kavathiya's Resume"
+                title="Let's Connect"
               >
-                <Download className="w-4 h-4" />
-                Download CV
+                📩 Let's Connect
               </MagneticButton>
+            </motion.div>
+
+            {/* Minimal Info Row */}
+            <motion.div variants={instant ? fadeUpInstant : fadeUp} className="flex items-center gap-2 text-xs sm:text-sm text-slate-400 font-medium">
+              <MapPin className="w-3.5 h-3.5 text-cyan-400" />
+              <span>Gujarat, India</span>
+              <span className="mx-2 opacity-50">•</span>
+              <GraduationCap className="w-3.5 h-3.5 text-indigo-400" />
+              <span>Computer Science Graduate</span>
             </motion.div>
           </motion.div>
 

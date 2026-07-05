@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <title>Harsh Kavathiya | Full Stack Developer & 5x Hackathon Winner</title>
     <meta name="description" content="Harsh Kavathiya — Full Stack Developer, 5x Hackathon Winner, and Innovation Specialist from Gujarat, India. Specialist in React, Node.js, and high-performance web applications." />
-    <meta name="keywords" content="Harsh Kavathiya Portfolio, Harsh, Kavathiya, Full Stack Developer, Software Engineer, Portfolio, Hackathon Winner, React Developer, Node.js Developer, Gujarat, India, IIT Madras, IIT Hyderabad, DA-IICT" />
+    <meta name="keywords" content="Harsh Kavathiya, Harsh, Kavathiya, Full Stack Developer, Software Engineer, Portfolio, Hackathon Winner, React Developer, Node.js Developer, Gujarat, India, IIT Madras, IIT Hyderabad, DA-IICT" />
     <meta name="author" content="Harsh Kavathiya" />
     <link rel="canonical" href="https://harshkavathiya.vercel.app/" />
     <meta name="theme-color" content="#060c1a" />
@@ -69,25 +69,26 @@
     <link rel="preconnect" href="https://res.cloudinary.com" crossorigin />
     <link rel="dns-prefetch" href="https://api.github.com" />
     
-    <!-- 3. Critical Font Preloads — only the 2 most important weights -->
+    <!-- 3. Zero-Chain Font Preloads — ALL critical font files -->
+    <link rel="preload" href="https://fonts.gstatic.com/s/plusjakartasans/v12/LDIbaomQNQcsA88c7O9yZ4KMCoOg4IA6-91aHEjcWuA_qU7NSg.ttf" as="font" type="font/ttf" crossorigin />
+    <link rel="preload" href="https://fonts.gstatic.com/s/plusjakartasans/v12/LDIbaomQNQcsA88c7O9yZ4KMCoOg4IA6-91aHEjcWuA_TknNSg.ttf" as="font" type="font/ttf" crossorigin />
     <link rel="preload" href="https://fonts.gstatic.com/s/plusjakartasans/v12/LDIbaomQNQcsA88c7O9yZ4KMCoOg4IA6-91aHEjcWuA_KUnNSg.ttf" as="font" type="font/ttf" crossorigin />
     <link rel="preload" href="https://fonts.gstatic.com/s/inter/v20/UcCO3FwrK3iLTeHuS_nVMrMxCp50SjIw2boKoduKmMEVuLyfMZg.ttf" as="font" type="font/ttf" crossorigin />
+    <link rel="preload" href="https://fonts.gstatic.com/s/dmmono/v16/aFTU7PB1QTsUX8KYhh0.ttf" as="font" type="font/ttf" crossorigin />
 
-    <!-- 4. LCP Image Preload — Hero profile photo -->
+    <!-- 4. LCP Image Preload (Precision Sync) -->
     <link rel="preload" as="image" 
-          href="https://res.cloudinary.com/dvv5mtpli/image/upload/q_auto,f_auto,w_400/v1776351778/Harsh_Kavathiya_Profile_duaqrs.jpg"
+          imagesrcset="https://res.cloudinary.com/dvv5mtpli/image/upload/q_auto,f_auto,w_400/v1776351778/Harsh_Kavathiya_Profile_duaqrs.jpg 400w, https://res.cloudinary.com/dvv5mtpli/image/upload/q_auto,f_auto,w_800/v1776351778/Harsh_Kavathiya_Profile_duaqrs.jpg 800w"
+          imagesizes="(max-width: 1024px) 400px, 800px"
           fetchpriority="high" />
 
-    <!-- Favicons — HK Logo -->
-    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
-    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
-    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
-    <link rel="manifest" href="/site.webmanifest" />
-    <script type="module" crossorigin src="/assets/index-Bsq7KJSK.js"></script>
-    <link rel="modulepreload" crossorigin href="/assets/router-Dia-6GUi.js">
-    <link rel="modulepreload" crossorigin href="/assets/animation-Dzm92fnt.js">
-    <link rel="modulepreload" crossorigin href="/assets/icons-B1MIsYN5.js">
-    <link rel="stylesheet" crossorigin href="/assets/style-CXvnAAxE.css">
+    <link rel="icon" type="image/jpeg" href="https://res.cloudinary.com/dvv5mtpli/image/upload/q_auto,f_auto,w_80,c_fill,g_face/v1776355358/hk_logo_pb2u8w.jpg" />
+    <link rel="apple-touch-icon" href="https://res.cloudinary.com/dvv5mtpli/image/upload/q_auto,f_auto,w_180,c_fill,g_face/v1776355358/hk_logo_pb2u8w.jpg" />
+    <script type="module" crossorigin src="/assets/index-CES2H-Oz.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/animation-n5QAwK3i.js">
+    <link rel="modulepreload" crossorigin href="/assets/react-vendor-5uGg9uY1.js">
+    <link rel="modulepreload" crossorigin href="/assets/icons-C6n0e_Ut.js">
+    <link rel="stylesheet" crossorigin href="/assets/style-CQvynhuG.css">
   </head>
   <body>
     <div id="root"></div>

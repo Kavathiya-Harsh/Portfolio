@@ -24,7 +24,7 @@ export default function Footer() {
   const year = new Date().getFullYear();
 
   return (
-    <footer className="py-12 px-6 border-t border-white/12">
+    <footer className="py-12 px-6 border-t border-white/12 relative z-10">
       <motion.div
         variants={smoothFadeIn}
         initial="hidden"

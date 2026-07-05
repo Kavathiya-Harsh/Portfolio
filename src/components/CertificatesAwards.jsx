@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { motion, AnimatePresence, useMotionValue, useTransform, useSpring } from 'framer-motion';
+import { motion, AnimatePresence, useMotionValue, useTransform, useSpring, useMotionTemplate } from 'framer-motion';
 import { Award, Medal, Maximize2, X, Sparkles, Shield } from 'lucide-react';
 import { certificates, awards } from '../data/certificates';
 import { textRevealUp, staggerContainer, viewportOnce } from '../utils/motion';
@@ -9,148 +9,126 @@ const mergedItems = [
   ...awards.map((a) => ({ ...a, isAward: true, image: a.image || '/certificates/shaastra_ai.jpg' })),
 ];
 
-const row1 = mergedItems.slice(0, Math.ceil(mergedItems.length / 2));
-const row2 = mergedItems.slice(Math.ceil(mergedItems.length / 2));
 
-/* ─── Infinite Marquee Row ─────────────────────────────────────────────── */
-function MarqueeRow({ items, direction = 'left', speed = 35, onCardClick }) {
-  const [paused, setPaused] = useState(false);
-  // Triple the items for seamless loop
-  const tripled = [...items, ...items, ...items];
 
-  return (
-    <div
-      className="relative overflow-hidden"
-      onMouseEnter={() => setPaused(true)}
-      onMouseLeave={() => setPaused(false)}
-    >
-      <motion.div
-        className="flex gap-5 w-max"
-        animate={{ x: direction === 'left' ? ['0%', '-33.333%'] : ['-33.333%', '0%'] }}
-        transition={{
-          x: { duration: speed, ease: 'linear', repeat: Infinity, repeatType: 'loop' },
-        }}
-        style={{ animationPlayState: paused ? 'paused' : 'running' }}
-      >
-        {tripled.map((item, i) => (
-          <MarqueeCard key={`${item.id}-${i}`} item={item} onClick={() => onCardClick(item)} />
-        ))}
-      </motion.div>
-      {/* Edge fades */}
-      <div className="absolute inset-y-0 left-0 w-24 sm:w-40 bg-gradient-to-r from-[#060911] to-transparent pointer-events-none z-10" />
-      <div className="absolute inset-y-0 right-0 w-24 sm:w-40 bg-gradient-to-l from-[#060911] to-transparent pointer-events-none z-10" />
-    </div>
-  );
-}
-
-/* ─── Single Marquee Card ──────────────────────────────────────────────── */
-function MarqueeCard({ item, onClick }) {
+/* ─── Single Certificate Card ──────────────────────────────────────────────── */
+function CertificateCard({ item, onClick }) {
   const ref = useRef(null);
-  const mx = useMotionValue(0.5);
-  const my = useMotionValue(0.5);
-  const sx = useSpring(mx, { stiffness: 220, damping: 26 });
-  const sy = useSpring(my, { stiffness: 220, damping: 26 });
-  const rotX = useTransform(sy, [0, 1], [6, -6]);
-  const rotY = useTransform(sx, [0, 1], [-6, 6]);
-  const glowX = useTransform(sx, [0, 1], ['0%', '100%']);
-  const glowY = useTransform(sy, [0, 1], ['0%', '100%']);
+  const mouseX = useMotionValue(0.5);
+  const mouseY = useMotionValue(0.5);
+  
+  const springConfig = { damping: 20, stiffness: 200, mass: 1 };
+  const springX = useSpring(mouseX, springConfig);
+  const springY = useSpring(mouseY, springConfig);
 
+  const rotateX = useTransform(springY, [0, 1], [8, -8]);
+  const rotateY = useTransform(springX, [0, 1], [-8, 8]);
+  
+  const xStr = useTransform(springX, x => `${x * 100}%`);
+  const yStr = useTransform(springY, y => `${y * 100}%`);
+  
   const isAward = item.isAward;
-  const accent = isAward ? '#fbbf24' : '#818cf8';
+  const accentRGB = isAward ? '251, 191, 36' : '6, 182, 212';
+  const accentHex = isAward ? '#fbbf24' : '#06b6d4';
 
-  const onMove = (e) => {
+  const glowBg = useMotionTemplate`radial-gradient(500px circle at ${xStr} ${yStr}, rgba(${accentRGB}, 0.15), transparent 50%)`;
+  const borderBg = useMotionTemplate`inset 0 0 0 1px rgba(${accentRGB}, 0.2)`;
+
+  const onMouseMove = (e) => {
     if (!ref.current) return;
-    const r = ref.current.getBoundingClientRect();
-    mx.set((e.clientX - r.left) / r.width);
-    my.set((e.clientY - r.top) / r.height);
+    const rect = ref.current.getBoundingClientRect();
+    const x = (e.clientX - rect.left) / rect.width;
+    const y = (e.clientY - rect.top) / rect.height;
+    mouseX.set(x);
+    mouseY.set(y);
   };
-  const onLeave = () => { mx.set(0.5); my.set(0.5); };
+
+  const onMouseLeave = () => {
+    mouseX.set(0.5);
+    mouseY.set(0.5);
+  };
 
   return (
     <motion.div
       ref={ref}
-      onMouseMove={onMove}
-      onMouseLeave={onLeave}
+      onMouseMove={onMouseMove}
+      onMouseLeave={onMouseLeave}
       onClick={onClick}
-      className="group relative flex-shrink-0 w-[320px] sm:w-[380px] cursor-pointer select-none"
-      style={{ perspective: '900px' }}
-      whileHover={{ y: -8 }}
-      transition={{ type: 'spring', stiffness: 300, damping: 24 }}
+      className="group relative w-full cursor-pointer select-none"
+      style={{ perspective: '1200px' }}
+      variants={{
+        hidden: { opacity: 0, y: 30, scale: 0.95 },
+        visible: { opacity: 1, y: 0, scale: 1, transition: { type: 'spring', stiffness: 100, damping: 15 } }
+      }}
     >
       <motion.div
-        className="relative rounded-2xl overflow-hidden h-full"
-        style={{ rotateX: rotX, rotateY: rotY, transformStyle: 'preserve-3d' }}
+        className="relative w-full rounded-[2.5rem] p-4 flex flex-col gap-5 overflow-hidden bg-[#0a0f1e] shadow-2xl transition-all duration-500 hover:shadow-[0_20px_40px_-10px_rgba(0,0,0,0.7)] border border-white/[0.03] group-hover:border-white/[0.08]"
+        style={{
+          rotateX,
+          rotateY,
+          transformStyle: 'preserve-3d',
+        }}
+        whileHover={{ scale: 1.02 }}
+        transition={{ type: 'spring', stiffness: 300, damping: 20 }}
       >
-        {/* Border glow */}
-        <div
-          className="absolute inset-0 rounded-2xl pointer-events-none z-30 transition-opacity duration-500 opacity-0 group-hover:opacity-100"
-          style={{ boxShadow: `inset 0 0 0 1px ${accent}44, 0 0 30px -8px ${accent}22` }}
-        />
-        <div
-          className="absolute inset-0 rounded-2xl pointer-events-none z-30"
-          style={{ boxShadow: 'inset 0 0 0 1px rgba(255,255,255,0.07)' }}
-        />
-
-        {/* Cursor glow */}
+        {/* Glow overlay following cursor */}
         <motion.div
-          className="absolute w-64 h-64 rounded-full pointer-events-none z-20 opacity-0 group-hover:opacity-100 transition-opacity duration-400"
-          style={{
-            left: glowX, top: glowY, x: '-50%', y: '-50%',
-            background: `radial-gradient(circle, ${accent}30 0%, transparent 65%)`,
-            filter: 'blur(16px)',
-          }}
+          className="absolute inset-0 z-0 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+          style={{ background: glowBg }}
         />
 
-        {/* Image */}
-        <div className="relative overflow-hidden bg-slate-950" style={{ aspectRatio: '16/10' }}>
+        {/* Dynamic Border Glow */}
+        <motion.div 
+          className="absolute inset-0 z-0 rounded-[2.5rem] pointer-events-none opacity-0 group-hover:opacity-100 transition-duration-500"
+          style={{ boxShadow: borderBg }}
+        />
+
+        {/* Image Container */}
+        <div className="relative h-48 sm:h-56 w-full rounded-3xl overflow-hidden z-10 shadow-[0_8px_30px_rgb(0,0,0,0.4)]" style={{ transform: 'translateZ(20px)' }}>
           <motion.img
             src={item.image}
             alt={item.title}
-            width="380" height="238"
-            loading="lazy" decoding="async"
-            className="w-full h-full object-cover"
+            loading="lazy"
+            className="w-full h-full object-cover transform"
             whileHover={{ scale: 1.08 }}
-            transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
+            transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
           />
-          {/* Vignette */}
-          <div className="absolute inset-0 bg-gradient-to-t from-[#0a0f1e] via-[#0a0f1e]/20 to-transparent opacity-60 group-hover:opacity-95 transition-opacity duration-500 pointer-events-none" />
-
-          {/* Scanlines */}
-          <div
-            className="absolute inset-0 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-700"
-            style={{ background: 'repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(255,255,255,0.012) 2px, rgba(255,255,255,0.012) 4px)' }}
-          />
-
-          {/* Type badge */}
+          <div className="absolute inset-0 rounded-3xl shadow-[inset_0_0_20px_rgba(0,0,0,0.6)] pointer-events-none" />
+          
           <div className="absolute top-3 left-3 z-20">
             <span
-              className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[9px] font-mono uppercase tracking-widest backdrop-blur-md border"
-              style={{ background: `${accent}18`, borderColor: `${accent}33`, color: accent }}
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[10px] font-bold tracking-widest backdrop-blur-md"
+              style={{ 
+                background: `linear-gradient(135deg, rgba(${accentRGB}, 0.2), rgba(${accentRGB}, 0.05))`, 
+                border: `1px solid rgba(${accentRGB}, 0.3)`, 
+                color: accentHex,
+                boxShadow: `0 4px 12px rgba(${accentRGB}, 0.15)`
+              }}
             >
-              {isAward ? <Medal className="w-2.5 h-2.5" /> : <Award className="w-2.5 h-2.5" />}
-              {isAward ? 'Award' : 'Cert'}
+              {isAward ? <Medal className="w-3 h-3" /> : <Award className="w-3 h-3" />}
+              {isAward ? 'AWARD' : 'CERTIFICATE'}
             </span>
           </div>
 
-          {/* Expand icon */}
-          <div className="absolute top-3 right-3 z-20 opacity-0 group-hover:opacity-100 scale-75 group-hover:scale-100 transition-all duration-300">
-            <div className="p-2 rounded-lg bg-white/[0.06] backdrop-blur-xl border border-white/10">
-              <Maximize2 className="w-3 h-3 text-white" />
-            </div>
+          <div className="absolute top-3 right-3 z-20 p-2 rounded-full bg-black/50 backdrop-blur-md border border-white/10 opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0 transition-all duration-300 shadow-lg cursor-pointer">
+            <Maximize2 className="w-4 h-4 text-white" />
           </div>
         </div>
 
-        {/* Text */}
-        <div
-          className="relative z-10 p-4"
-          style={{ background: 'linear-gradient(180deg, #0a0f1e 0%, #080d1a 100%)' }}
-        >
-          <h3 className="text-white font-bold text-sm leading-snug mb-1 line-clamp-1 group-hover:drop-shadow-[0_0_12px_rgba(255,255,255,0.1)] transition-all duration-300">
+        {/* Content Section */}
+        <div className="relative z-10 px-2 pb-2" style={{ transform: 'translateZ(30px)' }}>
+          <h3 className="text-white font-bold text-lg leading-tight mb-2 line-clamp-1 transition-colors duration-300">
             {item.title}
           </h3>
-          <div className="flex items-center justify-between gap-2">
-            <p className="text-slate-500 text-[11px] font-mono truncate">{item.issuer}</p>
-            <span className="shrink-0 text-[10px] font-mono text-slate-600">{item.date}</span>
+          <div className="flex items-center justify-between gap-3 mt-3">
+            <div className="flex items-center gap-2 overflow-hidden">
+               <div className="w-1.5 h-1.5 rounded-full shrink-0" style={{ backgroundColor: accentHex, boxShadow: `0 0 10px ${accentHex}` }} />
+               <p className="text-slate-400 text-sm font-medium truncate group-hover:text-slate-300 transition-colors">{item.issuer}</p>
+            </div>
+            <span className="shrink-0 text-[10px] font-mono px-2.5 py-1 rounded-md" 
+                  style={{ color: accentHex, backgroundColor: `rgba(${accentRGB}, 0.1)`, border: `1px solid rgba(${accentRGB}, 0.2)` }}>
+              {item.date}
+            </span>
           </div>
         </div>
       </motion.div>
@@ -176,7 +154,7 @@ export default function CertificatesAwards() {
   const expandedIdx = expandedItem ? mergedItems.findIndex((m) => m.id === expandedItem.id) : -1;
 
   return (
-    <section id="certificates" className="py-28 relative overflow-hidden" style={{ background: '#060911' }}>
+    <section id="certificates" className="py-28 relative overflow-hidden">
       {/* Breathing ambient blobs */}
       <motion.div
         className="absolute rounded-full pointer-events-none"
@@ -234,11 +212,21 @@ export default function CertificatesAwards() {
         </motion.div>
       </div>
 
-      {/* ─── Marquee Rows (full width) ─────────────────────────── */}
-      <div className="space-y-5 relative z-10">
-        <MarqueeRow items={row1} direction="left"  speed={40} onCardClick={setExpandedItem} />
-        <MarqueeRow items={row2} direction="right" speed={45} onCardClick={setExpandedItem} />
-      </div>
+      {/* ─── Staggered Grid Layout ─────────────────────────── */}
+      <motion.div
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, margin: '-50px' }}
+        variants={{
+          visible: { transition: { staggerChildren: 0.15 } },
+          hidden: {}
+        }}
+        className="relative z-10 max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8"
+      >
+        {mergedItems.map((item) => (
+          <CertificateCard key={item.id} item={item} onClick={() => setExpandedItem(item)} />
+        ))}
+      </motion.div>
 
       {/* ─── Stats ──────────────────────────────────────────────── */}
       <motion.div

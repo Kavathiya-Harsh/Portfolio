@@ -20,7 +20,7 @@ import {
 /* LeetCode SVG icon — lucide doesn't have one */
 const LeetCodeIcon = ({ className }) => (
   <svg viewBox="0 0 24 24" fill="currentColor" className={className} aria-hidden="true">
-    <path d="M13.483 0a1.374 1.374 0 0 0-.961.438L7.116 6.226l-3.854 4.126a5.266 5.266 0 0 0-1.209 2.104 5.35 5.35 0 0 0-.125.513 5.527 5.527 0 0 0 .062 2.362 5.83 5.83 0 0 0 .349 1.017 5.938 5.938 0 0 0 1.271 1.818l4.277 4.193.039.038c2.248 2.165 5.852 2.133 8.063-.074l2.396-2.392c.54-.54.54-1.414.003-1.955a1.378 1.378 0 0 0-1.951-.003l-2.396 2.392a3.021 3.021 0 0 1-4.205.038l-.02-.019-4.276-4.193c-.652-.64-.972-1.469-.948-2.263a2.68 2.68 0 0 1 .066-.523 2.545 2.545 0 0 1 .619-1.164L9.13 8.114c1.058-1.134 3.204-1.27 4.43-.278l3.501 2.831c.593.48 1.461.387 1.94-.207a1.384 1.384 0 0 0-.207-1.943l-3.5-2.831c-.8-.647-1.766-1.045-2.774-1.202l2.015-2.158A1.384 1.384 0 0 0 13.483 0zm-2.866 12.815a1.38 1.38 0 0 0-1.38 1.382 1.38 1.38 0 0 0 1.38 1.382H20.79a1.38 1.38 0 0 0 1.38-1.382 1.38 1.38 0 0 0-1.38-1.382z"/>
+    <path d="M13.483 0a1.374 1.374 0 0 0-.961.438L7.116 6.226l-3.854 4.126a5.266 5.266 0 0 0-1.209 2.104 5.35 5.35 0 0 0-.125.513 5.527 5.527 0 0 0 .062 2.362 5.83 5.83 0 0 0 .349 1.017 5.938 5.938 0 0 0 1.271 1.818l4.277 4.193.039.038c2.248 2.165 5.852 2.133 8.063-.074l2.396-2.392c.54-.54.54-1.414.003-1.955a1.378 1.378 0 0 0-1.951-.003l-2.396 2.392a3.021 3.021 0 0 1-4.205.038l-.02-.019-4.276-4.193c-.652-.64-.972-1.469-.948-2.263a2.68 2.68 0 0 1 .066-.523 2.545 2.545 0 0 1 .619-1.164L9.13 8.114c1.058-1.134 3.204-1.27 4.43-.278l3.501 2.831c.593.48 1.461.387 1.94-.207a1.384 1.384 0 0 0-.207-1.943l-3.5-2.831c-.8-.647-1.766-1.045-2.774-1.202l2.015-2.158A1.384 1.384 0 0 0 13.483 0zm-2.866 12.815a1.38 1.38 0 0 0-1.38 1.382 1.38 1.38 0 0 0 1.38 1.382H20.79a1.38 1.38 0 0 0 1.38-1.382 1.38 1.38 0 0 0-1.38-1.382z" />
   </svg>
 );
 
@@ -96,7 +96,7 @@ function ContactCard({ item, index }) {
     >
       {/* Dynamic Background Glow */}
       <div className={`absolute inset-0 ${item.bg} opacity-0 group-hover:opacity-100 transition-opacity blur-2xl -z-10`} />
-      
+
       {/* Left: Icon */}
       <div className={`shrink-0 w-11 h-11 sm:w-12 sm:h-12 rounded-xl ${item.bg} border border-white/5 flex items-center justify-center transition-transform group-hover:scale-110`}>
         <item.icon className={`w-5 h-5 sm:w-6 sm:h-6 ${item.color}`} />
@@ -183,7 +183,7 @@ export default function ContactForm() {
 
       if (response.ok && data.success) {
         setStatus('success');
-        
+
         // Sweet Success Celebration!
         confetti({
           particleCount: 150,
@@ -207,7 +207,7 @@ export default function ContactForm() {
 
   return (
     <section id="contact" className="py-16 md:py-24 px-4 sm:px-6 relative overflow-hidden">
-      <div className="max-w-7xl mx-auto">
+      <div className="max-w-7xl mx-auto relative z-10">
         {/* Section Header with text reveal */}
         <motion.div
           initial="hidden"
@@ -261,8 +261,8 @@ export default function ContactForm() {
             className="relative p-5 sm:p-8 md:p-10 rounded-[2.5rem] bg-white/[0.03] border border-white/10 backdrop-blur-2xl shadow-2xl overflow-hidden h-full flex flex-col will-change-transform"
           >
             <div className="absolute -top-24 -right-24 w-64 h-64 bg-blue-500/10 blur-[80px] rounded-full pointer-events-none will-change-transform" />
-            
-            <form 
+
+            <form
               onSubmit={handleSubmit}
               className="relative z-10 space-y-6 flex flex-col flex-1"
             >
@@ -308,7 +308,7 @@ export default function ContactForm() {
 
               <motion.button
                 type="submit"
-                whileHover={{ 
+                whileHover={{
                   scale: 1.05,
                   y: -5,
                   boxShadow: "0 25px 50px -12px rgba(37,99,235,0.5)"
@@ -318,7 +318,7 @@ export default function ContactForm() {
               >
                 {/* Progress Underlay during sending */}
                 {status === 'sending' && (
-                  <motion.div 
+                  <motion.div
                     initial={{ x: '-100%' }}
                     animate={{ x: '0%' }}
                     transition={{ duration: 3, ease: "linear" }}
@@ -335,7 +335,7 @@ export default function ContactForm() {
                       exit={{ opacity: 0, scale: 1.1 }}
                       className="flex items-center gap-3 relative z-10"
                     >
-                      <motion.div 
+                      <motion.div
                         animate={{ rotate: 360 }}
                         transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
                         className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full"

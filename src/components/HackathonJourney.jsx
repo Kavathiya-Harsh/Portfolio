@@ -103,7 +103,7 @@ const HackathonCard = ({ hackathon, index }) => {
 
 export default function HackathonJourney() {
   return (
-    <section id="hackathons" className="py-32 px-6 relative overflow-hidden bg-[#050810]">
+    <section id="hackathons" className="py-32 px-6 relative overflow-hidden">
       {/* Ambient Orbs — Matched with BentoSkills */}
       <div className="absolute top-[-200px] left-[-200px] w-[600px] h-[600px] rounded-full bg-blue-500/[0.08] blur-[120px] pointer-events-none animate-pulse" />
       <div className="absolute bottom-[-150px] right-[-100px] w-[500px] h-[500px] rounded-full bg-purple-500/[0.06] blur-[120px] pointer-events-none" />

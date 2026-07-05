@@ -199,7 +199,7 @@ export default function SkillsCloud() {
     });
 
   return (
-    <section id="skills" className="py-32 px-6 relative overflow-hidden bg-[#0b1120]">
+    <section id="skills" className="py-32 px-6 relative overflow-hidden">
       {/* Decorative Background Elements */}
       <div className="absolute top-0 left-1/4 w-[500px] h-[500px] bg-blue-600/10 rounded-full blur-[120px] pointer-events-none" />
       <div className="absolute bottom-0 right-1/4 w-[500px] h-[500px] bg-cyan-600/10 rounded-full blur-[120px] pointer-events-none" />
