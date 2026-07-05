@@ -43,7 +43,7 @@ function AntigravityParticles() {
         color: '#00f5ff',
         distance: 130,
         enable: true,
-        opacity: 0.25,
+        opacity: 0.225,
         width: 1,
       },
       move: {
@@ -68,11 +68,11 @@ function AntigravityParticles() {
         },
       },
       opacity: {
-        value: 0.65,
+        value: 0.585,
         animation: {
           enable: true,
           speed: 0.8,
-          minimumValue: 0.25,
+          minimumValue: 0.225,
         },
       },
       shape: {
@@ -102,6 +102,7 @@ function AntigravityParticles() {
         height: '100%',
         zIndex: -1,
         pointerEvents: 'none',
+        opacity: 0.85,  // 10% visibility reduction
       }}
     />
   );
