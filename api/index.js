@@ -47,21 +47,44 @@ if (!process.env.GMAIL_APP_PASSWORD) {
 // Configure Nodemailer transporter (Gmail with App Password)
 let emailTransporter = null;
 const GMAIL_USER = process.env.GMAIL_USER || 'harsh.kavathiya.cg@gmail.com';
-const GMAIL_APP_PASSWORD = process.env.GMAIL_APP_PASSWORD;
+const GMAIL_APP_PASSWORD = process.env.GMAIL_APP_PASSWORD?.replace(/\s+/g, ''); // strip any accidental spaces
 
 if (GMAIL_APP_PASSWORD) {
+    // Validate: Gmail App Passwords are exactly 16 alphanumeric characters
+    if (GMAIL_APP_PASSWORD.length !== 16) {
+        console.warn(`⚠️  GMAIL_APP_PASSWORD looks malformed (got ${GMAIL_APP_PASSWORD.length} chars, expected 16).`);
+        console.warn('   → Generate a fresh one at: https://myaccount.google.com/apppasswords');
+    }
+
     emailTransporter = nodemailer.createTransport({
-        service: 'gmail',
+        host: 'smtp.gmail.com',
+        port: 465,
+        secure: true, // SSL — more reliable than service:'gmail'
         auth: {
             user: GMAIL_USER,
             pass: GMAIL_APP_PASSWORD,
         },
+        tls: {
+            rejectUnauthorized: true,
+        },
     });
 
-    // Verify the transporter on startup
+    // Non-blocking startup verification
     emailTransporter.verify()
-        .then(() => console.log('✅ Email transporter verified — ready to send'))
-        .catch((err) => console.error('❌ Email transporter verification failed:', err.message));
+        .then(() => console.log('✅ Email transporter verified — ready to send mail'))
+        .catch((err) => {
+            console.error('❌ Email transporter verification failed:', err.message);
+            if (err.message.includes('535') || err.message.includes('Username and Password')) {
+                console.error('   → Fix: Your Gmail App Password is invalid or expired.');
+                console.error('   → Steps to fix:');
+                console.error('   →   1. Go to https://myaccount.google.com/apppasswords');
+                console.error('   →   2. Delete the old password and create a new one.');
+                console.error('   →   3. Paste the new 16-char password into .env as GMAIL_APP_PASSWORD');
+                console.error('   →   4. Restart the server.');
+            }
+            // Don't crash — server still functions, emails just won't send
+            emailTransporter = null;
+        });
 }
 
 /**

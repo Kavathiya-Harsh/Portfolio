@@ -2,12 +2,12 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { Trophy, Calendar, Target, Code, Cpu, ExternalLink, Flag, Rocket } from 'lucide-react';
 import { hackathons } from '../data/hackathons';
-import { 
-  textRevealUp, 
-  staggerContainer, 
-  viewportOnce, 
-  slideInLeft, 
-  slideInRight 
+import {
+  textRevealUp,
+  staggerContainer,
+  viewportOnce,
+  slideInLeft,
+  slideInRight
 } from '../utils/motion';
 
 const HackathonCard = ({ hackathon, index }) => {
@@ -24,9 +24,9 @@ const HackathonCard = ({ hackathon, index }) => {
           {index === 0 ? <Flag className="w-5 h-5 text-[#d4af37]" /> : <Rocket className="w-5 h-5 text-blue-400" />}
         </div>
         <div className="mt-4 text-center max-w-md bg-white/5 border border-white/10 backdrop-blur-md px-6 py-4 rounded-2xl shadow-xl">
-           <p className="text-[10px] font-mono text-[#d4af37] uppercase tracking-widest mb-1">{hackathon.achievement}</p>
-           <h3 className="text-lg font-bold text-white mb-2">{hackathon.title}</h3>
-           <p className="text-xs text-slate-400 font-mono tracking-wide">{hackathon.description}</p>
+          <p className="text-[10px] font-mono text-[#d4af37] uppercase tracking-widest mb-1">{hackathon.achievement}</p>
+          <h3 className="text-lg font-bold text-white mb-2">{hackathon.title}</h3>
+          <p className="text-xs text-slate-400 font-mono tracking-wide">{hackathon.description}</p>
         </div>
       </motion.div>
     );
@@ -35,9 +35,8 @@ const HackathonCard = ({ hackathon, index }) => {
   return (
     <motion.div
       variants={isEven ? slideInLeft : slideInRight}
-      className={`relative flex items-center mb-20 last:mb-0 ${
-        isEven ? 'md:justify-start' : 'md:justify-end'
-      } justify-center w-full`}
+      className={`relative flex items-center mb-20 last:mb-0 ${isEven ? 'md:justify-start' : 'md:justify-end'
+        } justify-center w-full`}
     >
       {/* Connector Dot */}
       <div className="hidden md:block absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-20">
@@ -46,12 +45,11 @@ const HackathonCard = ({ hackathon, index }) => {
 
       {/* Content Card */}
       <div className="w-full md:w-[45%] group perspective-1000">
-        <motion.div 
+        <motion.div
           whileHover={{ y: -5, scale: 1.02 }}
           transition={{ type: "spring", stiffness: 300, damping: 20 }}
-          className={`relative p-8 rounded-3xl border border-white/10 bg-slate-900/40 backdrop-blur-xl overflow-hidden hover:border-[#d4af37]/30 transition-all duration-500 shadow-2xl ${
-            isEven ? 'md:mr-auto' : 'md:ml-auto'
-          }`}
+          className={`relative p-8 rounded-3xl border border-white/10 bg-slate-900/40 backdrop-blur-xl overflow-hidden hover:border-[#d4af37]/30 transition-all duration-500 shadow-2xl ${isEven ? 'md:mr-auto' : 'md:ml-auto'
+            }`}
         >
           {/* Ambient Glow */}
           <div className={`absolute -inset-2 opacity-0 group-hover:opacity-100 transition-opacity duration-700 bg-gradient-to-r ${hackathon.color} blur-2xl -z-10`} />
@@ -64,7 +62,7 @@ const HackathonCard = ({ hackathon, index }) => {
           </div>
 
           <h3 className="text-2xl md:text-3xl font-bold text-white mb-2 tracking-tight">{hackathon.title}</h3>
-          
+
           <div className="flex items-center gap-2 mb-4 text-sm text-slate-400 font-mono">
             <span className="text-blue-400">{hackathon.issuer}</span>
             <span>•</span>
@@ -72,15 +70,15 @@ const HackathonCard = ({ hackathon, index }) => {
           </div>
 
           <p className="text-slate-400 text-sm mb-6 leading-relaxed">{hackathon.description}</p>
-          
+
           <div className="flex items-center gap-4 mb-6 p-4 rounded-2xl bg-white/5 border border-white/10">
-             <div className="w-10 h-10 rounded-xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center shrink-0">
-                <Code className="w-5 h-5 text-blue-400" />
-             </div>
-             <div>
-                <p className="text-[10px] font-mono text-slate-400 uppercase tracking-widest mb-0.5">Project Built</p>
-                <p className="font-bold text-sm text-white">{hackathon.project}</p>
-             </div>
+            <div className="w-10 h-10 rounded-xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center shrink-0">
+              <Code className="w-5 h-5 text-blue-400" />
+            </div>
+            <div>
+              <p className="text-[10px] font-mono text-slate-400 uppercase tracking-widest mb-0.5">Project Built</p>
+              <p className="font-bold text-sm text-white">{hackathon.project}</p>
+            </div>
           </div>
 
           <div className="flex flex-wrap gap-2 mb-8">
@@ -139,7 +137,7 @@ export default function HackathonJourney() {
         <div className="relative">
           {/* Vertical Center Line */}
           <div className="hidden md:block absolute left-1/2 top-4 bottom-4 w-px bg-gradient-to-b from-blue-500/50 via-blue-500/20 to-transparent -translate-x-1/2" />
-          
+
           <motion.div
             initial="hidden"
             whileInView="visible"
@@ -154,7 +152,7 @@ export default function HackathonJourney() {
         </div>
 
         {/* Footer Call to Action */}
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={viewportOnce}
