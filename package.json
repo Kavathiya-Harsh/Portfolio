@@ -19,6 +19,7 @@
     "@tsparticles/engine": "^4.3.1",
     "@tsparticles/react": "^4.3.1",
     "@tsparticles/slim": "^4.3.1",
+    "@vercel/speed-insights": "^2.0.0",
     "canvas-confetti": "^1.9.4",
     "clsx": "^2.1.1",
     "compression": "^1.8.1",
