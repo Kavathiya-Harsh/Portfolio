@@ -48,7 +48,7 @@ function AnimatedName({ firstName, lastName, isReady, instant = false }) {
 
   return (
     <motion.h1
-      className="font-bold tracking-tighter leading-[1.05] mb-8 whitespace-nowrap cursor-default"
+      className="font-bold tracking-tighter leading-[1.25] mb-8 pb-3 whitespace-nowrap cursor-default overflow-visible"
       style={{ fontSize: 'clamp(1.7rem, 5.5vw, 5.25rem)' }}
       initial={instant ? 'visible' : 'hidden'}
       animate={isReady ? 'visible' : 'hidden'}
